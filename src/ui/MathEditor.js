@@ -8,6 +8,8 @@ import MathQuillEditor from './mathquill-editor/MathQuillEditor';
 import preventEventDefault from './preventEventDefault';
 import uuid from './uuid';
 
+import Lang from './i18n';
+
 import './czi-form.css';
 
 type Props = {
@@ -45,15 +47,15 @@ class MathEditor extends React.PureComponent<any, any> {
       <div className="czi-math-editor">
         <form className="czi-form" onSubmit={preventEventDefault}>
           <fieldset>
-            <legend>Insert Math</legend>
+            <legend>{Lang('Insert Math')}</legend>
             <MathQuillEditor onChange={this._onChange} value={value} />
           </fieldset>
           <div className="czi-form-buttons">
-            <CustomButton label="Cancel" onClick={this._cancel} />
+            <CustomButton label={Lang('Cancel')} onClick={this._cancel} />
             <CustomButton
               active={true}
               disabled={!this.state.value}
-              label={initialValue ? 'Update' : 'Insert'}
+              label={initialValue ? Lang('Update') : Lang('Insert')}
               onClick={this._insert}
             />
           </div>

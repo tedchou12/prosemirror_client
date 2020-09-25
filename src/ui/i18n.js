@@ -91,7 +91,7 @@ lang_list['zh'] = {'Insert Table...': '插入表格...',
                   'Only select image that you have confirmed the license to use': '請確認該連結為圖片網址',
                   '[grid_on] Table...': '[grid_on] 表格...',
                   '[hr] Horizontal line': '[hr] 水平線',
-                  '[functions] Math': '[functions] Math',
+                  '[functions] Math': '[functions] 方程式',
                   '[settings_overscan] Page layout': '[settings_overscan] 頁面設定',
                   '[undo] Undo': '[undo] 復原',
                   '[redo] Redo': '[redo] 取消復原',
@@ -116,7 +116,13 @@ lang_list['zh'] = {'Insert Table...': '插入表格...',
                   'Paste a URL': '貼上連結',
                   'Remove': '移除',
                   'Transparent': '透明',
-                  'Default': '預設'}
+                  'Default': '預設',
+                  'Insert Math': '插入方程式',
+                  'Update': '更新',
+                  'Operators': '運算符號',
+                  'Structure': '運算公式',
+                  'Symbols': '特殊符號',
+                  'Trigonometry': '三角函式'}
 
 
 export default function Lang(text) {

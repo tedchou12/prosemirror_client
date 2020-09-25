@@ -1,5 +1,7 @@
 // @flow
 
+import Lang from '../i18n';
+
 export type MathQuillEditorSymbol = {
   label: string,
   latex: string,
@@ -395,7 +397,7 @@ export const VERT = {
   cmd: 'write',
 };
 export const OPERATORS = {
-  title: 'Operators',
+  title: [Lang('Operators')],
   symbols: [
     PLUS,
     MINUS,
@@ -425,7 +427,7 @@ export const OPERATORS = {
 };
 
 export const STRUCTURE = {
-  title: 'Structure',
+  title: [Lang('Structure')],
   symbols: [
     SUM,
     FRAC,
@@ -446,7 +448,7 @@ export const STRUCTURE = {
 };
 
 export const SYMBOLS = {
-  title: 'Symbols',
+  title: [Lang('Symbols')],
   symbols: [
     SMALLE,
     ANGLE,
@@ -468,6 +470,6 @@ export const SYMBOLS = {
 };
 
 export const TRIG = {
-  title: 'Trigonometry',
+  title: [Lang('Trigonometry')],
   symbols: [SIN, COS, TAN, ARCSIN, ARCCOS, ARCTAN],
 };

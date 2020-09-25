@@ -66,7 +66,7 @@ class ImageURLEditor extends React.PureComponent<any, any> {
                 autoFocus={true}
                 className="czi-image-url-editor-src-input"
                 onChange={this._onSrcChange}
-                placeholder={Lang("Paste URL of Image...")}
+                placeholder={Lang("Type Something...")}
                 type="text"
                 value={src || ''}
               />
