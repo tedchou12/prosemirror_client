@@ -6,7 +6,7 @@ var webpack = require('webpack'),
   HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin'),
   HtmlWebpackPlugin = require('html-webpack-plugin'),
   TerserPlugin = require('terser-webpack-plugin'),
-  
+
   WriteFilePlugin = require('write-file-webpack-plugin'),
   env = require('./utils/env'),
   fileSystem = require('fs'),
@@ -20,7 +20,8 @@ var isDev = env.NODE_ENV === 'development' || 0;
 // isDev = false;
 
 var options = {
-  mode: 'production',
+  // mode: 'production',
+  mode: 'development',
   entry: {
     licit: path.join(__dirname, 'licit', 'client', 'index.js'),
   },
@@ -89,7 +90,7 @@ var options = {
       // jQuery (for Mathquill)
       'window.jQuery': 'jquery',
     }),
-    // type checker 
+    // type checker
     ... (env.NODE_ENV === 'development') ? [new FlowWebpackPlugin({flowArgs: ['--show-all-errors']})] : [],
     // clean the web folder
     new CleanWebpackPlugin(),
@@ -112,7 +113,7 @@ if (env.NODE_ENV === 'development') {
   options.devtool = 'source-map';
 } else {
 // [FS] IRAD-1005 2020-07-10
-// Upgrade outdated packages.  
+// Upgrade outdated packages.
   options.optimization =  {
     minimize: true,
     minimizer: [new TerserPlugin()],

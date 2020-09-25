@@ -6,6 +6,8 @@ import CustomButton from './CustomButton';
 import CustomRadioButton from './CustomRadioButton';
 import preventEventDefault from './preventEventDefault';
 
+import Lang from './i18n';
+
 import './czi-body-layout-editor.css';
 import './czi-form.css';
 
@@ -37,7 +39,7 @@ class DocLayoutEditor extends React.PureComponent<any, any> {
     //   layout: PropTypes.string,
     //   width: PropTypes.number,
     // }),
-    
+
     close: function (props: any, propName: string) {
       var fn = props[propName];
       if (!fn.prototype ||
@@ -56,7 +58,7 @@ class DocLayoutEditor extends React.PureComponent<any, any> {
     this.state = {
       width,
       layout,
-      selectedValue: width || layout || LAYOUT.US_LETTER_PORTRAIT,
+      selectedValue: width || layout || LAYOUT.A4_PORTRAIT,
     };
   }
 
@@ -76,16 +78,28 @@ class DocLayoutEditor extends React.PureComponent<any, any> {
       <div className="czi-body-layout-editor">
         <form className="czi-form" onSubmit={preventEventDefault}>
           <fieldset>
-            <legend>Page Layout</legend>
+            <legend>{Lang('Page Layout')}</legend>
+            <CustomRadioButton
+              checked={selectedValue === LAYOUT.A4_PORTRAIT}
+              label={Lang("A4 - Portrait")}
+              onSelect={this._onSelect}
+              value={LAYOUT.A4_PORTRAIT}
+            />
+            <CustomRadioButton
+              checked={selectedValue === LAYOUT.A4_LANDSCAPE}
+              label={Lang("A4 - Landscape")}
+              onSelect={this._onSelect}
+              value={LAYOUT.A4_LANDSCAPE}
+            />
             <CustomRadioButton
               checked={selectedValue === LAYOUT.US_LETTER_PORTRAIT}
-              label="US Letter - Portrait"
+              label={Lang("US Letter - Portrait")}
               onSelect={this._onSelect}
               value={LAYOUT.US_LETTER_PORTRAIT}
             />
             <CustomRadioButton
               checked={selectedValue === LAYOUT.US_LETTER_LANDSCAPE}
-              label="US Letter - Landscape"
+              label={Lang("US Letter - Landscape")}
               onSelect={this._onSelect}
               value={LAYOUT.US_LETTER_LANDSCAPE}
             />
@@ -105,8 +119,8 @@ class DocLayoutEditor extends React.PureComponent<any, any> {
           </fieldset>
           <hr />
           <div className="czi-form-buttons">
-            <CustomButton label="Cancel" onClick={this._cancel} />
-            <CustomButton active={true} label="Apply" onClick={this._apply} />
+            <CustomButton label={Lang('Cancel')} onClick={this._cancel} />
+            <CustomButton active={true} label={Lang('Apply')} onClick={this._apply} />
           </div>
         </form>
       </div>
