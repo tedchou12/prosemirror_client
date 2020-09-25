@@ -7,6 +7,8 @@ import CustomButton from './CustomButton';
 import preventEventDefault from './preventEventDefault';
 import resolveImage from './resolveImage';
 
+import Lang from './i18n';
+
 import './czi-form.css';
 import './czi-image-url-editor.css';
 
@@ -15,7 +17,7 @@ import type {ImageLike} from '../Types';
 type Props = {
   initialValue: ?ImageLike,
   close: (href: ?ImageLike) => void,
-}; 
+};
 
 class ImageURLEditor extends React.PureComponent<any, any> {
   _img = null;
@@ -58,28 +60,28 @@ class ImageURLEditor extends React.PureComponent<any, any> {
       <div className="czi-image-url-editor">
         <form className="czi-form" onSubmit={preventEventDefault}>
           <fieldset>
-            <legend>Insert Image</legend>
+            <legend>{Lang('Insert Image')}</legend>
             <div className="czi-image-url-editor-src-input-row">
               <input
                 autoFocus={true}
                 className="czi-image-url-editor-src-input"
                 onChange={this._onSrcChange}
-                placeholder="Paste URL of Image..."
+                placeholder={Lang("Paste URL of Image...")}
                 type="text"
                 value={src || ''}
               />
               {preview}
             </div>
             <em>
-              Only select image that you have confirmed the license to use
+              {Lang('Only select image that you have confirmed the license to use')}
             </em>
           </fieldset>
           <div className="czi-form-buttons">
-            <CustomButton label="Cancel" onClick={this._cancel} />
+            <CustomButton label={Lang('Cancel')} onClick={this._cancel} />
             <CustomButton
               active={!!validValue}
               disabled={!validValue}
-              label="Insert"
+              label={Lang('Insert')}
               onClick={this._insert}
             />
           </div>

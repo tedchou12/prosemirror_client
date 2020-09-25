@@ -46,21 +46,21 @@ export const HEADING_NAMES = [
     "name": [Lang("Title")],
     "customstyles":  [
       {
-        'stylename':'Title',
-        // 'fontsize' : 30,
-        // 'fontname' : 'Acme',
+        'stylename':[Lang('Title')],
         'strong' : true,
         'em' :true,
-        'color':'Green',
+        'color':'Black',
       }
     ]
   },
   {
-    "name": [Lang("Quote")],
-    "style":  [
+    "name": [Lang("Subtitle")],
+    "customstyles":  [
       {
-        "font-size": 20,
-        "font-name": "Arial",
+        'stylename':[Lang('Subtitle')],
+        'strong' : true,
+        'em': true,
+        'color': 'Grey',
       },
     ]
   },

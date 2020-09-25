@@ -17,18 +17,16 @@ import {Transform} from 'prosemirror-transform';
 
 const HEADING_COMMANDS: Object = {
   [HEADING_NAME_DEFAULT]: new HeadingCommand(0),
-}; 
- 
+};
+
 
 HEADING_NAMES.forEach(obj => {
-  if(obj.level){
+  if (obj.level || obj.level === 0) {
     HEADING_COMMANDS[obj.name] = new HeadingCommand(obj.level);
-  }
-  else
-  {
+  } else {
     HEADING_COMMANDS[obj.name] = new CustomStyleCommand(obj.customstyles,obj.name);
   }
- 
+
 });
 
 
@@ -45,8 +43,8 @@ class HeadingCommandMenuButton extends React.PureComponent<any, any> {
     for (var i=0; i < HEADING_NAMES.length; i++){
        if (HEADING_NAMES[i].level == level){
       return HEADING_NAMES[i].name;
-    }   
-    }      
+    }
+    }
   }
 
   render(): React.Element<any> {
@@ -60,7 +58,7 @@ class HeadingCommandMenuButton extends React.PureComponent<any, any> {
     else{
       customStyleName = findActiveCustomStyle(editorState);
     }
-    
+
 
     return (
       <CommandMenuButton
