@@ -15,7 +15,7 @@ import type {ImageLike} from '../Types';
 type Props = {
   initialValue: ?ImageLike,
   close: (href: ?ImageLike) => void,
-}; 
+};
 
 class ImageURLEditor extends React.PureComponent<any, any> {
   _img = null;
