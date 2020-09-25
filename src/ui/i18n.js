@@ -100,8 +100,18 @@ lang_list['zh'] = {'Insert Table...': '插入表格...',
                   'Quote': '引言',
                   'Single': '單行',
                   'Double': '雙行',
+                  'Page Layout': '頁面設定',
                   'US Letter - Portrait': 'US Letter - 直印',
-                  'US Letter - Landscape': 'US Letter - 橫印',}
+                  'US Letter - Landscape': 'US Letter - 橫印',
+                  'A4 - Portrait': 'A4 - 直印',
+                  'A4 - Landscape': 'A4 - 橫印',
+                  'Cancel': '取消',
+                  'Apply': '確定',
+                  'Add a Link': '新增連結',
+                  'Paste a URL': '貼上連結',
+                  'Remove': '移除',
+                  'Transparent': '透明',
+                  'Default': '預設'}
 
 
 export default function Lang(text) {
