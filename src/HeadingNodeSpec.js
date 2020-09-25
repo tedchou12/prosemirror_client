@@ -7,6 +7,8 @@ import {getParagraphNodeAttrs, toParagraphDOM} from './ParagraphNodeSpec';
 
 import type {NodeSpec} from './Types';
 
+import Lang from './ui/i18n';
+
 const TAG_NAME_TO_LEVEL = {
   H1: 1,
   H2: 2,
@@ -21,27 +23,27 @@ const TAG_NAME_TO_LEVEL = {
 
 export const HEADING_NAMES = [
   {
-    "name": "Normal",
+    "name": [Lang("Normal")],
     "level": 0
   },
   {
-    "name": "Heading 1",
+    "name": [Lang("Heading 1")],
     "level": 1
   },
   {
-    "name": "Heading 2",
+    "name": [Lang("Heading 2")],
     "level": 2
   },
   {
-    "name": "Heading 3",
+    "name": [Lang("Heading 3")],
     "level": 3
   },
   {
-    "name": "Heading 4",
+    "name": [Lang("Heading 4")],
     "level": 4
   },
   {
-    "name": "Title",
+    "name": [Lang("Title")],
     "customstyles":  [
       {
         'stylename':'Title',
@@ -49,19 +51,19 @@ export const HEADING_NAMES = [
         // 'fontname' : 'Acme',
         'strong' : true,
         'em' :true,
-        'color':'Green',         
-      }      
+        'color':'Green',
+      }
     ]
-  },  
+  },
   {
-    "name": "Quote",
+    "name": [Lang("Quote")],
     "style":  [
       {
         "font-size": 20,
-        "font-name": "Arial", 
+        "font-name": "Arial",
       },
     ]
-  },   
+  },
 ];
 
 // https://github.com/ProseMirror/prosemirror-schema-basic/blob/master/src/schema-basic.js
