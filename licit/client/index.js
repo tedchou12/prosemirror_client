@@ -37,7 +37,7 @@ function onChangeCB(data) {
 }
 
 function onReadyCB(ref) {
-  console.log('ref: ' + ref);
+  // console.log('ref: ' + ref);
 }
 
 window.onload = main;

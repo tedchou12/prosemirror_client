@@ -46,14 +46,13 @@ class CollabConnector extends SimpleConnector {
 
     this._connection.view = {
       updateState: (s) => {
-        // console.log('update', s);
         //poll if selection changes
-        // if (this._connection.ready) {
-        //   if (this._selection != s.selection) {
-        //     this._selection = s.selection;
-        //     this._connection.cursor_send(s.selection);
-        //   }
-        // }
+        if (this._connection.ready) {
+          if (this._selection != s.selection) {
+            this._selection = s.selection;
+            this._connection.cursor_send(s.selection);
+          }
+        }
         setState({ editorState: s }, () => { });
       },
     };
