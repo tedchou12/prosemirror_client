@@ -133,48 +133,10 @@ class EditorConnection {
 
   // Send cursor updates to the server
   cursor_send(selection: Object): void {
-    const json = JSON.stringify({
-      selection: selection,
-      clientID: uuid()
-    });
-    this.run(POST(this.url + '/cursor', json, 'application/json')).then(
-      data => {
-        this.report.success();
-      },
-      err => {
-        if (err.status == 410 || badVersion(err)) {
-          // Too far behind. Revert to server state
-          this.report.failure(err);
-        } else if (err) {
-        }
-      }
-    );
-  }
-
-  // Send a request for events that have happened since the version
-  // of the document that the client knows about. This request waits
-  // for a new version of the document to be created if the client
-  // is already up-to-date.
-  cursor_poll(): void {
-    const query = 'version=' + (Date.now() / 1000);
-    this.run(GET(this.url + '/cursor?' + query)).then(
-      data => {
-        this.report.success();
-        data = JSON.parse(data);
-        if (data) {
-          console.log(data);
-        }
-
-        this.cursor_poll();
-      },
-      err => {
-        if (err.status == 410 || badVersion(err)) {
-          // Too far behind. Revert to server state
-          this.report.failure(err);
-        } else if (err) {
-        }
-      }
-    );
+    const content = {selection: selection,
+                      clientID: uuid()};
+    const json = JSON.stringify({type: 'selection', data: content});
+    this.socket.send(json);
   }
 
   ws_start(): void {
@@ -199,7 +161,7 @@ class EditorConnection {
           version: json.version,
           users: json.users,
         });
-      } else {
+      } else if (data.type == 'step') {
         connection.backOff = 0;
         if (json.steps && json.steps.length) {
           const tr = receiveTransaction(
@@ -213,6 +175,8 @@ class EditorConnection {
             requestDone: false,
           });
         }
+      } else {
+        console.log(json);
       }
     }
 
@@ -231,11 +195,10 @@ class EditorConnection {
 
   ws_send(editState: EditorState, sendable: Object) {
     const { steps } = sendable;
-    const json = JSON.stringify({
-      version: getVersion(editState),
-      steps: steps ? steps.steps.map(s => s.toJSON()) : [],
-      clientID: steps ? steps.clientID : 0,
-    });
+    const content = {version: getVersion(editState),
+                     steps: steps ? steps.steps.map(s => s.toJSON()) : [],
+                     clientID: steps ? steps.clientID : 0};
+    const json = JSON.stringify({type: 'content', data: content});
     this.socket.send(json);
     this.report.success();
     this.backOff = 0;
@@ -267,112 +230,12 @@ class EditorConnection {
     }, this.backOff);
   }
 
-  // Load the document from the server and start up
-  start(): void {
-    this.run(GET(this.url)).then(
-      data => {
-        data = JSON.parse(data);
-        this.report.success();
-        this.backOff = 0;
-        this.dispatch({
-          type: 'loaded',
-          doc: this.getEffectiveSchema().nodeFromJSON(data.doc_json),
-          version: data.version,
-          users: data.users,
-        });
-      },
-      err => {
-        this.report.failure(err);
-      }
-    );
-  }
-
-  // Send a request for events that have happened since the version
-  // of the document that the client knows about. This request waits
-  // for a new version of the document to be created if the client
-  // is already up-to-date.
-  poll(): void {
-    const query = 'version=' + getVersion(this.state.edit);
-    this.run(GET(this.url + '/events?' + query)).then(
-      data => {
-        this.report.success();
-        data = JSON.parse(data);
-        this.backOff = 0;
-        if (data.steps && data.steps.length) {
-          const tr = receiveTransaction(
-            this.state.edit,
-            data.steps.map(j => Step.fromJSON(this.getEffectiveSchema(), j)),
-            data.clientIDs
-          );
-          this.dispatch({
-            type: 'transaction',
-            transaction: tr,
-            requestDone: true,
-          });
-        } else {
-          this.poll();
-        }
-      },
-      err => {
-        if (err.status == 410 || badVersion(err)) {
-          // Too far behind. Revert to server state
-          this.report.failure(err);
-          this.dispatch({ type: 'restart' });
-        } else if (err) {
-          this.dispatch({ type: 'recover', error: err });
-        }
-      }
-    );
-  }
-
   sendable(editState: EditorState): ?{ steps: Array<Step> } {
     const steps = sendableSteps(editState);
     if (steps) {
       return { steps };
     }
     return null;
-  }
-
-  // Send the given steps to the server
-  send(editState: EditorState, sendable: Object) {
-    const { steps } = sendable;
-    const json = JSON.stringify({
-      version: getVersion(editState),
-      steps: steps ? steps.steps.map(s => s.toJSON()) : [],
-      clientID: steps ? steps.clientID : 0,
-    });
-    this.run(POST(this.url + '/events', json, 'application/json')).then(
-      data => {
-        this.report.success();
-        this.backOff = 0;
-        const tr = steps
-          ? receiveTransaction(
-            this.state.edit,
-            steps.steps,
-            repeat(steps.clientID, steps.steps.length)
-          )
-          : this.state.edit.tr;
-
-        this.dispatch({
-          type: 'transaction',
-          transaction: tr,
-          requestDone: true,
-        });
-      },
-      err => {
-        // if (err.status == 409) {
-        //   // The client's document conflicts with the server's version.
-        //   // Poll for changes and then try again.
-        //   this.backOff = 0;
-        //   this.dispatch({ type: 'poll' });
-        // } else if (badVersion(err)) {
-        //   this.report.failure(err);
-        //   this.dispatch({ type: 'restart' });
-        // } else {
-        //   this.dispatch({ type: 'recover', error: err });
-        // }
-      }
-    );
   }
 
   // [FS] IRAD-1040 2020-09-02
