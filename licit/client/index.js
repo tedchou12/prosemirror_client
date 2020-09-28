@@ -27,13 +27,13 @@ function main(): void {
   // null means no custom plugins to pass
   // the plugin object must contain a method getEffectiveSchema() which accept schema and returns schema.
   const plugins = null;
-  ReactDOM.render(<Licit docID={1} debug={false} width={'100vw'} height={'100vh'}
+  ReactDOM.render(<Licit docID={2} debug={false} width={'100vw'} height={'100vh'}
     onChange={onChangeCB} onReady={onReadyCB} data={docJSON} embedded={false}
     runtime={null} plugins={plugins} fitToContent={false} />, el);
 }
 
 function onChangeCB(data) {
-  console.log('data: ' + JSON.stringify(data));
+  // console.log('data: ' + JSON.stringify(data));
 }
 
 function onReadyCB(ref) {
