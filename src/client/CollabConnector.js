@@ -17,6 +17,7 @@ class CollabConnector extends SimpleConnector {
   _connection: any;
   _docID: IdStrict;
   _stepKeys: Object;
+  _selection: Object;
 
   constructor(
     editorState: EditorState,
@@ -36,16 +37,23 @@ class CollabConnector extends SimpleConnector {
     //   window.location.hostname + ':3002/docs/' +
     //   docID;
     // const url = window.location.protocol + '\/\/' + 'localhost.charlesproxy.com' + ':3002/docs/' + docID;
-    const url = 'http://192.168.1.2/prosemirror_server/server_5/docs/' + docID;
+    const url = 'http://localhost.charlesproxy.com/prosemirror_server/server_5/docs/' + docID;
     this._connection = new EditorConnection(
       setState,
       new Reporter(),
-      url,
+      docID,
     );
 
     this._connection.view = {
       updateState: (s) => {
-        console.log('update', s);
+        // console.log('update', s);
+        //poll if selection changes
+        // if (this._connection.ready) {
+        //   if (this._selection != s.selection) {
+        //     this._selection = s.selection;
+        //     this._connection.cursor_send(s.selection);
+        //   }
+        // }
         setState({ editorState: s }, () => { });
       },
     };
@@ -64,7 +72,8 @@ class CollabConnector extends SimpleConnector {
   // FS IRAD-1040 2020-09-02
   // Send the modified schema to server
   updateSchema = (schema: Schema) => {
-    this._connection.updateSchema(schema);
+    // this._connection.updateSchema(schema);
+    this._connection.ws_start();
   };
 }
 
