@@ -1,44 +1,7 @@
-
-
-
-
-
-
-
-
-
-
-
-
-<h1 align="center">Licit Editor</h1>
+Prosemirror Editor Modified
 
 <div align="center">
   <strong>WYSIWYG editor based on ProseMirror & React</strong>
-</div>
-<div align="center">
-  Includes significant text markup including size, face, color, line spacing, strikethrough, bold, italic, etc.; multi-level bullet/number lists; images with text wrapping and resizing; and a powerful table (with images and markup within table)
-</div>
-&nbsp;
-<div align="center">
-  
-![GitHub last commit](https://img.shields.io/github/last-commit/MO-Movia/licit)
-![Website](https://img.shields.io/website?down_color=red&down_message=Offline&up_color=green&up_message=Online&url=http://www.greathints.com)
-![Dependencies](https://img.shields.io/badge/dependencies-up%20to%20date-brightgreen.svg)
-![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-
-</div>
-<div align="center">
-  <h3>
-    <a href="https://github.com/MO-Movia/licit/wiki">Wiki
-    </a>
-    <span> | </span>
-    <a href="http://greathints.com/licit">Demo
-    </a>
-    <span> | </span>
-    <a href="https://prosemirror.net/">Based on...
-    </a>
-  </h3>
 </div>
 
 ## Getting Started  
