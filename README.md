@@ -6,11 +6,6 @@ Prosemirror Editor Modified
 
 ## Getting Started  
 
-### Getting repository
-
-```
-git clone https://github.com/MO-Movia/licit.git 
-```
 ### Install Prerequisite
 ```
 Make(0.8.1)
@@ -19,7 +14,6 @@ Python(3.8.2)
 
 ### Install dependencies
 ```
-cd licit 
 npm install
 ``` 
 
@@ -43,23 +37,12 @@ To run collab server:
 python run_collab_server.py 
 ```  
 
-### Start the image server for Upload image 
-```
-In Windows
-py run_image_server.py  
-
-In MacOS/Linux
-python run_image_server.py
-```  
-
 ### Start the web server
 
-```
-In Windows
-py run_web_server.py  
+Refer to https://github.com/tedchou12/prosemirror-server-php
 
-In MacOS/Linux
-python run_web_server.py
+```
+php websocet.php
 ```
 Test http://localhost:3001/ from your browser.  
 
