@@ -15,6 +15,8 @@ var _preventEventDefault = _interopRequireDefault(require("./preventEventDefault
 
 var _resolveImage = _interopRequireDefault(require("./resolveImage"));
 
+var _i18n = _interopRequireDefault(require("./i18n"));
+
 require("./czi-form.css");
 
 require("./czi-image-url-editor.css");
@@ -96,24 +98,24 @@ class ImageURLEditor extends React.PureComponent {
     }, /*#__PURE__*/React.createElement("form", {
       className: "czi-form",
       onSubmit: _preventEventDefault.default
-    }, /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Insert Image"), /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, (0, _i18n.default)('Insert Image')), /*#__PURE__*/React.createElement("div", {
       className: "czi-image-url-editor-src-input-row"
     }, /*#__PURE__*/React.createElement("input", {
       autoFocus: true,
       className: "czi-image-url-editor-src-input",
       onChange: this._onSrcChange,
-      placeholder: "Paste URL of Image...",
+      placeholder: (0, _i18n.default)("Type Something..."),
       type: "text",
       value: src || ''
-    }), preview), /*#__PURE__*/React.createElement("em", null, "Only select image that you have confirmed the license to use")), /*#__PURE__*/React.createElement("div", {
+    }), preview), /*#__PURE__*/React.createElement("em", null, (0, _i18n.default)('Only select image that you have confirmed the license to use'))), /*#__PURE__*/React.createElement("div", {
       className: "czi-form-buttons"
     }, /*#__PURE__*/React.createElement(_CustomButton.default, {
-      label: "Cancel",
+      label: (0, _i18n.default)('Cancel'),
       onClick: this._cancel
     }), /*#__PURE__*/React.createElement(_CustomButton.default, {
       active: !!validValue,
       disabled: !validValue,
-      label: "Insert",
+      label: (0, _i18n.default)('Insert'),
       onClick: this._insert
     }))));
   }

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.UNDERLINE = exports.UL = exports.TEXT_LINE_SPACINGS = exports.TEXT_INSERT_TAB_SPACE = exports.TEXT_HIGHLIGHT = exports.TEXT_COLOR = exports.TEXT_ALIGN_RIGHT = exports.TEXT_ALIGN_LEFT = exports.TEXT_ALIGN_JUSTIFY = exports.TEXT_ALIGN_CENTER = exports.TABLE_TOGGLE_HEADER_ROW = exports.TABLE_TOGGLE_HEADER_COLUMN = exports.TABLE_TOGGLE_HEADER_CELL = exports.TABLE_SPLIT_ROW = exports.TABLE_MOVE_TO_PREV_CELL = exports.TABLE_MOVE_TO_NEXT_CELL = exports.TABLE_MERGE_CELLS = exports.TABLE_INSERT_TABLE = exports.TABLE_DELETE_TABLE = exports.TABLE_DELETE_ROW = exports.TABLE_DELETE_COLUMN = exports.TABLE_BORDER_COLOR = exports.TABLE_BACKGROUND_COLOR = exports.TABLE_ADD_ROW_BEFORE = exports.TABLE_ADD_ROW_AFTER = exports.TABLE_ADD_COLUMN_BEFORE = exports.TABLE_ADD_COLUMN_AFTER = exports.SUPER = exports.STRONG = exports.STRIKE = exports.PRINT = exports.OL = exports.MATH_EDIT = exports.LIST_SPLIT = exports.LIST_ITEM_MERGE_UP = exports.LIST_ITEM_MERGE_DOWN = exports.LIST_ITEM_INSERT_NEW_LINE = exports.LINK_SET_URL = exports.INDENT_MORE = exports.INDENT_LESS = exports.IMAGE_UPLOAD = exports.IMAGE_FROM_URL = exports.HR = exports.HISTORY_UNDO = exports.HISTORY_REDO = exports.H6 = exports.H5 = exports.H4 = exports.H3 = exports.H2 = exports.H1 = exports.EM = exports.DOC_LAYOUT = exports.CLEAR_FORMAT = void 0;
+exports.UNDERLINE = exports.UL = exports.TEXT_LINE_SPACINGS = exports.TEXT_INSERT_TAB_SPACE = exports.TEXT_HIGHLIGHT = exports.TEXT_COLOR = exports.TEXT_ALIGN_RIGHT = exports.TEXT_ALIGN_LEFT = exports.TEXT_ALIGN_JUSTIFY = exports.TEXT_ALIGN_CENTER = exports.TABLE_TOGGLE_HEADER_ROW = exports.TABLE_TOGGLE_HEADER_COLUMN = exports.TABLE_TOGGLE_HEADER_CELL = exports.TABLE_SPLIT_ROW = exports.TABLE_MOVE_TO_PREV_CELL = exports.TABLE_MOVE_TO_NEXT_CELL = exports.TABLE_MERGE_CELLS = exports.TABLE_INSERT_TABLE = exports.TABLE_DELETE_TABLE = exports.TABLE_DELETE_ROW = exports.TABLE_DELETE_COLUMN = exports.TABLE_BORDER_COLOR = exports.TABLE_BACKGROUND_COLOR = exports.TABLE_ADD_ROW_BEFORE = exports.TABLE_ADD_ROW_AFTER = exports.TABLE_ADD_COLUMN_BEFORE = exports.TABLE_ADD_COLUMN_AFTER = exports.SUB = exports.SUPER = exports.STRONG = exports.STRIKE = exports.PRINT = exports.OL = exports.MATH_EDIT = exports.LIST_SPLIT = exports.LIST_ITEM_MERGE_UP = exports.LIST_ITEM_MERGE_DOWN = exports.LIST_ITEM_INSERT_NEW_LINE = exports.LINK_SET_URL = exports.INDENT_MORE = exports.INDENT_LESS = exports.IMAGE_UPLOAD = exports.IMAGE_FROM_URL = exports.HR = exports.HISTORY_UNDO = exports.HISTORY_REDO = exports.H6 = exports.H5 = exports.H4 = exports.H3 = exports.H2 = exports.H1 = exports.EM = exports.DOC_LAYOUT = exports.CLEAR_FORMAT = void 0;
 
 var ProsemirrorTables = _interopRequireWildcard(require("prosemirror-tables"));
 
@@ -97,6 +97,7 @@ const {
   MARK_EM,
   MARK_STRIKE,
   MARK_SUPER,
+  MARK_SUB,
   MARK_UNDERLINE
 } = MarkNames; // Note that Firefox will, by default, add various kinds of controls to
 // editable tables, even though those don't work in ProseMirror. The only way
@@ -162,6 +163,8 @@ const STRONG = new _MarkToggleCommand.default(MARK_STRONG);
 exports.STRONG = STRONG;
 const SUPER = new _MarkToggleCommand.default(MARK_SUPER);
 exports.SUPER = SUPER;
+const SUB = new _MarkToggleCommand.default(MARK_SUB);
+exports.SUB = SUB;
 const TABLE_ADD_COLUMN_AFTER = (0, _createCommand.default)(addColumnAfter);
 exports.TABLE_ADD_COLUMN_AFTER = TABLE_ADD_COLUMN_AFTER;
 const TABLE_ADD_COLUMN_BEFORE = (0, _createCommand.default)(addColumnBefore);

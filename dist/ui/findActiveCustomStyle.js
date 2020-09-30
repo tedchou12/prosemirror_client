@@ -12,9 +12,11 @@ var _MarkNames = require("../MarkNames");
 
 var _findActiveMark = _interopRequireDefault(require("../findActiveMark"));
 
+var _i18n = _interopRequireDefault(require("./i18n"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const CUSTOMSTYLE_NAME_DEFAULT = 'Normal'; // [FS] IRAD-1042 2020-09-17
+const CUSTOMSTYLE_NAME_DEFAULT = [(0, _i18n.default)('Normal')]; // [FS] IRAD-1042 2020-09-17
 // To find the selected custom style
 
 exports.CUSTOMSTYLE_NAME_DEFAULT = CUSTOMSTYLE_NAME_DEFAULT;

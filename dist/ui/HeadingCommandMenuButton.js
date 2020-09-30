@@ -40,7 +40,7 @@ const HEADING_COMMANDS = {
 };
 
 _HeadingNodeSpec.HEADING_NAMES.forEach(obj => {
-  if (obj.level) {
+  if (obj.level || obj.level === 0) {
     HEADING_COMMANDS[obj.name] = new _HeadingCommand.default(obj.level);
   } else {
     HEADING_COMMANDS[obj.name] = new _CustomStyleCommand.default(obj.customstyles, obj.name);

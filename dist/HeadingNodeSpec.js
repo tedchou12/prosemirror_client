@@ -9,7 +9,11 @@ var _prosemirrorModel = require("prosemirror-model");
 
 var _ParagraphNodeSpec = _interopRequireWildcard(require("./ParagraphNodeSpec"));
 
+var _i18n = _interopRequireDefault(require("./ui/i18n"));
+
 var _Types = require("./Types");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
@@ -32,35 +36,35 @@ const TAG_NAME_TO_LEVEL = {
 // Fix: Changes the menu for include the custom styles.
 
 const HEADING_NAMES = [{
-  "name": "Normal",
+  "name": [(0, _i18n.default)("Normal")],
   "level": 0
 }, {
-  "name": "Heading 1",
+  "name": [(0, _i18n.default)("Heading 1")],
   "level": 1
 }, {
-  "name": "Heading 2",
+  "name": [(0, _i18n.default)("Heading 2")],
   "level": 2
 }, {
-  "name": "Heading 3",
+  "name": [(0, _i18n.default)("Heading 3")],
   "level": 3
 }, {
-  "name": "Heading 4",
+  "name": [(0, _i18n.default)("Heading 4")],
   "level": 4
 }, {
-  "name": "Title",
+  "name": [(0, _i18n.default)("Title")],
   "customstyles": [{
-    'stylename': 'Title',
-    // 'fontsize' : 30,
-    // 'fontname' : 'Acme',
+    'stylename': [(0, _i18n.default)('Title')],
     'strong': true,
     'em': true,
-    'color': 'Green'
+    'color': 'Black'
   }]
 }, {
-  "name": "Quote",
-  "style": [{
-    "font-size": 20,
-    "font-name": "Arial"
+  "name": [(0, _i18n.default)("Subtitle")],
+  "customstyles": [{
+    'stylename': [(0, _i18n.default)('Subtitle')],
+    'strong': true,
+    'em': true,
+    'color': 'Grey'
   }]
 }]; // https://github.com/ProseMirror/prosemirror-schema-basic/blob/master/src/schema-basic.js
 // :: NodeSpec A plain paragraph textblock. Represented in the DOM

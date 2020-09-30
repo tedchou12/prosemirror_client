@@ -13,6 +13,8 @@ var _CustomButton = _interopRequireDefault(require("./CustomButton"));
 
 var _clamp = _interopRequireDefault(require("./clamp"));
 
+var _i18n = _interopRequireDefault(require("./i18n"));
+
 require("./czi-color-editor.css");
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
@@ -98,7 +100,7 @@ class ColorEditor extends React.PureComponent {
     }, /*#__PURE__*/React.createElement(_CustomButton.default, {
       active: !selectedColor,
       className: "czi-color-editor-color-transparent",
-      label: "Transparent",
+      label: (0, _i18n.default)("Transparent"),
       onClick: this._onSelectColor,
       value: "rgba(0,0,0,0)"
     })), /*#__PURE__*/React.createElement("div", {

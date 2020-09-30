@@ -7,6 +7,8 @@ import scrollIntoView from 'smooth-scroll-into-view-if-needed';
 import sanitizeURL from '../sanitizeURL';
 import CustomButton from './CustomButton';
 
+import Lang from './i18n';
+
 import './czi-link-tooltip.css';
 
 function isBookMarkHref(href: string): boolean {
@@ -46,12 +48,12 @@ class LinkTooltip extends React.PureComponent<any, any> {
               value={href}
             />
             <CustomButton
-              label="Change"
+              label={Lang('Change')}
               onClick={onEdit}
               value={editorView}
             />
             <CustomButton
-              label="Remove"
+              label={Lang('Remove')}
               onClick={onRemove}
               value={editorView}
             />

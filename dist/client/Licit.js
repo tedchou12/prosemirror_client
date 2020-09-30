@@ -62,7 +62,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  *  disabled {boolean} [false] Disable the editor.
  *  embedded {boolean} [false] Disable/Enable inline behaviour.
  *  plugins [plugins] External Plugins into the editor.
- *  fitToContent {boolean} [false] Fit to content behavour.
  */
 class Licit extends React.Component {
   // This will be handy in updating document's content.
@@ -181,9 +180,10 @@ class Licit extends React.Component {
     const docID = _props.docID || 0; // 0 < means collaborative.
 
     const collaborative = 0 < docID;
-    const debug = _props.debug || false;
-    const width = _props.width || '100%';
-    const height = _props.height || '100%';
+    const debug = _props.debug || false; // Default width and height to undefined
+
+    const width = _props.width || undefined;
+    const height = _props.height || undefined;
     const onChangeCB = typeof _props.onChange === 'function' ? _props.onChange : noop;
     const onReadyCB = typeof _props.onReady === 'function' ? _props.onReady : noop;
     const readOnly = _props.readOnly || false;
@@ -192,8 +192,6 @@ class Licit extends React.Component {
 
     const disabled = _props.disabled || false;
     const embedded = _props.embedded || false; // [FS] IRAD-996 2020-06-30
-
-    const fitToContent = _props.fitToContent || false; // [FS] IRAD-996 2020-06-30
     // [FS] 2020-07-03
     // Handle Image Upload from Angular App
 
@@ -225,7 +223,6 @@ class Licit extends React.Component {
       debug,
       disabled,
       embedded,
-      fitToContent,
       runtime
     }; // FS IRAD-1040 2020-26-08
     // Get the modified schema from editorstate and send it to collab server
@@ -295,7 +292,6 @@ class Licit extends React.Component {
       readOnly,
       disabled,
       embedded,
-      fitToContent,
       runtime
     } = this.state; // [FS] IRAD-978 2020-06-05
     // Using 100vw & 100vh (100% viewport) is not ideal for a component which is expected to be a part of a page,
@@ -304,7 +300,6 @@ class Licit extends React.Component {
     return /*#__PURE__*/React.createElement(_RichTextEditor.default, {
       editorState: editorState,
       embedded: embedded,
-      fitToContent: fitToContent,
       height: height,
       onChange: this._onChange,
       onReady: this._onReady,

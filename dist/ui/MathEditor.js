@@ -17,6 +17,8 @@ var _preventEventDefault = _interopRequireDefault(require("./preventEventDefault
 
 var _uuid = _interopRequireDefault(require("./uuid"));
 
+var _i18n = _interopRequireDefault(require("./i18n"));
+
 require("./czi-form.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -65,18 +67,18 @@ class MathEditor extends React.PureComponent {
     }, /*#__PURE__*/React.createElement("form", {
       className: "czi-form",
       onSubmit: _preventEventDefault.default
-    }, /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Insert Math"), /*#__PURE__*/React.createElement(_MathQuillEditor.default, {
+    }, /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, (0, _i18n.default)('Insert Math')), /*#__PURE__*/React.createElement(_MathQuillEditor.default, {
       onChange: this._onChange,
       value: value
     })), /*#__PURE__*/React.createElement("div", {
       className: "czi-form-buttons"
     }, /*#__PURE__*/React.createElement(_CustomButton.default, {
-      label: "Cancel",
+      label: (0, _i18n.default)('Cancel'),
       onClick: this._cancel
     }), /*#__PURE__*/React.createElement(_CustomButton.default, {
       active: true,
       disabled: !this.state.value,
-      label: initialValue ? 'Update' : 'Insert',
+      label: initialValue ? (0, _i18n.default)('Update') : (0, _i18n.default)('Insert'),
       onClick: this._insert
     }))));
   }

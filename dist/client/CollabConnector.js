@@ -41,6 +41,8 @@ class CollabConnector extends _SimpleConnector.default {
 
     _defineProperty(this, "_stepKeys", void 0);
 
+    _defineProperty(this, "_selection", void 0);
+
     _defineProperty(this, "onEdit", transaction => {
       if (!this._connection.ready) {
         console.warn('not ready');
@@ -56,7 +58,8 @@ class CollabConnector extends _SimpleConnector.default {
     });
 
     _defineProperty(this, "updateSchema", schema => {
-      this._connection.updateSchema(schema);
+      // this._connection.updateSchema(schema);
+      this._connection.ws_start();
     });
 
     const {
@@ -65,12 +68,23 @@ class CollabConnector extends _SimpleConnector.default {
     this._docID = docID; // [FS][11-MAR-2020]
     // Modified the scripts to ensure not to always replace 3001 with 3002 to run both servers together,
     // instead used running hostname and configured port.
+    // const url = window.location.protocol + '\/\/' +
+    //   window.location.hostname + ':3002/docs/' +
+    //   docID;
+    // const url = window.location.protocol + '\/\/' + 'localhost.charlesproxy.com' + ':3002/docs/' + docID;
 
-    const url = window.location.protocol + '\/\/' + window.location.hostname + ':3002/docs/' + docID;
-    this._connection = new _EditorConnection.default(setState, new _Reporter.default(), url);
+    const url = 'http://localhost.charlesproxy.com/prosemirror_server/server_5/docs/' + docID;
+    this._connection = new _EditorConnection.default(setState, new _Reporter.default(), docID);
     this._connection.view = {
       updateState: s => {
-        console.log('update', s);
+        // console.log('update', s);
+        //poll if selection changes
+        // if (this._connection.ready) {
+        //   if (this._selection != s.selection) {
+        //     this._selection = s.selection;
+        //     this._connection.cursor_send(s.selection);
+        //   }
+        // }
         setState({
           editorState: s
         }, () => {});

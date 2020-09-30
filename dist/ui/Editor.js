@@ -79,7 +79,6 @@ var bpfrpt_proptype_EditorProps = {
     return (typeof _prosemirrorState.EditorState === "function" ? _propTypes.default.instanceOf(_prosemirrorState.EditorState) : _propTypes.default.any).apply(this, arguments);
   },
   "embedded": _propTypes.default.bool,
-  "fitToContent": _propTypes.default.bool,
   "onBlur": _propTypes.default.func,
   "onChange": _propTypes.default.func,
   "onReady": _propTypes.default.func,
@@ -324,24 +323,12 @@ class Editor extends React.PureComponent {
   render() {
     const {
       embedded,
-      fitToContent,
       readOnly
     } = this.props;
-    let className = ''; //  FS IRAD-1040 2020-17-09
-    //  wrapping style for fit to content mode
-
-    if (fitToContent) {
-      className = (0, _classnames.default)('prosemirror-editor-wrapper', {
-        fitToContent,
-        readOnly
-      });
-    } else {
-      className = (0, _classnames.default)('prosemirror-editor-wrapper', {
-        embedded,
-        readOnly
-      });
-    }
-
+    const className = (0, _classnames.default)('prosemirror-editor-wrapper', {
+      embedded,
+      readOnly
+    });
     return /*#__PURE__*/React.createElement("div", {
       className: className,
       "data-czi-prosemirror-editor-id": this._id,
