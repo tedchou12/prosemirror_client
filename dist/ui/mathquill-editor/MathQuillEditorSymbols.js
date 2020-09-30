@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.bpfrpt_proptype_SymbolDefination = exports.bpfrpt_proptype_MathQuillEditorSymbol = exports.TRIG = exports.SYMBOLS = exports.STRUCTURE = exports.OPERATORS = exports.VERT = exports.VDASH = exports.UNION = exports.UNDERLINE = exports.TRIANGLE = exports.TIMES = exports.THETA = exports.TAN = exports.SUPERSETEQ = exports.SUPERSET = exports.SUM = exports.SUBSETEQ = exports.SUBSET = exports.SUBSCRIPT = exports.SQRT = exports.SQRT2 = exports.SQR = exports.SMALLE = exports.SIN = exports.SIM = exports.SIMEQ = exports.POWER = exports.PM = exports.PLUS = exports.PI = exports.PHI = exports.PERP = exports.PARENS = exports.OVERLINE = exports.NEQ = exports.MINUS = exports.LTE = exports.LT = exports.LOG_E = exports.INTXY = exports.INTERSECT = exports.INT = exports.INFINITY = exports.IMAGINARY = exports.GTE = exports.GT = exports.FRAC = exports.EQUAL = exports.DOTM = exports.DOLLAR = exports.DIVIDE = exports.DEGREES = exports.CTIMES = exports.CONG = exports.COS = exports.CENT = exports.BRACKETS = exports.ARROWLLR = exports.ARROWRL = exports.ARROWLL = exports.ARCTAN = exports.ARCSIN = exports.ARCCOS = exports.APPROX = exports.ANGLE = exports.ABSOLUTE = void 0;
 
+var _i18n = _interopRequireDefault(require("../i18n"));
+
 var _propTypes = _interopRequireDefault(require("prop-types"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -469,22 +471,22 @@ const VERT = {
 };
 exports.VERT = VERT;
 const OPERATORS = {
-  title: 'Operators',
+  title: [(0, _i18n.default)('Operators')],
   symbols: [PLUS, MINUS, TIMES, DOTM, DIVIDE, EQUAL, APPROX, SIM, SIMEQ, CONG, NEQ, PM, LT, GT, LTE, GTE, UNION, INTERSECT, SUBSET, SUBSETEQ, SUPERSET, SUPERSETEQ, VERT, CTIMES]
 };
 exports.OPERATORS = OPERATORS;
 const STRUCTURE = {
-  title: 'Structure',
+  title: [(0, _i18n.default)('Structure')],
   symbols: [SUM, FRAC, PARENS, BRACKETS, SQR, SUBSCRIPT, ABSOLUTE, INTXY, OVERLINE, UNDERLINE, POWER, INT, SQRT, SQRT2, LOG_E]
 };
 exports.STRUCTURE = STRUCTURE;
 const SYMBOLS = {
-  title: 'Symbols',
+  title: [(0, _i18n.default)('Symbols')],
   symbols: [SMALLE, ANGLE, PI, IMAGINARY, DEGREES, THETA, PHI, TRIANGLE, INFINITY, DOLLAR, CENT, VDASH, PERP, ARROWLL, ARROWRL, ARROWLLR]
 };
 exports.SYMBOLS = SYMBOLS;
 const TRIG = {
-  title: 'Trigonometry',
+  title: [(0, _i18n.default)('Trigonometry')],
   symbols: [SIN, COS, TAN, ARCSIN, ARCCOS, ARCTAN]
 };
 exports.TRIG = TRIG;

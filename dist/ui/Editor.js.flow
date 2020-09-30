@@ -47,7 +47,6 @@ export type EditorProps = {
   dispatchTransaction?: ?(tr: Transform) => void,
   editorState?: ?EditorState,
   embedded?: ?boolean,
-  fitToContent?: ?boolean,
   onBlur?: ?() => void,
   onChange?: ?(state: EditorState) => void,
   onReady?: ?(view: EditorView) => void,
@@ -239,15 +238,8 @@ class Editor extends React.PureComponent<any, any> {
   }
 
   render(): React.Element<any> {
-    const { embedded, fitToContent, readOnly } = this.props;
-    let className = '';
-    //  FS IRAD-1040 2020-17-09
-    //  wrapping style for fit to content mode
-    if (fitToContent) {
-      className = cx('prosemirror-editor-wrapper', { fitToContent, readOnly });
-    } else {
-      className = cx('prosemirror-editor-wrapper', { embedded, readOnly });
-    }
+    const { embedded, readOnly } = this.props;
+    const className = cx('prosemirror-editor-wrapper', { embedded, readOnly });
     return (
       <div
         className={className}

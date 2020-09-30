@@ -3,7 +3,10 @@
 import {EditorState} from 'prosemirror-state';
 import {HEADING} from '../NodeNames';
 import {findParentNodeOfType} from 'prosemirror-utils';
-export const HEADING_NAME_DEFAULT = 'Normal'; 
+
+import Lang from './i18n';
+
+export const HEADING_NAME_DEFAULT = [Lang('Normal')];
 // [FS] IRAD-1042 2020-09-15
 // To find the selected heading
 
@@ -13,10 +16,10 @@ export function findActiveHeading(state: EditorState): number {
   if (!markType) {
     return HEADING_NAME_DEFAULT;
   }
-  
+
   const fn = markType ? findParentNodeOfType(markType) : null;
   const headingName =  fn(state.selection);
-  // const level = headingName.node.attrs.level; 
+  // const level = headingName.node.attrs.level;
   if (headingName && undefined!==headingName) {
     return headingName.node.attrs.level;
   }

@@ -12,7 +12,11 @@ var _NodeNames = require("../NodeNames");
 
 var _prosemirrorUtils = require("prosemirror-utils");
 
-const HEADING_NAME_DEFAULT = 'Normal'; // [FS] IRAD-1042 2020-09-15
+var _i18n = _interopRequireDefault(require("./i18n"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const HEADING_NAME_DEFAULT = [(0, _i18n.default)('Normal')]; // [FS] IRAD-1042 2020-09-15
 // To find the selected heading
 
 exports.HEADING_NAME_DEFAULT = HEADING_NAME_DEFAULT;
@@ -31,7 +35,7 @@ function findActiveHeading(state) {
   }
 
   const fn = markType ? (0, _prosemirrorUtils.findParentNodeOfType)(markType) : null;
-  const headingName = fn(state.selection); // const level = headingName.node.attrs.level; 
+  const headingName = fn(state.selection); // const level = headingName.node.attrs.level;
 
   if (headingName && undefined !== headingName) {
     return headingName.node.attrs.level;

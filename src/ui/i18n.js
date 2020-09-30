@@ -122,7 +122,8 @@ lang_list['zh'] = {'Insert Table...': '插入表格...',
                   'Operators': '運算符號',
                   'Structure': '運算公式',
                   'Symbols': '特殊符號',
-                  'Trigonometry': '三角函式'}
+                  'Trigonometry': '三角函式',
+                  'Change': '變更'}
 
 
 export default function Lang(text) {

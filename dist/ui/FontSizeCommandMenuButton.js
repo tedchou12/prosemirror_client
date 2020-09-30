@@ -19,6 +19,8 @@ var _CommandMenuButton = _interopRequireDefault(require("./CommandMenuButton"));
 
 var _findActiveFontSize = _interopRequireDefault(require("./findActiveFontSize"));
 
+var _i18n = _interopRequireDefault(require("./i18n"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
@@ -34,7 +36,7 @@ const FONT_PT_SIZE_COMMANDS = FONT_PT_SIZES.reduce((memo, size) => {
   return memo;
 }, {});
 const COMMAND_GROUPS = [{
-  Default: new _FontSizeCommand.default(0)
+  [(0, _i18n.default)('Default')]: new _FontSizeCommand.default(0)
 }, FONT_PT_SIZE_COMMANDS];
 
 class FontSizeCommandMenuButton extends React.PureComponent {

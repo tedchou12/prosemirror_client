@@ -33,6 +33,8 @@ function badVersion(err) {
   return err.status == 400 && /invalid version/i.test(String(err));
 }
 
+var connection = null;
+
 class State {
   constructor(edit, comm) {
     _defineProperty(this, "edit", void 0);
@@ -46,7 +48,7 @@ class State {
 }
 
 class EditorConnection {
-  constructor(onReady, report, url) {
+  constructor(onReady, report, doc_id) {
     _defineProperty(this, "backOff", void 0);
 
     _defineProperty(this, "onReady", void 0);
@@ -65,6 +67,8 @@ class EditorConnection {
 
     _defineProperty(this, "schema", void 0);
 
+    _defineProperty(this, "socket", void 0);
+
     _defineProperty(this, "dispatch", action => {
       let newEditState = null;
 
@@ -79,14 +83,13 @@ class EditorConnection {
 
         this.state = new State(editState, 'poll');
         this.ready = true;
-        this.onReady(editState);
-        this.poll();
+        this.onReady(editState); // this.poll();
+        // this.cursor_poll();
       } else if (action.type == 'restart') {
         this.state = new State(null, 'start');
-        this.start();
+        this.ws_start();
       } else if (action.type == 'poll') {
-        this.state = new State(this.state.edit, 'poll');
-        this.poll();
+        this.state = new State(this.state.edit, 'poll'); // this.poll();
       } else if (action.type == 'recover') {
         if (action.error.status && action.error.status < 500) {
           this.report.failure(action.error);
@@ -108,13 +111,12 @@ class EditorConnection {
           }
 
           this.state = new State(newEditState, 'detached');
-        } else if ((this.state.comm == 'poll' || action.requestDone) && (sendable = this.sendable(newEditState))) {
-          this.closeRequest();
-          this.state = new State(newEditState, 'send');
-          this.send(newEditState, sendable);
         } else if (action.requestDone) {
-          this.state = new State(newEditState, 'poll');
-          this.poll();
+          this.state = new State(newEditState, 'poll'); // this.poll();
+        } else if (this.state.comm == 'poll' && (sendable = this.sendable(newEditState))) {
+          // this.closeRequest();
+          this.state = new State(newEditState, 'send');
+          this.ws_send(newEditState, sendable);
         } else {
           this.state = new State(newEditState, this.state.comm);
         }
@@ -128,7 +130,7 @@ class EditorConnection {
 
     this.schema = null;
     this.report = report;
-    this.url = url;
+    this.doc_id = doc_id;
     this.state = new State(null, 'start');
     this.request = null;
     this.backOff = 0;
@@ -136,6 +138,8 @@ class EditorConnection {
     this.dispatch = this.dispatch.bind(this);
     this.ready = false;
     this.onReady = onReady;
+    this.socket = null;
+    connection = this;
   } // [FS] IRAD-1040 2020-09-08
 
 
@@ -144,58 +148,110 @@ class EditorConnection {
   } // All state changes go through this
 
 
-  // Load the document from the server and start up
-  start() {
-    this.run((0, _http.GET)(this.url)).then(data => {
-      data = JSON.parse(data);
-      this.report.success();
-      this.backOff = 0;
-      this.dispatch({
-        type: 'loaded',
-        doc: this.getEffectiveSchema().nodeFromJSON(data.doc_json),
-        version: data.version,
-        users: data.users
-      });
-    }, err => {
-      this.report.failure(err);
+  // Send cursor updates to the server
+  cursor_send(selection) {
+    const content = {
+      selection: selection,
+      clientID: (0, _uuid.default)()
+    };
+    const json = JSON.stringify({
+      type: 'selection',
+      data: content
     });
-  } // Send a request for events that have happened since the version
-  // of the document that the client knows about. This request waits
-  // for a new version of the document to be created if the client
-  // is already up-to-date.
+    this.socket.send(json);
+  }
+
+  ws_start() {
+    var ws_url = 'ws://192.168.1.2:9300';
+    var ws_url = ws_url + '?user_id=' + this.user_id + '&doc_id=' + this.doc_id;
+    this.socket = new WebSocket(ws_url);
+
+    this.socket.onopen = function (e) {//does something when socket opens
+    }; // replaces poll
 
 
-  poll() {
-    const query = 'version=' + (0, _prosemirrorCollab.getVersion)(this.state.edit);
-    this.run((0, _http.GET)(this.url + '/events?' + query)).then(data => {
-      this.report.success();
-      data = JSON.parse(data);
-      this.backOff = 0;
+    this.socket.onmessage = function (e) {
+      connection.report.success();
+      var data = JSON.parse(e.data);
+      var json = data.data;
 
-      if (data.steps && data.steps.length) {
-        const tr = (0, _prosemirrorCollab.receiveTransaction)(this.state.edit, data.steps.map(j => _prosemirrorTransform.Step.fromJSON(this.getEffectiveSchema(), j)), data.clientIDs);
-        this.dispatch({
-          type: 'transaction',
-          transaction: tr,
-          requestDone: true
+      if (data.type == 'init') {
+        connection.dispatch({
+          type: 'loaded',
+          doc: connection.getEffectiveSchema().nodeFromJSON(json.doc_json),
+          version: json.version,
+          users: json.users
+        });
+      } else if (data.type == 'step') {
+        connection.backOff = 0;
+
+        if (json.steps && json.steps.length) {
+          const tr = (0, _prosemirrorCollab.receiveTransaction)(connection.state.edit, json.steps.map(j => _prosemirrorTransform.Step.fromJSON(connection.getEffectiveSchema(), j)), json.clientIDs);
+          connection.dispatch({
+            type: 'transaction',
+            transaction: tr,
+            requestDone: false
+          });
+        }
+      } else {
+        console.log(json);
+      }
+    }; //try reconnects
+
+
+    this.socket.onclose = function (e) {
+      // Too far behind. Revert to server state
+      if (true) {
+        connection.report.failure(err);
+        connection.dispatch({
+          type: 'restart'
         });
       } else {
-        this.poll();
+        connection.closeRequest();
+        connection.setView(null);
       }
-    }, err => {
-      if (err.status == 410 || badVersion(err)) {
-        // Too far behind. Revert to server state
-        this.report.failure(err);
+    };
+  }
+
+  ws_send(editState, sendable) {
+    const {
+      steps
+    } = sendable;
+    const content = {
+      version: (0, _prosemirrorCollab.getVersion)(editState),
+      steps: steps ? steps.steps.map(s => s.toJSON()) : [],
+      clientID: steps ? steps.clientID : 0
+    };
+    const json = JSON.stringify({
+      type: 'content',
+      data: content
+    });
+    this.socket.send(json);
+    this.report.success();
+    this.backOff = 0;
+    const tr = steps ? (0, _prosemirrorCollab.receiveTransaction)(this.state.edit, steps.steps, repeat(steps.clientID, steps.steps.length)) : this.state.edit.tr;
+    this.dispatch({
+      type: 'transaction',
+      transaction: tr,
+      requestDone: true
+    });
+  }
+
+  ws_recover() {
+    const newBackOff = this.backOff ? Math.min(this.backOff * 2, 6e4) : 200;
+
+    if (newBackOff > 1000 && this.backOff < 1000) {
+      this.report.delay(err);
+    }
+
+    this.backOff = newBackOff;
+    setTimeout(() => {
+      if (this.state.comm == 'recover') {
         this.dispatch({
           type: 'restart'
         });
-      } else if (err) {
-        this.dispatch({
-          type: 'recover',
-          error: err
-        });
       }
-    });
+    }, this.backOff);
   }
 
   sendable(editState) {
@@ -208,47 +264,6 @@ class EditorConnection {
     }
 
     return null;
-  } // Send the given steps to the server
-
-
-  send(editState, sendable) {
-    const {
-      steps
-    } = sendable;
-    const json = JSON.stringify({
-      version: (0, _prosemirrorCollab.getVersion)(editState),
-      steps: steps ? steps.steps.map(s => s.toJSON()) : [],
-      clientID: steps ? steps.clientID : 0
-    });
-    this.run((0, _http.POST)(this.url + '/events', json, 'application/json')).then(data => {
-      this.report.success();
-      this.backOff = 0;
-      const tr = steps ? (0, _prosemirrorCollab.receiveTransaction)(this.state.edit, steps.steps, repeat(steps.clientID, steps.steps.length)) : this.state.edit.tr;
-      this.dispatch({
-        type: 'transaction',
-        transaction: tr,
-        requestDone: true
-      });
-    }, err => {
-      if (err.status == 409) {
-        // The client's document conflicts with the server's version.
-        // Poll for changes and then try again.
-        this.backOff = 0;
-        this.dispatch({
-          type: 'poll'
-        });
-      } else if (badVersion(err)) {
-        this.report.failure(err);
-        this.dispatch({
-          type: 'restart'
-        });
-      } else {
-        this.dispatch({
-          type: 'recover',
-          error: err
-        });
-      }
-    });
   } // [FS] IRAD-1040 2020-09-02
   // Send the modified schema to server
 

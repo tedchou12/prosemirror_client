@@ -36,12 +36,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 // [FS] IRAD-1042 2020-09-09
 // To include custom styles in the toolbar
 const HEADING_COMMANDS = {
-  [_findActiveHeading.HEADING_NAME_DEFAULT]: new _HeadingCommand.default(0)
+  [_findActiveHeading.HEADING_NAME_DEFAULT]: new _HeadingCommand.default(0, '')
 };
 
 _HeadingNodeSpec.HEADING_NAMES.forEach(obj => {
-  if (obj.level) {
-    HEADING_COMMANDS[obj.name] = new _HeadingCommand.default(obj.level);
+  if (obj.level || obj.level === 0) {
+    HEADING_COMMANDS[obj.name] = new _HeadingCommand.default(obj.level, obj.name);
   } else {
     HEADING_COMMANDS[obj.name] = new _CustomStyleCommand.default(obj.customstyles, obj.name);
   }

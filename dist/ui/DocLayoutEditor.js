@@ -15,6 +15,8 @@ var _CustomRadioButton = _interopRequireDefault(require("./CustomRadioButton"));
 
 var _preventEventDefault = _interopRequireDefault(require("./preventEventDefault"));
 
+var _i18n = _interopRequireDefault(require("./i18n"));
+
 require("./czi-body-layout-editor.css");
 
 require("./czi-form.css");
@@ -81,7 +83,7 @@ class DocLayoutEditor extends React.PureComponent {
     this.state = {
       width,
       layout,
-      selectedValue: width || layout || _DocNodeSpec.LAYOUT.US_LETTER_PORTRAIT
+      selectedValue: width || layout || _DocNodeSpec.LAYOUT.A4_PORTRAIT
     };
   }
 
@@ -102,14 +104,24 @@ class DocLayoutEditor extends React.PureComponent {
     }, /*#__PURE__*/React.createElement("form", {
       className: "czi-form",
       onSubmit: _preventEventDefault.default
-    }, /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Page Layout"), /*#__PURE__*/React.createElement(_CustomRadioButton.default, {
+    }, /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, (0, _i18n.default)('Page Layout')), /*#__PURE__*/React.createElement(_CustomRadioButton.default, {
+      checked: selectedValue === _DocNodeSpec.LAYOUT.A4_PORTRAIT,
+      label: (0, _i18n.default)("A4 - Portrait"),
+      onSelect: this._onSelect,
+      value: _DocNodeSpec.LAYOUT.A4_PORTRAIT
+    }), /*#__PURE__*/React.createElement(_CustomRadioButton.default, {
+      checked: selectedValue === _DocNodeSpec.LAYOUT.A4_LANDSCAPE,
+      label: (0, _i18n.default)("A4 - Landscape"),
+      onSelect: this._onSelect,
+      value: _DocNodeSpec.LAYOUT.A4_LANDSCAPE
+    }), /*#__PURE__*/React.createElement(_CustomRadioButton.default, {
       checked: selectedValue === _DocNodeSpec.LAYOUT.US_LETTER_PORTRAIT,
-      label: "US Letter - Portrait",
+      label: (0, _i18n.default)("US Letter - Portrait"),
       onSelect: this._onSelect,
       value: _DocNodeSpec.LAYOUT.US_LETTER_PORTRAIT
     }), /*#__PURE__*/React.createElement(_CustomRadioButton.default, {
       checked: selectedValue === _DocNodeSpec.LAYOUT.US_LETTER_LANDSCAPE,
-      label: "US Letter - Landscape",
+      label: (0, _i18n.default)("US Letter - Landscape"),
       onSelect: this._onSelect,
       value: _DocNodeSpec.LAYOUT.US_LETTER_LANDSCAPE
     }), /*#__PURE__*/React.createElement(_CustomRadioButton.default, {
@@ -125,11 +137,11 @@ class DocLayoutEditor extends React.PureComponent {
     }), customOption), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("div", {
       className: "czi-form-buttons"
     }, /*#__PURE__*/React.createElement(_CustomButton.default, {
-      label: "Cancel",
+      label: (0, _i18n.default)('Cancel'),
       onClick: this._cancel
     }), /*#__PURE__*/React.createElement(_CustomButton.default, {
       active: true,
-      label: "Apply",
+      label: (0, _i18n.default)('Apply'),
       onClick: this._apply
     }))));
   }

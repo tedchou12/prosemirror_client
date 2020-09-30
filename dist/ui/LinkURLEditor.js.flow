@@ -8,6 +8,8 @@ import CustomButton from './CustomButton';
 import {ENTER} from './KeyCodes';
 import preventEventDefault from './preventEventDefault';
 
+import Lang from './i18n';
+
 import './czi-form.css';
 import './czi-image-url-editor.css';
 
@@ -16,8 +18,8 @@ const BAD_CHARACTER_PATTER = /\s/;
 type Props = {
   href: ?string,
   close: (href: ?string) => void,
-};  
-  
+};
+
 class LinkURLEditor extends React.PureComponent<any, any> {
 
   // [FS] IRAD-1005 2020-07-07
@@ -48,7 +50,7 @@ class LinkURLEditor extends React.PureComponent<any, any> {
     let label = 'Apply';
     let disabled = !!error;
     if (href) {
-      label = url ? 'Apply' : 'Remove';
+      label = url ? Lang('Apply') : Lang('Remove');
       disabled = error;
     } else {
       disabled = error || !url;
@@ -58,19 +60,19 @@ class LinkURLEditor extends React.PureComponent<any, any> {
       <div className="czi-image-url-editor">
         <form className="czi-form" onSubmit={preventEventDefault}>
           <fieldset>
-            <legend>Add a Link</legend>
+            <legend>{Lang('Add a Link')}</legend>
             <input
               autoFocus={true}
               onChange={this._onURLChange}
               onKeyDown={this._onKeyDown}
-              placeholder="Paste a URL"
+              placeholder={Lang("Paste a URL")}
               spellCheck={false}
               type="text"
               value={url || ''}
             />
           </fieldset>
           <div className="czi-form-buttons">
-            <CustomButton label="Cancel" onClick={this._cancel} />
+            <CustomButton label={Lang('Cancel')} onClick={this._cancel} />
             <CustomButton
               active={true}
               disabled={disabled}

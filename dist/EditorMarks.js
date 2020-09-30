@@ -43,6 +43,8 @@ var _TextSelectionMarkSpec = _interopRequireDefault(require("./TextSelectionMark
 
 var _TextSuperMarkSpec = _interopRequireDefault(require("./TextSuperMarkSpec"));
 
+var _TextSubMarkSpec = _interopRequireDefault(require("./TextSubMarkSpec"));
+
 var _TextUnderlineMarkSpec = _interopRequireDefault(require("./TextUnderlineMarkSpec"));
 
 var _CustomStyleMarkSpec = _interopRequireDefault(require("./CustomStyleMarkSpec"));
@@ -63,6 +65,7 @@ const {
   MARK_STRIKE,
   MARK_STRONG,
   MARK_SUPER,
+  MARK_SUB,
   MARK_TEXT_COLOR,
   MARK_TEXT_HIGHLIGHT,
   MARK_TEXT_SELECTION,
@@ -89,6 +92,7 @@ const marks = {
   [MARK_STRIKE]: _StrikeMarkSpec.default,
   [MARK_STRONG]: _StrongMarkSpec.default,
   [MARK_SUPER]: _TextSuperMarkSpec.default,
+  [MARK_SUB]: _TextSubMarkSpec.default,
   [MARK_TEXT_COLOR]: _TextColorMarkSpec.default,
   [MARK_TEXT_HIGHLIGHT]: _TextHighlightMarkSpec.default,
   [MARK_TEXT_SELECTION]: _TextSelectionMarkSpec.default,

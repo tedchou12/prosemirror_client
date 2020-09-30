@@ -25,7 +25,6 @@ var bpfrpt_proptype_EditorFramesetProps = {
   "body": _propTypes.default.node,
   "className": _propTypes.default.string,
   "embedded": _propTypes.default.bool,
-  "fitToContent": _propTypes.default.bool,
   "header": _propTypes.default.node,
   "height": _propTypes.default.oneOfType([_propTypes.default.string, _propTypes.default.number]),
   "toolbarPlacement": _propTypes.default.oneOf(["header", "body"]),
@@ -37,15 +36,17 @@ const FRAMESET_BODY_CLASSNAME = 'czi-editor-frame-body';
 exports.FRAMESET_BODY_CLASSNAME = FRAMESET_BODY_CLASSNAME;
 
 function toCSS(val) {
-  if (typeof val === 'number') {
-    return val + 'px';
+  if (!val || val === 'auto') {
+    // '', 0, null, false, 'auto' are all treated as undefined
+    // instead of auto...
+    return undefined;
   }
 
-  if (val === undefined || val === null) {
-    return 'auto';
+  if (isNaN(val)) {
+    return `${val}`;
   }
 
-  return String(val);
+  return `${val}px`;
 }
 
 class EditorFrameset extends React.PureComponent {
@@ -64,31 +65,18 @@ class EditorFrameset extends React.PureComponent {
       height,
       toolbarPlacement,
       toolbar,
-      width,
-      fitToContent
+      width
     } = this.props;
-    const useFixedLayout = width !== undefined || height !== undefined;
-    let mainClassName = ''; //  FS IRAD-1040 2020-17-09
-    //  wrapping style for fit to content mode
-
-    if (fitToContent) {
-      mainClassName = (0, _classnames.default)(className, {
-        'czi-editor-frameset': true,
-        'with-fixed-layout': useFixedLayout,
-        fitToContent: fitToContent
-      });
-    } else {
-      mainClassName = (0, _classnames.default)(className, {
-        'czi-editor-frameset': true,
-        'with-fixed-layout': useFixedLayout,
-        embedded: embedded
-      });
-    }
-
     const mainStyle = {
-      width: toCSS(width === undefined && useFixedLayout ? 'auto' : width),
-      height: toCSS(height === undefined && useFixedLayout ? 'auto' : height)
+      width: toCSS(width),
+      height: toCSS(height)
     };
+    const mainClassName = (0, _classnames.default)(className, {
+      'czi-editor-frameset': true,
+      // Layout is fixed when either width or height is set.
+      'with-fixed-layout': mainStyle.width || mainStyle.height,
+      embedded: embedded
+    });
     const toolbarHeader = toolbarPlacement === 'header' || !toolbarPlacement ? toolbar : null;
     const toolbarBody = toolbarPlacement === 'body' && toolbar;
     return /*#__PURE__*/React.createElement("div", {

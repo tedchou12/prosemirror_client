@@ -97,8 +97,7 @@ class RichTextEditor extends React.PureComponent {
       nodeViews,
       placeholder,
       readOnly,
-      width,
-      fitToContent
+      width
     } = this.props;
     let {
       editorState,
@@ -122,7 +121,6 @@ class RichTextEditor extends React.PureComponent {
       dispatchTransaction: this._dispatchTransaction,
       editorState: editorState,
       embedded: embedded,
-      fitToContent: fitToContent,
       id: this._id,
       nodeViews: nodeViews,
       onChange: onChange,
@@ -135,7 +133,6 @@ class RichTextEditor extends React.PureComponent {
       body: body,
       className: className,
       embedded: embedded,
-      fitToContent: fitToContent,
       header: header,
       height: height,
       toolbar: toolbar,

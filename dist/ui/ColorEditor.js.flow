@@ -6,6 +6,8 @@ import * as React from 'react';
 import CustomButton from './CustomButton';
 import clamp from './clamp';
 
+import Lang from './i18n';
+
 import './czi-color-editor.css';
 
 function generateGreyColors(count: number): Array<Color> {
@@ -55,7 +57,7 @@ class ColorEditor extends React.PureComponent<any, any> {
           <CustomButton
             active={!selectedColor}
             className="czi-color-editor-color-transparent"
-            label="Transparent"
+            label={Lang("Transparent")}
             onClick={this._onSelectColor}
             value="rgba(0,0,0,0)"
           />

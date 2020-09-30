@@ -15,6 +15,8 @@ var _sanitizeURL = _interopRequireDefault(require("../sanitizeURL"));
 
 var _CustomButton = _interopRequireDefault(require("./CustomButton"));
 
+var _i18n = _interopRequireDefault(require("./i18n"));
+
 require("./czi-link-tooltip.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -96,11 +98,11 @@ class LinkTooltip extends React.PureComponent {
       title: href,
       value: href
     }), /*#__PURE__*/React.createElement(_CustomButton.default, {
-      label: "Change",
+      label: (0, _i18n.default)('Change'),
       onClick: onEdit,
       value: editorView
     }), /*#__PURE__*/React.createElement(_CustomButton.default, {
-      label: "Remove",
+      label: (0, _i18n.default)('Remove'),
       onClick: onRemove,
       value: editorView
     }))));

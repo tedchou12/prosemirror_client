@@ -17,6 +17,8 @@ var _KeyCodes = require("./KeyCodes");
 
 var _preventEventDefault = _interopRequireDefault(require("./preventEventDefault"));
 
+var _i18n = _interopRequireDefault(require("./i18n"));
+
 require("./czi-form.css");
 
 require("./czi-image-url-editor.css");
@@ -81,7 +83,7 @@ class LinkURLEditor extends React.PureComponent {
     let disabled = !!error;
 
     if (href) {
-      label = url ? 'Apply' : 'Remove';
+      label = url ? (0, _i18n.default)('Apply') : (0, _i18n.default)('Remove');
       disabled = error;
     } else {
       disabled = error || !url;
@@ -92,18 +94,18 @@ class LinkURLEditor extends React.PureComponent {
     }, /*#__PURE__*/React.createElement("form", {
       className: "czi-form",
       onSubmit: _preventEventDefault.default
-    }, /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Add a Link"), /*#__PURE__*/React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, (0, _i18n.default)('Add a Link')), /*#__PURE__*/React.createElement("input", {
       autoFocus: true,
       onChange: this._onURLChange,
       onKeyDown: this._onKeyDown,
-      placeholder: "Paste a URL",
+      placeholder: (0, _i18n.default)("Paste a URL"),
       spellCheck: false,
       type: "text",
       value: url || ''
     })), /*#__PURE__*/React.createElement("div", {
       className: "czi-form-buttons"
     }, /*#__PURE__*/React.createElement(_CustomButton.default, {
-      label: "Cancel",
+      label: (0, _i18n.default)('Cancel'),
       onClick: this._cancel
     }), /*#__PURE__*/React.createElement(_CustomButton.default, {
       active: true,

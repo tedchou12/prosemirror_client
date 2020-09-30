@@ -9,6 +9,8 @@ import FontSizeCommand from '../FontSizeCommand';
 import CommandMenuButton from './CommandMenuButton';
 import findActiveFontSize from './findActiveFontSize';
 
+import Lang from './i18n';
+
 export const FONT_PT_SIZES = [
   8,
   9,
@@ -32,7 +34,7 @@ const FONT_PT_SIZE_COMMANDS = FONT_PT_SIZES.reduce((memo, size) => {
 }, {});
 
 const COMMAND_GROUPS = [
-  {Default: new FontSizeCommand(0)},
+  {[Lang('Default')]: new FontSizeCommand(0)},
   FONT_PT_SIZE_COMMANDS,
 ];
 

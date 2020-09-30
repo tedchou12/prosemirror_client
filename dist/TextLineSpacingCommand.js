@@ -18,6 +18,8 @@ var _prosemirrorModel = require("prosemirror-model");
 
 var _prosemirrorTransform = require("prosemirror-transform");
 
+var _i18n = _interopRequireDefault(require("./ui/i18n"));
+
 var _toCSSLineSpacing = require("./ui/toCSSLineSpacing");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -108,10 +110,10 @@ function setTextLineSpacing(tr, schema, lineSpacing) {
 
 function createGroup() {
   const group = {
-    Single: new TextLineSpacingCommand(_toCSSLineSpacing.SINGLE_LINE_SPACING),
+    [(0, _i18n.default)('Single')]: new TextLineSpacingCommand(_toCSSLineSpacing.SINGLE_LINE_SPACING),
     '1.15': new TextLineSpacingCommand(_toCSSLineSpacing.LINE_SPACING_115),
     '1.5': new TextLineSpacingCommand(_toCSSLineSpacing.LINE_SPACING_150),
-    Double: new TextLineSpacingCommand(_toCSSLineSpacing.DOUBLE_LINE_SPACING)
+    [(0, _i18n.default)('Double')]: new TextLineSpacingCommand(_toCSSLineSpacing.DOUBLE_LINE_SPACING)
   };
   return [group];
 }
