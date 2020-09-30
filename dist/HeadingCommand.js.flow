@@ -4,8 +4,6 @@ import {EditorState} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 import {findParentNodeOfType} from 'prosemirror-utils';
 import {EditorView} from 'prosemirror-view';
-import * as React from 'react';
-import ReactHtmlParser from 'react-html-parser';
 
 import {HEADING} from './NodeNames';
 import noop from './noop';
@@ -15,16 +13,10 @@ import UICommand from './ui/UICommand';
 class HeadingCommand extends UICommand {
   _level: number;
 
-  constructor(level: number, name: ?string) {
+  constructor(level: number) {
     super();
     this._level = level;
-    const html = '<h' + level + '>' + name + '</h' + level + '>';
-    this._label = name ? <span>{ReactHtmlParser(html)}</span> : null;
   }
-
-  renderLabel = (state: EditorState): any => {
-    return this._label;
-  };
 
   isActive = (state: EditorState): boolean => {
     const result = this._findHeading(state);

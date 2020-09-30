@@ -16,15 +16,15 @@ import {Transform} from 'prosemirror-transform';
 // To include custom styles in the toolbar
 
 const HEADING_COMMANDS: Object = {
-  [HEADING_NAME_DEFAULT]: new HeadingCommand(0, ''),
+  [HEADING_NAME_DEFAULT]: new HeadingCommand(0),
 };
 
 
 HEADING_NAMES.forEach(obj => {
   if (obj.level || obj.level === 0) {
-    HEADING_COMMANDS[obj.name] = new HeadingCommand(obj.level, obj.name);
+    HEADING_COMMANDS[obj.name] = new HeadingCommand(obj.level);
   } else {
-    HEADING_COMMANDS[obj.name] = new CustomStyleCommand(obj.customstyles, obj.name);
+    HEADING_COMMANDS[obj.name] = new CustomStyleCommand(obj.customstyles,obj.name);
   }
 
 });
