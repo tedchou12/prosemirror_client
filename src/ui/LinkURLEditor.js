@@ -47,7 +47,7 @@ class LinkURLEditor extends React.PureComponent<any, any> {
 
     const error = url ? BAD_CHARACTER_PATTER.test(url) : false;
 
-    let label = 'Apply';
+    let label = Lang('Apply');
     let disabled = !!error;
     if (href) {
       label = url ? Lang('Apply') : Lang('Remove');

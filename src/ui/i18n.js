@@ -1,4 +1,6 @@
 
+const lang = localStorage.getItem('lang');
+
 let lang_list = {}
 lang_list['en'] = {'Insert Table...': 'Insert Table...',
                   'Fill Color...': 'Fill Color...',
@@ -45,6 +47,7 @@ lang_list['en'] = {'Insert Table...': 'Insert Table...',
                   '[settings_overscan] Page layout': '[settings_overscan] Page layout',
                   '[undo] Undo': '[undo] Undo',
                   '[redo] Redo': '[redo] Redo'}
+
 lang_list['zh'] = {'Insert Table...': '插入表格...',
                   'Fill Color...': '背景顏色...',
                   'Border Color....': '框線顏色....',
@@ -125,11 +128,13 @@ lang_list['zh'] = {'Insert Table...': '插入表格...',
                   'Trigonometry': '三角函式',
                   'Change': '變更'}
 
-
 export default function Lang(text) {
-    if (text in lang_list['zh']) {
-      return lang_list['zh'][text]
-    }
+  if (lang == undefined || !(lang in lang_list)) {
+    return lang_list['en'][text]
+  }
+  if (text in lang_list[lang]) {
+    return lang_list[lang][text]
+  }
 
-    return text
+  return text;
 }
