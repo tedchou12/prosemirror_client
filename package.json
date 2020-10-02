@@ -102,7 +102,7 @@
     "prosemirror-tables": "github:ProseMirror/prosemirror-tables",
     "prosemirror-transform": "^1.2.7",
     "prosemirror-utils": "0.9.6",
-    "prosemirror-view": "^1.15.2",
+    "prosemirror-view": "^1.16.0",
     "query-string": "6.13.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
