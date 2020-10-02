@@ -122,8 +122,6 @@ class Licit extends React.Component<any, any> {
         }
       },
     });
-
-
   }
 
   setContent = (content: any = {}): void => {
