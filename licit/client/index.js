@@ -1,4 +1,5 @@
 // @flow
+localStorage.setItem('lang', 'zh');
 
 import * as React from 'react';
 import ReactDOM from 'react-dom';
