@@ -128,6 +128,13 @@ const TABLE_COMMANDS_GROUP = [{
 
 exports.TABLE_COMMANDS_GROUP = TABLE_COMMANDS_GROUP;
 const COMMAND_GROUPS = [{
+  [(0, _i18n.default)('[undo] Undo')]: HISTORY_UNDO,
+  [(0, _i18n.default)('[redo] Redo')]: HISTORY_REDO
+}, // [FS] IRAD-1042 2020-09-09
+// Changes the menu for include the custom styles.
+{
+  [(0, _i18n.default)('[H1] Header 1')]: _HeadingCommandMenuButton.default
+}, {
   [(0, _i18n.default)('[font_download] Font Type')]: _FontTypeCommandMenuButton.default
 }, {
   [(0, _i18n.default)('[format_size] Text Size')]: _FontSizeCommandMenuButton.default
@@ -153,15 +160,11 @@ const COMMAND_GROUPS = [{
 }, {
   [(0, _i18n.default)('[format_list_numbered] Ordered list')]: OL,
   [(0, _i18n.default)('[format_list_bulleted] Bulleted list')]: UL
-}, // [FS] IRAD-1042 2020-09-09
-// Changes the menu for include the custom styles.
-{
-  [(0, _i18n.default)('[H1] Header 1')]: _HeadingCommandMenuButton.default
 }, {
   [(0, _i18n.default)('[link] Apply link')]: LINK_SET_URL,
   [(0, _i18n.default)('[image] Insert image')]: [{
-    [(0, _i18n.default)('Insert image by URL')]: IMAGE_FROM_URL,
-    [(0, _i18n.default)('Upload image from computer')]: IMAGE_UPLOAD
+    [(0, _i18n.default)('Insert image by URL')]: IMAGE_FROM_URL // [Lang('Upload image from computer')]: IMAGE_UPLOAD,
+
   }],
   [(0, _i18n.default)('[grid_on] Table...')]: TABLE_COMMANDS_GROUP,
   [(0, _i18n.default)('[hr] Horizontal line')]: HR,
@@ -170,8 +173,5 @@ const COMMAND_GROUPS = [{
 
 }, {
   [(0, _i18n.default)('[settings_overscan] Page layout')]: DOC_LAYOUT
-}, {
-  [(0, _i18n.default)('[undo] Undo')]: HISTORY_UNDO,
-  [(0, _i18n.default)('[redo] Redo')]: HISTORY_REDO
 }];
 exports.COMMAND_GROUPS = COMMAND_GROUPS;
