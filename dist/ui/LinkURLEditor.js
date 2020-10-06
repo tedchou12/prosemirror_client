@@ -79,7 +79,7 @@ class LinkURLEditor extends React.PureComponent {
       url
     } = this.state;
     const error = url ? BAD_CHARACTER_PATTER.test(url) : false;
-    let label = 'Apply';
+    let label = (0, _i18n.default)('Apply');
     let disabled = !!error;
 
     if (href) {

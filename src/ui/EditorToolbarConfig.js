@@ -125,6 +125,15 @@ export const TABLE_COMMANDS_GROUP = [
 
 export const COMMAND_GROUPS = [
   {
+    [Lang('[undo] Undo')]: HISTORY_UNDO,
+    [Lang('[redo] Redo')]: HISTORY_REDO,
+  },
+  // [FS] IRAD-1042 2020-09-09
+  // Changes the menu for include the custom styles.
+  {
+    [Lang('[H1] Header 1')]: HeadingCommandMenuButton,
+  },
+  {
     [Lang('[font_download] Font Type')]: FontTypeCommandMenuButton,
   },
   {
@@ -156,17 +165,12 @@ export const COMMAND_GROUPS = [
     [Lang('[format_list_numbered] Ordered list')]: OL,
     [Lang('[format_list_bulleted] Bulleted list')]: UL,
   },
-  // [FS] IRAD-1042 2020-09-09
-  // Changes the menu for include the custom styles.
-  {
-    [Lang('[H1] Header 1')]: HeadingCommandMenuButton,
-  },
   {
     [Lang('[link] Apply link')]: LINK_SET_URL,
     [Lang('[image] Insert image')]: [
       {
         [Lang('Insert image by URL')]: IMAGE_FROM_URL,
-        [Lang('Upload image from computer')]: IMAGE_UPLOAD,
+        // [Lang('Upload image from computer')]: IMAGE_UPLOAD,
       },
     ],
     [Lang('[grid_on] Table...')]: TABLE_COMMANDS_GROUP,
@@ -179,9 +183,4 @@ export const COMMAND_GROUPS = [
   {
     [Lang('[settings_overscan] Page layout')]: DOC_LAYOUT,
   },
-  {
-    [Lang('[undo] Undo')]: HISTORY_UNDO,
-    [Lang('[redo] Redo')]: HISTORY_REDO,
-  },
-
 ];

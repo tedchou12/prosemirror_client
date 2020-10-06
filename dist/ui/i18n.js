@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = Lang;
+const lang = window.lang;
 let lang_list = {};
 lang_list['en'] = {
   'Insert Table...': 'Insert Table...',
@@ -135,8 +136,12 @@ lang_list['zh'] = {
 };
 
 function Lang(text) {
-  if (text in lang_list['zh']) {
-    return lang_list['zh'][text];
+  if (lang == undefined || !(lang in lang_list)) {
+    return lang_list['en'][text];
+  }
+
+  if (text in lang_list[lang]) {
+    return lang_list[lang][text];
   }
 
   return text;

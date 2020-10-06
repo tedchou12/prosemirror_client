@@ -1,5 +1,5 @@
 
-const lang = localStorage.getItem('lang');
+const lang = window.lang;
 
 let lang_list = {}
 lang_list['en'] = {'Insert Table...': 'Insert Table...',
