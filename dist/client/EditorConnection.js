@@ -48,7 +48,7 @@ class State {
 }
 
 class EditorConnection {
-  constructor(onReady, report, doc_id) {
+  constructor(onReady, report, ws_url, session_hash, user_id, doc_id) {
     _defineProperty(this, "backOff", void 0);
 
     _defineProperty(this, "onReady", void 0);
@@ -61,7 +61,7 @@ class EditorConnection {
 
     _defineProperty(this, "state", void 0);
 
-    _defineProperty(this, "url", void 0);
+    _defineProperty(this, "ws_url", void 0);
 
     _defineProperty(this, "view", void 0);
 
@@ -76,7 +76,7 @@ class EditorConnection {
         const editState = _prosemirrorState.EditorState.create({
           doc: action.doc,
           plugins: _EditorPlugins.default.concat([(0, _prosemirrorCollab.collab)({
-            clientID: (0, _uuid.default)(),
+            clientID: this.client_id,
             version: action.version
           })])
         });
@@ -92,7 +92,7 @@ class EditorConnection {
         this.state = new State(this.state.edit, 'poll'); // this.poll();
       } else if (action.type == 'recover') {
         if (action.error.status && action.error.status < 500) {
-          this.report.failure(action.error);
+          this.report.failure('error');
           this.state = new State(null, null);
         } else {
           this.state = new State(this.state.edit, 'recover');
@@ -130,7 +130,11 @@ class EditorConnection {
 
     this.schema = null;
     this.report = report;
+    this.ws_url = ws_url;
     this.doc_id = doc_id;
+    this.user_id = user_id;
+    this.client_id = user_id + '#' + (0, _uuid.default)();
+    this.session_hash = session_hash;
     this.state = new State(null, 'start');
     this.request = null;
     this.backOff = 0;
@@ -138,7 +142,8 @@ class EditorConnection {
     this.dispatch = this.dispatch.bind(this);
     this.ready = false;
     this.onReady = onReady;
-    this.socket = null;
+    this.socket = null; // for websocket onmessage
+
     connection = this;
   } // [FS] IRAD-1040 2020-09-08
 
@@ -152,7 +157,7 @@ class EditorConnection {
   cursor_send(selection) {
     const content = {
       selection: selection,
-      clientID: (0, _uuid.default)()
+      clientID: this.client_id
     };
     const json = JSON.stringify({
       type: 'selection',
@@ -162,8 +167,7 @@ class EditorConnection {
   }
 
   ws_start() {
-    var ws_url = 'ws://192.168.1.2:9300';
-    var ws_url = ws_url + '?user_id=' + this.user_id + '&doc_id=' + this.doc_id;
+    const ws_url = this.ws_url + '?user_id=' + this.user_id + '&session_hash=' + this.session_hash + '&doc_id=' + this.doc_id;
     this.socket = new WebSocket(ws_url);
 
     this.socket.onopen = function (e) {//does something when socket opens
@@ -202,10 +206,7 @@ class EditorConnection {
     this.socket.onclose = function (e) {
       // Too far behind. Revert to server state
       if (true) {
-        connection.report.failure(err);
-        connection.dispatch({
-          type: 'restart'
-        });
+        connection.report.failure('error'); // connection.dispatch({ type: 'restart' });
       } else {
         connection.closeRequest();
         connection.setView(null);
@@ -241,7 +242,7 @@ class EditorConnection {
     const newBackOff = this.backOff ? Math.min(this.backOff * 2, 6e4) : 200;
 
     if (newBackOff > 1000 && this.backOff < 1000) {
-      this.report.delay(err);
+      this.report.delay('error');
     }
 
     this.backOff = newBackOff;
@@ -271,13 +272,13 @@ class EditorConnection {
   updateSchema(schema) {
     // to avoid cyclic reference error, use flatted string.
     const schemaFlatted = (0, _flatted.stringify)(schema);
-    this.run((0, _http.POST)(this.url + '/schema/', schemaFlatted, 'text/plain')).then(data => {
+    this.run((0, _http.POST)(this.ws_url + '/schema/', schemaFlatted, 'text/plain')).then(data => {
       console.log("collab server's schema updated"); // [FS] IRAD-1040 2020-09-08
 
       this.schema = schema;
       this.start();
     }, err => {
-      this.report.failure(err);
+      this.report.failure('error');
     });
   } // Try to recover from an error
 
@@ -286,7 +287,7 @@ class EditorConnection {
     const newBackOff = this.backOff ? Math.min(this.backOff * 2, 6e4) : 200;
 
     if (newBackOff > 1000 && this.backOff < 1000) {
-      this.report.delay(err);
+      this.report.delay('error');
     }
 
     this.backOff = newBackOff;

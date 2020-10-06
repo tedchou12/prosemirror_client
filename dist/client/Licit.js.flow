@@ -49,15 +49,12 @@ class Licit extends React.Component<any, any> {
 
     super(props, context);
 
-    this._clientID = uuid();
-    this._editorView = null;
-    this._skipSCU = true;
-
-    const noop = function () { };
-
     // [FS] IRAD-981 2020-06-10
     // Component's configurations.
+    const ws_url = props.ws_url;
     const docID = props.docID || 0; // 0 < means collaborative.
+    const user_id = props.user_id;
+    const session_hash = props.session_hash
     const collaborative = 0 < docID;
     const debug = props.debug || false;
     // Default width and height to undefined
@@ -73,6 +70,14 @@ class Licit extends React.Component<any, any> {
     // Handle Image Upload from Angular App
     const runtime = props.runtime ? props.runtime : new LicitRuntime();
     const plugins = props.plugins || null;
+
+    // initiate other variables
+    // this._clientID = uuid();
+    this._editorView = null;
+    this._skipSCU = true;
+
+    const noop = function () { };
+
     let editorState = convertFromJSON(data, null, plugins);
     // [FS] IRAD-1067 2020-09-19
     // The editorState will return null if the doc Json is mal-formed
@@ -83,7 +88,7 @@ class Licit extends React.Component<any, any> {
 
     const setState = this.setState.bind(this);
     this._connector = collaborative
-      ? new CollabConnector(editorState, setState, { docID })
+      ? new CollabConnector(editorState, setState, { ws_url, session_hash, user_id, docID })
       : new SimpleConnector(editorState, setState);
 
     // FS IRAD-989 2020-18-06
@@ -170,7 +175,7 @@ class Licit extends React.Component<any, any> {
         const docID = nextState.docID || 1;
         // create new connector
         this._connector = collabEditing
-          ? new CollabConnector(editorState, setState, { docID })
+          ? new CollabConnector(editorState, setState, { ws_url, session_hash, user_id, docID })
           : new SimpleConnector(editorState, setState);
       }
     }

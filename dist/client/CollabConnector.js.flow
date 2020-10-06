@@ -23,12 +23,14 @@ class CollabConnector extends SimpleConnector {
     editorState: EditorState,
     setState: SetStateCall,
     config: {
+      ws_url: String,
+      session_hash: String,
+      user_id: String,
       docID: IdStrict,
     },
   ) {
     super(editorState, setState);
-    const { docID } = config;
-    this._docID = docID;
+    const { ws_url, session_hash, user_id, docID } = config;
 
     // [FS][11-MAR-2020]
     // Modified the scripts to ensure not to always replace 3001 with 3002 to run both servers together,
@@ -36,11 +38,12 @@ class CollabConnector extends SimpleConnector {
     // const url = window.location.protocol + '\/\/' +
     //   window.location.hostname + ':3002/docs/' +
     //   docID;
-    // const url = window.location.protocol + '\/\/' + 'localhost.charlesproxy.com' + ':3002/docs/' + docID;
-    const url = 'http://localhost.charlesproxy.com/prosemirror_server/server_5/docs/' + docID;
     this._connection = new EditorConnection(
       setState,
       new Reporter(),
+      ws_url,
+      session_hash,
+      user_id,
       docID,
     );
 

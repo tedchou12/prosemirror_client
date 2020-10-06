@@ -169,16 +169,13 @@ class Licit extends React.Component {
       this.setState(props);
     });
 
-    this._clientID = (0, _uuid.default)();
-    this._editorView = null;
-    this._skipSCU = true;
-
-    const noop = function () {}; // [FS] IRAD-981 2020-06-10
+    // [FS] IRAD-981 2020-06-10
     // Component's configurations.
-
-
+    const ws_url = _props.ws_url;
     const docID = _props.docID || 0; // 0 < means collaborative.
 
+    const user_id = _props.user_id;
+    const session_hash = _props.session_hash;
     const collaborative = 0 < docID;
     const debug = _props.debug || false; // Default width and height to undefined
 
@@ -196,7 +193,14 @@ class Licit extends React.Component {
     // Handle Image Upload from Angular App
 
     const runtime = _props.runtime ? _props.runtime : new _LicitRuntime.default();
-    const plugins = _props.plugins || null;
+    const plugins = _props.plugins || null; // initiate other variables
+    // this._clientID = uuid();
+
+    this._editorView = null;
+    this._skipSCU = true;
+
+    const noop = function () {};
+
     let editorState = (0, _convertFromJSON.default)(_data, null, plugins); // [FS] IRAD-1067 2020-09-19
     // The editorState will return null if the doc Json is mal-formed
 
@@ -207,6 +211,9 @@ class Licit extends React.Component {
 
     const setState = this.setState.bind(this);
     this._connector = collaborative ? new _CollabConnector.default(editorState, setState, {
+      ws_url,
+      session_hash,
+      user_id,
       docID
     }) : new _SimpleConnector.default(editorState, setState); // FS IRAD-989 2020-18-06
     // updating properties should automatically render the changes
@@ -276,6 +283,9 @@ class Licit extends React.Component {
         const docID = nextState.docID || 1; // create new connector
 
         this._connector = collabEditing ? new _CollabConnector.default(editorState, setState, {
+          ws_url,
+          session_hash,
+          user_id,
           docID
         }) : new _SimpleConnector.default(editorState, setState);
       }

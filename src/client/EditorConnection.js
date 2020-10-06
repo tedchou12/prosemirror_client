@@ -40,15 +40,19 @@ class EditorConnection {
   report: any;
   request: any;
   state: State;
-  url: string;
+  ws_url: string;
   view: ?EditorView;
   schema: Schema;
   socket: any;
 
-  constructor(onReady: Function, report: any, doc_id: string) {
+  constructor(onReady: Function, report: any, ws_url: string, session_hash: string, user_id: string, doc_id: string) {
     this.schema = null;
     this.report = report;
+    this.ws_url = ws_url;
     this.doc_id = doc_id;
+    this.user_id = user_id;
+    this.client_id = user_id + '#' + uuid();
+    this.session_hash = session_hash;
     this.state = new State(null, 'start');
     this.request = null;
     this.backOff = 0;
@@ -57,6 +61,9 @@ class EditorConnection {
     this.ready = false;
     this.onReady = onReady;
     this.socket = null;
+
+
+    // for websocket onmessage
     connection = this;
   }
 
@@ -73,7 +80,7 @@ class EditorConnection {
         doc: action.doc,
         plugins: EditorPlugins.concat([
           collab({
-            clientID: uuid(),
+            clientID: this.client_id,
             version: action.version,
           }),
         ]),
@@ -91,7 +98,7 @@ class EditorConnection {
       // this.poll();
     } else if (action.type == 'recover') {
       if (action.error.status && action.error.status < 500) {
-        this.report.failure(action.error);
+        this.report.failure('error');
         this.state = new State(null, null);
       } else {
         this.state = new State(this.state.edit, 'recover');
@@ -133,15 +140,16 @@ class EditorConnection {
 
   // Send cursor updates to the server
   cursor_send(selection: Object): void {
-    const content = {selection: selection,
-                      clientID: uuid()};
+    const content = {
+                      selection: selection,
+                      clientID: this.client_id
+                    };
     const json = JSON.stringify({type: 'selection', data: content});
     this.socket.send(json);
   }
 
   ws_start(): void {
-    var ws_url = 'ws://192.168.1.2:9300';
-    var ws_url = ws_url + '?user_id=' + this.user_id + '&doc_id=' + this.doc_id;
+    const ws_url = this.ws_url + '?user_id=' + this.user_id + '&session_hash=' + this.session_hash + '&doc_id=' + this.doc_id;
     this.socket = new WebSocket(ws_url);
 
     this.socket.onopen = function(e) {
@@ -184,8 +192,8 @@ class EditorConnection {
     this.socket.onclose = function(e) {
       // Too far behind. Revert to server state
       if (true) {
-        connection.report.failure(err);
-        connection.dispatch({ type: 'restart' });
+        connection.report.failure('error');
+        // connection.dispatch({ type: 'restart' });
       } else {
         connection.closeRequest();
         connection.setView(null);
@@ -220,7 +228,7 @@ class EditorConnection {
   ws_recover(): void {
     const newBackOff = this.backOff ? Math.min(this.backOff * 2, 6e4) : 200;
     if (newBackOff > 1000 && this.backOff < 1000) {
-      this.report.delay(err);
+      this.report.delay('error');
     }
     this.backOff = newBackOff;
     setTimeout(() => {
@@ -243,7 +251,7 @@ class EditorConnection {
   updateSchema(schema: Schema) {
 	// to avoid cyclic reference error, use flatted string.
 	const schemaFlatted = stringify(schema);
-    this.run(POST(this.url + '/schema/', schemaFlatted, 'text/plain')).then(
+    this.run(POST(this.ws_url + '/schema/', schemaFlatted, 'text/plain')).then(
       data => {
         console.log("collab server's schema updated");
         // [FS] IRAD-1040 2020-09-08
@@ -251,7 +259,7 @@ class EditorConnection {
         this.start();
       },
       err => {
-        this.report.failure(err);
+        this.report.failure('error');
       }
     );
   }
@@ -260,7 +268,7 @@ class EditorConnection {
   recover(err: Error): void {
     const newBackOff = this.backOff ? Math.min(this.backOff * 2, 6e4) : 200;
     if (newBackOff > 1000 && this.backOff < 1000) {
-      this.report.delay(err);
+      this.report.delay('error');
     }
     this.backOff = newBackOff;
     setTimeout(() => {

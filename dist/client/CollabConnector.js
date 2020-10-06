@@ -63,18 +63,18 @@ class CollabConnector extends _SimpleConnector.default {
     });
 
     const {
+      ws_url,
+      session_hash,
+      user_id,
       docID
-    } = config;
-    this._docID = docID; // [FS][11-MAR-2020]
+    } = config; // [FS][11-MAR-2020]
     // Modified the scripts to ensure not to always replace 3001 with 3002 to run both servers together,
     // instead used running hostname and configured port.
     // const url = window.location.protocol + '\/\/' +
     //   window.location.hostname + ':3002/docs/' +
     //   docID;
-    // const url = window.location.protocol + '\/\/' + 'localhost.charlesproxy.com' + ':3002/docs/' + docID;
 
-    const url = 'http://localhost.charlesproxy.com/prosemirror_server/server_5/docs/' + docID;
-    this._connection = new _EditorConnection.default(setState, new _Reporter.default(), docID);
+    this._connection = new _EditorConnection.default(setState, new _Reporter.default(), ws_url, session_hash, user_id, docID);
     this._connection.view = {
       updateState: s => {
         // console.log('update', s);
