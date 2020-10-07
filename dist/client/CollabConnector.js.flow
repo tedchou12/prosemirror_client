@@ -64,7 +64,7 @@ class CollabConnector extends SimpleConnector {
 
   onEdit = (transaction: Transform): void => {
     if (!this._connection.ready) {
-      console.warn('not ready');
+      // console.warn('not ready');
       return;
     }
     ReactDOM.unstable_batchedUpdates(() => {

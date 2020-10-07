@@ -69,6 +69,7 @@ class Licit extends React.Component<any, any> {
     // [FS] 2020-07-03
     // Handle Image Upload from Angular App
     const runtime = props.runtime ? props.runtime : new LicitRuntime();
+    const runtime = props.runtime ? props.runtime : null;
     const plugins = props.plugins || null;
 
     // initiate other variables

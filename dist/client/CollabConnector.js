@@ -45,7 +45,7 @@ class CollabConnector extends _SimpleConnector.default {
 
     _defineProperty(this, "onEdit", transaction => {
       if (!this._connection.ready) {
-        console.warn('not ready');
+        // console.warn('not ready');
         return;
       }
 
