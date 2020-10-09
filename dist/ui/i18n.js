@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = Lang;
-const lang = window.lang;
+const lang = window.lang ? window.lang : 'en';
 let lang_list = {};
 lang_list['en'] = {
   'Insert Table...': 'Insert Table...',

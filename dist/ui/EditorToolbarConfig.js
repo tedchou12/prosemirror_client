@@ -69,6 +69,7 @@ const {
   LINK_SET_URL,
   MATH_EDIT,
   OL,
+  PRINT,
   STRIKE,
   STRONG,
   SUPER,
@@ -128,6 +129,8 @@ const TABLE_COMMANDS_GROUP = [{
 
 exports.TABLE_COMMANDS_GROUP = TABLE_COMMANDS_GROUP;
 const COMMAND_GROUPS = [{
+  [(0, _i18n.default)('[print] Print')]: PRINT
+}, {
   [(0, _i18n.default)('[undo] Undo')]: HISTORY_UNDO,
   [(0, _i18n.default)('[redo] Redo')]: HISTORY_REDO
 }, // [FS] IRAD-1042 2020-09-09

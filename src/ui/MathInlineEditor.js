@@ -7,14 +7,16 @@ import MathEditor from './MathEditor';
 import * as React from 'react';
 import createPopUp from './createPopUp';
 
+import Lang from './i18n';
+
 const MathAlignValues = {
   NONE: {
     value: null,
-    text: 'Inline',
+    text: Lang('Inline'),
   },
   CENTER: {
     value: 'center',
-    text: 'Break text',
+    text: Lang('Break text'),
   },
 };
 
@@ -59,7 +61,7 @@ class MathInlineEditor extends React.PureComponent<any, any> {
         {buttons}
         <CustomButton
           key="edit"
-          label="Edit"
+          label={Lang("Edit")}
           onClick={this._editLatex}
           value={latex || ''}
         />

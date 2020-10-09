@@ -155,7 +155,7 @@ class EditorConnection {
     this.socket.onopen = function(e) {
       //does something when socket opens
       if (typeof(add_user) === typeof(Function)) {
-        add_user(connection.user_id);
+        add_user(connection.user_id, window.user_name);
       }
     }
 
@@ -187,17 +187,17 @@ class EditorConnection {
           });
         }
       } else if (data.type == 'users') {
-        if ('add' in json && json.add.length) {
+        if ('add' in json && json.add.user_id.length) {
           if (typeof(add_user) === typeof(Function)) {
-            for (var i in json['add']) {
-              add_user(json['add'][i]);
+            for (var i in json['add']['user_id']) {
+              add_user(json['add']['user_id'][i], json['add']['user_name'][i]);
             }
           }
         }
-        if ('delete' in json && json.delete.length) {
+        if ('delete' in json && json.delete.user_id.length) {
           if (typeof(delete_user) === typeof(Function)) {
-            for (var i in json['delete']) {
-              delete_user(json['delete'][i]);
+            for (var i in json['delete']['user_id']) {
+              delete_user(json['delete']['user_id'][i]);
             }
           }
         }
