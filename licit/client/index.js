@@ -30,7 +30,7 @@ function main(): void {
 
   const service = 'doc_editor';
   const ws_url = (window.ws_url) ? window.ws_url : 'ws://192.168.1.2:8800';
-  const doc_id = (window.doc_id) ? window.doc_id : 1939;
+  const doc_id = (window.doc_id) ? window.doc_id : 2045;
   const session_hash = (window.session_hash) ? window.session_hash : 'NWY3YjBkOTg0MDI2YQ==';
   const read_only = (window.read_only) ? window.read_only : false;
   const user_id = window.user_id ? window.user_id : 5;
