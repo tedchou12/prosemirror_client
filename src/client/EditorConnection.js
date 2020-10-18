@@ -27,6 +27,8 @@ var connection = null;
 var retry_count = 0;
 var retry_timer = 0;
 var retry_time = [15, 30, 60, 90, 180, 360, 720];
+var last_connection = null;
+var unauthorized = false;
 
 class State {
   edit: EditorState;
@@ -52,6 +54,7 @@ class EditorConnection {
 
   constructor(onReady: Function, report: any, ws_url: string, session_hash: string, user_id: string, doc_id: string) {
     this.schema = null;
+    this.service = 'doc_editor';
     this.report = report;
     this.ws_url = ws_url;
     this.doc_id = doc_id;
@@ -157,7 +160,7 @@ class EditorConnection {
   }
 
   ws_start(): void {
-    const ws_url = this.ws_url + '?user_id=' + this.user_id + '&session_hash=' + this.session_hash + '&doc_id=' + this.doc_id;
+    const ws_url = this.ws_url + '?service=' + this.service + '&user_id=' + this.user_id + '&session_hash=' + this.session_hash + '&doc_id=' + this.doc_id + '&client_id=' + btoa(this.client_id);
     this.socket = new WebSocket(ws_url);
 
     this.socket.onopen = function(e) {
@@ -171,10 +174,12 @@ class EditorConnection {
       if (typeof(hide_message) === typeof(Function)) {
         hide_message();
       }
+      last_connection = Date.now();
     }
 
     // replaces poll
     this.socket.onmessage = function(e) {
+      unauthorized = false;
       connection.report.success();
       var data = JSON.parse(e.data);
       var json = data.data;
@@ -204,14 +209,14 @@ class EditorConnection {
           });
         }
       } else if (data.type == 'users') {
-        if ('add' in json && json.add.user_id.length) {
+        if ('add' in json && 'user_id' in json['add'] && (Object.keys(json['add']['user_id']).length || json.add.user_id.length)) {
           if (typeof(add_user) === typeof(Function)) {
             for (var i in json['add']['user_id']) {
               add_user(json['add']['user_id'][i], json['add']['user_name'][i]);
             }
           }
         }
-        if ('delete' in json && json.delete.user_id.length) {
+        if ('delete' in json && 'user_id' in json['delete'] && (Object.keys(json['delete']['user_id']).length || json.delete.user_id.length)) {
           if (typeof(delete_user) === typeof(Function)) {
             for (var i in json['delete']['user_id']) {
               delete_user(json['delete']['user_id'][i]);
@@ -231,7 +236,15 @@ class EditorConnection {
         if (typeof(show_message) === typeof(Function)) {
           show_message('error');
         }
-        if (retry_count == 0 && retry_timer == 0) {
+        if (last_connection != null && (last_connection - Date.now()) < 3000) {
+          connection.state.comm = 'recover';
+          retry_count = 1;
+          retry_timer = 15;
+          if (unauthorized == false) {
+            connection.dispatch({ type: 'recover' });
+            unauthorized = true;
+          }
+        } else if (retry_count == 0 && retry_timer == 0) {
           connection.dispatch({ type: 'recover' });
         }
       } else {
