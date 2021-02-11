@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = Lang;
-const lang = window.lang;
+const lang = window.lang ? window.lang : 'en';
 let lang_list = {};
 lang_list['en'] = {
   'Insert Table...': 'Insert Table...',
@@ -65,9 +65,9 @@ lang_list['zh'] = {
   'Delete Row': '刪除一列',
   'Merge Cells': '合併儲存格',
   'Split Row': '取消合併儲存格',
-  'Toggle Header Column': 'Toggle Header Column',
-  'Toggle Header Row': 'Toggle Header Row',
-  'Toggle Header Cells': 'Toggle Header Cells',
+  'Toggle Header Column': '加重表格欄',
+  'Toggle Header Row': '加重表格列',
+  'Toggle Header Cells': '加重儲存格',
   'Delete Table': '刪除表格',
   '[font_download] Font Type': '[font_download] 字型',
   '[format_size] Text Size': '[format_size] 字型大小',

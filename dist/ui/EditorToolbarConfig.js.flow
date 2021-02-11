@@ -54,6 +54,7 @@ const {
   LINK_SET_URL,
   MATH_EDIT,
   OL,
+  PRINT,
   STRIKE,
   STRONG,
   SUPER,
@@ -124,6 +125,9 @@ export const TABLE_COMMANDS_GROUP = [
 // Fix: Toolbar is poorly organized.
 
 export const COMMAND_GROUPS = [
+  {
+    [Lang('[print] Print')]: PRINT,
+  },
   {
     [Lang('[undo] Undo')]: HISTORY_UNDO,
     [Lang('[redo] Redo')]: HISTORY_REDO,

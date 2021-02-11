@@ -191,8 +191,9 @@ class Licit extends React.Component {
     const embedded = _props.embedded || false; // [FS] IRAD-996 2020-06-30
     // [FS] 2020-07-03
     // Handle Image Upload from Angular App
+    // const runtime = props.runtime ? props.runtime : new LicitRuntime();
 
-    const runtime = _props.runtime ? _props.runtime : new _LicitRuntime.default();
+    const runtime = _props.runtime ? _props.runtime : null;
     const plugins = _props.plugins || null; // initiate other variables
     // this._clientID = uuid();
 

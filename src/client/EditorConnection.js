@@ -7,21 +7,28 @@ import {
   sendableSteps,
 } from 'prosemirror-collab';
 import { EditorState } from 'prosemirror-state';
-import { Step } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
+import { Schema } from 'prosemirror-model';
+import { Step } from 'prosemirror-transform';
 import EditorPlugins from '../EditorPlugins';
 import EditorSchema from '../EditorSchema';
 import uuid from '../uuid';
-import { GET, POST } from './http';
 // [FS] IRAD-1040 2020-09-02
-import { Schema } from 'prosemirror-model';
-import { stringify } from 'flatted';
+
+// deprecated with websocket
+// import { GET, POST } from './http';
+// import { stringify } from 'flatted';
 
 function badVersion(err: Object) {
   return err.status == 400 && /invalid version/i.test(String(err));
 }
 
 var connection = null;
+var retry_count = 0;
+var retry_timer = 0;
+var retry_time = [15, 30, 60, 90, 180, 360, 720];
+var last_connection = null;
+var unauthorized = false;
 
 class State {
   edit: EditorState;
@@ -47,6 +54,7 @@ class EditorConnection {
 
   constructor(onReady: Function, report: any, ws_url: string, session_hash: string, user_id: string, doc_id: string) {
     this.schema = null;
+    this.service = 'doc_editor';
     this.report = report;
     this.ws_url = ws_url;
     this.doc_id = doc_id;
@@ -55,12 +63,13 @@ class EditorConnection {
     this.session_hash = session_hash;
     this.state = new State(null, 'start');
     this.request = null;
-    this.backOff = 0;
     this.view = null;
     this.dispatch = this.dispatch.bind(this);
     this.ready = false;
     this.onReady = onReady;
     this.socket = null;
+
+    this.temp = null;
 
 
     // for websocket onmessage
@@ -90,24 +99,23 @@ class EditorConnection {
       this.onReady(editState);
       // this.poll();
       // this.cursor_poll();
-    } else if (action.type == 'restart') {
+    } else if (action.type == 'start') {
       this.state = new State(null, 'start');
+      this.ws_start();
+    } else if (action.type == 'restart') {
+      this.state = new State(null, 'recover');
       this.ws_start();
     } else if (action.type == 'poll') {
       this.state = new State(this.state.edit, 'poll');
-      // this.poll();
     } else if (action.type == 'recover') {
-      if (action.error.status && action.error.status < 500) {
-        this.report.failure('error');
-        this.state = new State(null, null);
-      } else {
-        this.state = new State(this.state.edit, 'recover');
-        this.recover(action.error);
+      this.report.failure('error');
+      if (typeof(show_message) === typeof(Function)) {
+        show_message('error');
       }
+      this.state = new State(null, 'recover');
+      this.ws_recover();
     } else if (action.type == 'transaction') {
-      newEditState = this.state.edit
-        ? this.state.edit.apply(action.transaction)
-        : null;
+      newEditState = this.state.edit ? this.state.edit.apply(action.transaction) : null;
     }
 
     if (newEditState) {
@@ -115,6 +123,9 @@ class EditorConnection {
       if (newEditState.doc.content.size > 40000) {
         if (this.state.comm !== 'detached') {
           this.report.failure('Document too big. Detached.');
+          if (typeof(show_message) === typeof(Function)) {
+            show_message('size_limit');
+          }
         }
         this.state = new State(newEditState, 'detached');
       } else if (action.requestDone) {
@@ -149,32 +160,46 @@ class EditorConnection {
   }
 
   ws_start(): void {
-    const ws_url = this.ws_url + '?user_id=' + this.user_id + '&session_hash=' + this.session_hash + '&doc_id=' + this.doc_id;
+    const ws_url = this.ws_url + '?service=' + this.service + '&user_id=' + this.user_id + '&session_hash=' + this.session_hash + '&doc_id=' + this.doc_id + '&client_id=' + btoa(this.client_id);
     this.socket = new WebSocket(ws_url);
 
     this.socket.onopen = function(e) {
       //does something when socket opens
+      if (typeof(add_user) === typeof(Function)) {
+        add_user(connection.user_id, window.user_name);
+      }
+      connection.state.comm = 'start';
+      retry_count = 0;
+      retry_timer = 0;
+      if (typeof(hide_message) === typeof(Function)) {
+        hide_message();
+      }
+      last_connection = Date.now();
     }
 
     // replaces poll
     this.socket.onmessage = function(e) {
+      unauthorized = false;
       connection.report.success();
       var data = JSON.parse(e.data);
       var json = data.data;
 
       if (data.type == 'init') {
+        connection.temp = json.doc_json;
+        connection.recursive_unquote(connection.temp);
         connection.dispatch({
           type: 'loaded',
-          doc: connection.getEffectiveSchema().nodeFromJSON(json.doc_json),
+          doc: connection.getEffectiveSchema().nodeFromJSON(connection.temp),
           version: json.version,
           users: json.users,
         });
       } else if (data.type == 'step') {
-        connection.backOff = 0;
         if (json.steps && json.steps.length) {
+          connection.temp = json.steps;
+          connection.recursive_unquote(connection.temp);
           const tr = receiveTransaction(
             connection.state.edit,
-            json.steps.map(j => Step.fromJSON(connection.getEffectiveSchema(), j)),
+            connection.temp.map(j => Step.fromJSON(connection.getEffectiveSchema(), j)),
             json.clientIDs
           );
           connection.dispatch({
@@ -182,6 +207,21 @@ class EditorConnection {
             transaction: tr,
             requestDone: false,
           });
+        }
+      } else if (data.type == 'users') {
+        if ('add' in json && 'user_id' in json['add'] && (Object.keys(json['add']['user_id']).length || json.add.user_id.length)) {
+          if (typeof(add_user) === typeof(Function)) {
+            for (var i in json['add']['user_id']) {
+              add_user(json['add']['user_id'][i], json['add']['user_name'][i]);
+            }
+          }
+        }
+        if ('delete' in json && 'user_id' in json['delete'] && (Object.keys(json['delete']['user_id']).length || json.delete.user_id.length)) {
+          if (typeof(delete_user) === typeof(Function)) {
+            for (var i in json['delete']['user_id']) {
+              delete_user(json['delete']['user_id'][i]);
+            }
+          }
         }
       } else {
         console.log(json);
@@ -193,7 +233,20 @@ class EditorConnection {
       // Too far behind. Revert to server state
       if (true) {
         connection.report.failure('error');
-        // connection.dispatch({ type: 'restart' });
+        if (typeof(show_message) === typeof(Function)) {
+          show_message('error');
+        }
+        if (last_connection != null && (last_connection - Date.now()) < 3000) {
+          connection.state.comm = 'recover';
+          retry_count = 1;
+          retry_timer = 15;
+          if (unauthorized == false) {
+            connection.dispatch({ type: 'recover' });
+            unauthorized = true;
+          }
+        } else if (retry_count == 0 && retry_timer == 0) {
+          connection.dispatch({ type: 'recover' });
+        }
       } else {
         connection.closeRequest();
         connection.setView(null);
@@ -202,14 +255,15 @@ class EditorConnection {
   }
 
   ws_send(editState: EditorState, sendable: Object) {
-    const { steps } = sendable;
+    let { steps } = sendable;
+    this.temp = steps ? steps.steps.map(s => s.toJSON()) : [];
+    this.recursive_enquote(this.temp);
     const content = {version: getVersion(editState),
-                     steps: steps ? steps.steps.map(s => s.toJSON()) : [],
-                     clientID: steps ? steps.clientID : 0};
-    const json = JSON.stringify({type: 'content', data: content});
+                   steps: this.temp,
+                   clientID: steps ? steps.clientID : 0};
+    let json = JSON.stringify({type: 'content', data: content});
     this.socket.send(json);
     this.report.success();
-    this.backOff = 0;
     const tr = steps
       ? receiveTransaction(
         this.state.edit,
@@ -226,16 +280,9 @@ class EditorConnection {
   }
 
   ws_recover(): void {
-    const newBackOff = this.backOff ? Math.min(this.backOff * 2, 6e4) : 200;
-    if (newBackOff > 1000 && this.backOff < 1000) {
-      this.report.delay('error');
+    if (connection.state.comm == 'recover') {
+      recover();
     }
-    this.backOff = newBackOff;
-    setTimeout(() => {
-      if (this.state.comm == 'recover') {
-        this.dispatch({ type: 'restart' });
-      }
-    }, this.backOff);
   }
 
   sendable(editState: EditorState): ?{ steps: Array<Step> } {
@@ -248,35 +295,21 @@ class EditorConnection {
 
   // [FS] IRAD-1040 2020-09-02
   // Send the modified schema to server
-  updateSchema(schema: Schema) {
-	// to avoid cyclic reference error, use flatted string.
-	const schemaFlatted = stringify(schema);
-    this.run(POST(this.ws_url + '/schema/', schemaFlatted, 'text/plain')).then(
-      data => {
-        console.log("collab server's schema updated");
-        // [FS] IRAD-1040 2020-09-08
-        this.schema = schema;
-        this.start();
-      },
-      err => {
-        this.report.failure('error');
-      }
-    );
-  }
-
-  // Try to recover from an error
-  recover(err: Error): void {
-    const newBackOff = this.backOff ? Math.min(this.backOff * 2, 6e4) : 200;
-    if (newBackOff > 1000 && this.backOff < 1000) {
-      this.report.delay('error');
-    }
-    this.backOff = newBackOff;
-    setTimeout(() => {
-      if (this.state.comm == 'recover') {
-        this.dispatch({ type: 'poll' });
-      }
-    }, this.backOff);
-  }
+  // updateSchema(schema: Schema) {
+  //   // to avoid cyclic reference error, use flatted string.
+  //   const schemaFlatted = stringify(schema);
+  //   this.run(POST(this.ws_url + '/schema/', schemaFlatted, 'text/plain')).then(
+  //     data => {
+  //       console.log("collab server's schema updated");
+  //       // [FS] IRAD-1040 2020-09-08
+  //       this.schema = schema;
+  //       this.start();
+  //     },
+  //     err => {
+  //       this.report.failure('error');
+  //     }
+  //   );
+  // }
 
   closeRequest(): void {
     if (this.request) {
@@ -300,6 +333,32 @@ class EditorConnection {
     }
     this.view = window.view = view;
   }
+
+  recursive_enquote(arr) {
+    for (var i in arr) {
+      if (typeof(arr[i]) == 'string') {
+        // arr[i] = arr[i].replace('\\', '^@$!^%*@^#%#*@$!!');
+        arr[i] = arr[i].replace(/"/g, '龘');
+        arr[i] = arr[i].replace(/\\/g, '靐');
+      }
+      if (typeof(arr[i]) == 'object') {
+        this.recursive_enquote(arr[i]);
+      }
+    }
+  }
+
+  recursive_unquote(arr) {
+    for (var i in arr) {
+      if (typeof(arr[i]) == 'string') {
+        // arr[i] = arr[i].replace('^@$!^%*@^#%#*@$!!', '\\');
+        arr[i] = arr[i].replace(/靐/g, '\\');
+        arr[i] = arr[i].replace(/龘/g, '"');
+      }
+      if (typeof(arr[i]) == 'object') {
+        this.recursive_unquote(arr[i]);
+      }
+    }
+  }
 }
 
 function repeat(val: any, n: number): Array<any> {
@@ -308,6 +367,27 @@ function repeat(val: any, n: number): Array<any> {
     result.push(val);
   }
   return result;
+}
+
+function recover() {
+  clearTimeout(recover);
+  if (connection.state.comm == 'recover') {
+    if (retry_timer <= 0 && retry_count <= retry_time.length) {
+      connection.dispatch({ type: 'restart' });
+      if (retry_count < retry_time.length) {
+        retry_timer = retry_time[retry_count];
+        retry_count = retry_count + 1;
+        setTimeout(recover, 1000);
+      }
+    } else {
+      retry_timer = retry_timer - 1;
+      setTimeout(recover, 1000);
+    }
+  } else {
+    retry_count = 0;
+    retry_timer = 0;
+    clearTimeout(recover);
+  }
 }
 
 export default EditorConnection;

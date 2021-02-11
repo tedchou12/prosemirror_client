@@ -1,5 +1,5 @@
 
-const lang = window.lang;
+const lang = window.lang ? window.lang : 'en';
 
 let lang_list = {}
 lang_list['en'] = {'Insert Table...': 'Insert Table...',
@@ -59,9 +59,9 @@ lang_list['zh'] = {'Insert Table...': '插入表格...',
                   'Delete Row': '刪除一列',
                   'Merge Cells': '合併儲存格',
                   'Split Row': '取消合併儲存格',
-                  'Toggle Header Column': 'Toggle Header Column',
-                  'Toggle Header Row': 'Toggle Header Row',
-                  'Toggle Header Cells': 'Toggle Header Cells',
+                  'Toggle Header Column': '加重表格欄',
+                  'Toggle Header Row': '加重表格列',
+                  'Toggle Header Cells': '加重儲存格',
                   'Delete Table': '刪除表格',
                   '[font_download] Font Type': '[font_download] 字型',
                   '[format_size] Text Size': '[format_size] 字型大小',
@@ -98,6 +98,7 @@ lang_list['zh'] = {'Insert Table...': '插入表格...',
                   '[settings_overscan] Page layout': '[settings_overscan] 頁面設定',
                   '[undo] Undo': '[undo] 復原',
                   '[redo] Redo': '[redo] 取消復原',
+                  '[print] Print': '[print] 列印',
                   'Normal': '一般文字',
                   'Heading 1': '標題 1',
                   'Heading 2': '標題 2',
@@ -126,7 +127,12 @@ lang_list['zh'] = {'Insert Table...': '插入表格...',
                   'Structure': '運算公式',
                   'Symbols': '特殊符號',
                   'Trigonometry': '三角函式',
-                  'Change': '變更'}
+                  'Change': '變更',
+                  'Inline': '環繞文字',
+                  'Float left': '置左',
+                  'Float right': '置右',
+                  'Break text': '切段文字',
+                  'Edit': '編輯'}
 
 export default function Lang(text) {
   if (lang == undefined || !(lang in lang_list)) {

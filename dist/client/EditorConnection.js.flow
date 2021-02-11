@@ -154,6 +154,9 @@ class EditorConnection {
 
     this.socket.onopen = function(e) {
       //does something when socket opens
+      if (typeof(add_user) === typeof(Function)) {
+        add_user(connection.user_id);
+      }
     }
 
     // replaces poll
@@ -183,6 +186,21 @@ class EditorConnection {
             requestDone: false,
           });
         }
+      } else if (data.type == 'users') {
+        if ('add' in json && json.add.length) {
+          if (typeof(add_user) === typeof(Function)) {
+            for (var i in json['add']) {
+              add_user(json['add'][i]);
+            }
+          }
+        }
+        if ('delete' in json && json.delete.length) {
+          if (typeof(delete_user) === typeof(Function)) {
+            for (var i in json['delete']) {
+              delete_user(json['delete'][i]);
+            }
+          }
+        }
       } else {
         console.log(json);
       }
@@ -193,7 +211,7 @@ class EditorConnection {
       // Too far behind. Revert to server state
       if (true) {
         connection.report.failure('error');
-        // connection.dispatch({ type: 'restart' });
+        connection.dispatch({ type: 'restart' });
       } else {
         connection.closeRequest();
         connection.setView(null);
