@@ -12,16 +12,12 @@ import { Schema } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
 import EditorPlugins from '../EditorPlugins';
 import EditorSchema from '../EditorSchema';
+import {
+  receiveRemoteCursor,
+  removeRemoteCursorsForUser,
+} from '../RemoteCursorPlugin';
 import uuid from '../uuid';
 // [FS] IRAD-1040 2020-09-02
-
-// deprecated with websocket
-// import { GET, POST } from './http';
-// import { stringify } from 'flatted';
-
-function badVersion(err: Object) {
-  return err.status == 400 && /invalid version/i.test(String(err));
-}
 
 var connection = null;
 var retry_count = 0;
@@ -143,16 +139,22 @@ class EditorConnection {
 
   // Send cursor updates to the server
   cursor_send(selection: Object): void {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+      return;
+    }
     const content = {
-                      selection: selection,
-                      clientID: this.client_id
-                    };
+      selection: {
+        anchor: selection.anchor,
+        head: selection.head,
+      },
+      clientID: this.client_id,
+    };
     const json = JSON.stringify({type: 'selection', data: content});
     this.socket.send(json);
   }
 
   ws_start(): void {
-    const ws_url = this.ws_url + '?service=' + this.service + '&user_id=' + this.user_id + '&session_hash=' + this.session_hash + '&doc_id=' + this.doc_id + '&client_id=' + btoa(this.client_id);
+    const ws_url = this.ws_url + '?service=' + this.service + '&user_id=' + this.user_id + '&session_hash=' + this.session_hash + '&doc_id=' + this.doc_id + '&client_id=' + encodeURIComponent(btoa(this.client_id));
     this.socket = new WebSocket(ws_url);
 
     this.socket.onopen = function(e) {
@@ -199,18 +201,46 @@ class EditorConnection {
             requestDone: false,
           });
         }
+      } else if (data.type == 'selection' || data.type == 'cursor') {
+        const cursorData = json;
+        if (
+          connection.state.edit &&
+          cursorData &&
+          cursorData.clientID !== connection.client_id
+        ) {
+          const transaction = receiveRemoteCursor(connection.state.edit, cursorData);
+          if (transaction) {
+            connection.dispatch({ type: 'transaction', transaction });
+          }
+        }
+      } else if (data.type == 'cursor_leave') {
+        if (connection.state.edit && json && json.userId) {
+          connection.dispatch({
+            type: 'transaction',
+            transaction: removeRemoteCursorsForUser(connection.state.edit, String(json.userId)),
+          });
+        }
       } else if (data.type == 'users') {
         if ('add' in json && 'user_id' in json['add'] && (Object.keys(json['add']['user_id']).length || json.add.user_id.length)) {
           if (typeof(add_user) === typeof(Function)) {
-            for (var i in json['add']['user_id']) {
-              add_user(json['add']['user_id'][i], json['add']['user_name'][i]);
+            for (var addIndex in json['add']['user_id']) {
+              add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex]);
             }
           }
         }
         if ('delete' in json && 'user_id' in json['delete'] && (Object.keys(json['delete']['user_id']).length || json.delete.user_id.length)) {
-          if (typeof(delete_user) === typeof(Function)) {
-            for (var i in json['delete']['user_id']) {
-              delete_user(json['delete']['user_id'][i]);
+          for (var deleteIndex in json['delete']['user_id']) {
+            if (typeof(delete_user) === typeof(Function)) {
+              delete_user(json['delete']['user_id'][deleteIndex]);
+            }
+            if (connection.state.edit) {
+              connection.dispatch({
+                type: 'transaction',
+                transaction: removeRemoteCursorsForUser(
+                  connection.state.edit,
+                  String(json['delete']['user_id'][deleteIndex]),
+                ),
+              });
             }
           }
         }

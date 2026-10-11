@@ -125,17 +125,14 @@
     }
   },
   "lint-staged": {
-    "*.css": [
+    "src/**/*.css": [
       "stylelint --fix"
     ],
-    "*.js": [
+    "src/**/*.js": [
       "eslint --fix"
     ],
-    "*.json": [
+    "src/**/*.json": [
       "prettier --write"
-    ],
-    "*.{css,js,json}": [
-      "git add"
     ]
   }
 }

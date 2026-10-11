@@ -57,14 +57,17 @@ class CollabConnector extends _SimpleConnector.default {
     this._connection = new _EditorConnection.default(setState, ws_url, session_hash, user_id, docID);
     this._connection.view = {
       updateState: s => {
-        // console.log('update', s);
-        //poll if selection changes
-        // if (this._connection.ready) {
-        //   if (this._selection != s.selection) {
-        //     this._selection = s.selection;
-        //     this._connection.cursor_send(s.selection);
-        //   }
-        // }
+        const {
+          anchor,
+          head
+        } = s.selection;
+        if (this._connection.ready && (!this._selection || this._selection.anchor !== anchor || this._selection.head !== head)) {
+          this._selection = {
+            anchor,
+            head
+          };
+          this._connection.cursor_send(s.selection);
+        }
         setState({
           editorState: s
         }, () => {});

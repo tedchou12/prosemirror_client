@@ -8,6 +8,8 @@ import { Schema } from 'prosemirror-model';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import ContentPlaceholderPlugin from './ContentPlaceholderPlugin';
 import CursorPlaceholderPlugin from './CursorPlaceholderPlugin';
+import LocalCursorPlugin from './LocalCursorPlugin';
+import RemoteCursorPlugin from './RemoteCursorPlugin';
 import EditorPageLayoutPlugin from './EditorPageLayoutPlugin';
 import ImageUploadPlaceholderPlugin from './ImageUploadPlaceholderPlugin';
 import LinkTooltipPlugin from './LinkTooltipPlugin';
@@ -22,6 +24,8 @@ export default function buildEditorPlugins(schema: Schema): Array<Plugin> {
   const plugins = [
     new ContentPlaceholderPlugin(),
     new CursorPlaceholderPlugin(),
+    new LocalCursorPlugin(),
+    new RemoteCursorPlugin(),
     new EditorPageLayoutPlugin(),
     new ImageUploadPlaceholderPlugin(),
     new LinkTooltipPlugin(),

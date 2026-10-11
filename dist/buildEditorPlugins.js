@@ -13,6 +13,8 @@ var _prosemirrorModel = require("prosemirror-model");
 var _prosemirrorState = require("prosemirror-state");
 var _ContentPlaceholderPlugin = _interopRequireDefault(require("./ContentPlaceholderPlugin"));
 var _CursorPlaceholderPlugin = _interopRequireDefault(require("./CursorPlaceholderPlugin"));
+var _LocalCursorPlugin = _interopRequireDefault(require("./LocalCursorPlugin"));
+var _RemoteCursorPlugin = _interopRequireDefault(require("./RemoteCursorPlugin"));
 var _EditorPageLayoutPlugin = _interopRequireDefault(require("./EditorPageLayoutPlugin"));
 var _ImageUploadPlaceholderPlugin = _interopRequireDefault(require("./ImageUploadPlaceholderPlugin"));
 var _LinkTooltipPlugin = _interopRequireDefault(require("./LinkTooltipPlugin"));
@@ -23,7 +25,7 @@ var _createEditorKeyMap = _interopRequireDefault(require("./createEditorKeyMap")
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 // Creates the default plugin for the editor.
 function buildEditorPlugins(schema) {
-  const plugins = [new _ContentPlaceholderPlugin.default(), new _CursorPlaceholderPlugin.default(), new _EditorPageLayoutPlugin.default(), new _ImageUploadPlaceholderPlugin.default(), new _LinkTooltipPlugin.default(), new _SelectionPlaceholderPlugin.default(), setPluginKey((0, _buildInputRules.default)(schema), 'InputRules'), setPluginKey((0, _prosemirrorDropcursor.dropCursor)(), 'DropCursor'), setPluginKey((0, _prosemirrorGapcursor.gapCursor)(), 'GapCursor'), (0, _prosemirrorHistory.history)(), setPluginKey((0, _prosemirrorKeymap.keymap)((0, _createEditorKeyMap.default)()), 'EditorKeyMap'), setPluginKey((0, _prosemirrorKeymap.keymap)(_prosemirrorCommands.baseKeymap), 'BaseKeymap')].concat(_TablePlugins.default);
+  const plugins = [new _ContentPlaceholderPlugin.default(), new _CursorPlaceholderPlugin.default(), new _LocalCursorPlugin.default(), new _RemoteCursorPlugin.default(), new _EditorPageLayoutPlugin.default(), new _ImageUploadPlaceholderPlugin.default(), new _LinkTooltipPlugin.default(), new _SelectionPlaceholderPlugin.default(), setPluginKey((0, _buildInputRules.default)(schema), 'InputRules'), setPluginKey((0, _prosemirrorDropcursor.dropCursor)(), 'DropCursor'), setPluginKey((0, _prosemirrorGapcursor.gapCursor)(), 'GapCursor'), (0, _prosemirrorHistory.history)(), setPluginKey((0, _prosemirrorKeymap.keymap)((0, _createEditorKeyMap.default)()), 'EditorKeyMap'), setPluginKey((0, _prosemirrorKeymap.keymap)(_prosemirrorCommands.baseKeymap), 'BaseKeymap')].concat(_TablePlugins.default);
   return plugins;
 }
 
