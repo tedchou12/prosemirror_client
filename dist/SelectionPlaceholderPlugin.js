@@ -3,23 +3,19 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.showSelectionPlaceholder = showSelectionPlaceholder;
-exports.hideSelectionPlaceholder = hideSelectionPlaceholder;
 exports.default = void 0;
-
+exports.hideSelectionPlaceholder = hideSelectionPlaceholder;
+exports.showSelectionPlaceholder = showSelectionPlaceholder;
 var _prosemirrorState = require("prosemirror-state");
-
 var _prosemirrorTransform = require("prosemirror-transform");
-
 var _prosemirrorView = require("prosemirror-view");
-
 require("./ui/czi-selection-placeholder.css");
-
 const PLACE_HOLDER_ID = {
   name: 'SelectionPlaceholderPlugin'
 };
-let singletonInstance = null; // https://prosemirror.net/examples/upload/
+let singletonInstance = null;
 
+// https://prosemirror.net/examples/upload/
 const SPEC = {
   // [FS] IRAD-1005 2020-07-07
   // Upgrade outdated packages.
@@ -28,31 +24,25 @@ const SPEC = {
     init() {
       return _prosemirrorView.DecorationSet.empty;
     },
-
     apply(tr, set) {
       set = set.map(tr.mapping, tr.doc);
       const action = tr.getMeta(this);
-
       if (!action) {
         return set;
       }
-
       if (action.add) {
         const deco = _prosemirrorView.Decoration.inline(action.add.from, action.add.to, {
           class: 'czi-selection-placeholder'
         }, {
           id: PLACE_HOLDER_ID
         });
-
         set = set.add(tr.doc, [deco]);
       } else if (action.remove) {
         const found = set.find(null, null, specFinder);
         set = set.remove(found);
       }
-
       return set;
     }
-
   },
   props: {
     decorations: state => {
@@ -61,50 +51,38 @@ const SPEC = {
     }
   }
 };
-
 class SelectionPlaceholderPlugin extends _prosemirrorState.Plugin {
   constructor() {
     super(SPEC);
-
     if (singletonInstance) {
       return singletonInstance;
     }
-
     singletonInstance = this;
   }
-
 }
-
 function specFinder(spec) {
   return spec.id == PLACE_HOLDER_ID;
 }
-
 function findSelectionPlaceholder(state) {
   if (!singletonInstance) {
     return null;
   }
-
   if (!state.plugins.includes(singletonInstance)) {
     console.warn('SelectionPlaceholderPlugin is not installed');
     return null;
   }
-
   const decos = singletonInstance.getState(state);
   const found = decos.find(null, null, specFinder);
   const pos = found.length ? found[0] : null;
   return pos || null;
 }
-
 function showSelectionPlaceholder(state, tr) {
   tr = tr || state.tr;
   const plugin = singletonInstance;
-
   if (!plugin || !tr.selection || tr.selection.empty) {
     return tr;
   }
-
   const deco = findSelectionPlaceholder(state);
-
   if (deco === null) {
     tr = tr.setMeta(plugin, {
       add: {
@@ -113,28 +91,20 @@ function showSelectionPlaceholder(state, tr) {
       }
     });
   }
-
   return tr;
 }
-
 function hideSelectionPlaceholder(state, tr) {
   tr = tr || state.tr;
   const plugin = singletonInstance;
-
   if (!plugin) {
     return tr;
   }
-
   const deco = findSelectionPlaceholder(state);
-
   if (deco) {
     tr = tr.setMeta(plugin, {
       remove: {}
     });
   }
-
   return tr;
 }
-
-var _default = SelectionPlaceholderPlugin;
-exports.default = _default;
+var _default = exports.default = SelectionPlaceholderPlugin;

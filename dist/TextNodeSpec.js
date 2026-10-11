@@ -7,5 +7,4 @@ exports.default = void 0;
 const TextNodeSpec = {
   group: 'inline'
 };
-var _default = TextNodeSpec;
-exports.default = _default;
+var _default = exports.default = TextNodeSpec;

@@ -7,5 +7,4 @@ exports.default = void 0;
 const browser = {
   isMac: () => true
 };
-var _default = browser;
-exports.default = _default;
+var _default = exports.default = browser;

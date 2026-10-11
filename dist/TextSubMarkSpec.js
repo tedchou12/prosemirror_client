@@ -4,9 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-
 var _Types = require("./Types");
-
 const TextSubMarkSpec = {
   parseDOM: [{
     tag: 'sub'
@@ -16,11 +14,8 @@ const TextSubMarkSpec = {
       return value === 'sub' && null;
     }
   }],
-
   toDOM() {
     return ['sub', 0];
   }
-
 };
-var _default = TextSubMarkSpec;
-exports.default = _default;
+var _default = exports.default = TextSubMarkSpec;

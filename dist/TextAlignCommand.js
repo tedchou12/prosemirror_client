@@ -3,39 +3,28 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.setTextAlign = setTextAlign;
 exports.default = void 0;
-
+exports.setTextAlign = setTextAlign;
 var _prosemirrorModel = require("prosemirror-model");
-
 var _prosemirrorState = require("prosemirror-state");
-
 var _prosemirrorTransform = require("prosemirror-transform");
-
 var _prosemirrorView = require("prosemirror-view");
-
 var _NodeNames = require("./NodeNames");
-
 var _UICommand = _interopRequireDefault(require("./ui/UICommand"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, e) { if ("object" != typeof t || !t) return t; var r; if ("undefined" != typeof Symbol && void 0 !== (r = t[Symbol.toPrimitive])) { var i = r.call(t, e || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === e ? String : Number)(t); }
 function setTextAlign(tr, schema, alignment) {
   const {
     selection,
     doc
   } = tr;
-
   if (!selection || !doc) {
     return tr;
   }
-
   const {
     from,
     to
@@ -53,7 +42,6 @@ function setTextAlign(tr, schema, alignment) {
   doc.nodesBetween(from, to, (node, pos, parentNode) => {
     const nodeType = node.type;
     const align = node.attrs.align || null;
-
     if (align !== alignment && allowedNodeTypes.has(nodeType)) {
       tasks.push({
         node,
@@ -61,14 +49,11 @@ function setTextAlign(tr, schema, alignment) {
         nodeType
       });
     }
-
     return true;
   });
-
   if (!tasks.length) {
     return tr;
   }
-
   tasks.forEach(job => {
     const {
       node,
@@ -78,7 +63,6 @@ function setTextAlign(tr, schema, alignment) {
     let {
       attrs
     } = node;
-
     if (alignment) {
       attrs = _objectSpread(_objectSpread({}, attrs), {}, {
         align: alignment
@@ -88,18 +72,14 @@ function setTextAlign(tr, schema, alignment) {
         align: null
       });
     }
-
     tr = tr.setNodeMarkup(pos, nodeType, attrs, node.marks);
   });
   return tr;
 }
-
 class TextAlignCommand extends _UICommand.default {
   constructor(alignment) {
     super();
-
     _defineProperty(this, "_alignment", void 0);
-
     _defineProperty(this, "isActive", state => {
       const {
         selection,
@@ -116,26 +96,22 @@ class TextAlignCommand extends _UICommand.default {
           keepLooking = false;
           active = true;
         }
-
         return keepLooking;
       });
       return active;
     });
-
     _defineProperty(this, "isEnabled", state => {
       const {
         selection
       } = state;
       return selection instanceof _prosemirrorState.TextSelection || selection instanceof _prosemirrorState.AllSelection;
     });
-
     _defineProperty(this, "execute", (state, dispatch, view) => {
       const {
         schema,
         selection
       } = state;
       const tr = setTextAlign(state.tr.setSelection(selection), schema, this._alignment);
-
       if (tr.docChanged) {
         dispatch && dispatch(tr);
         return true;
@@ -143,11 +119,7 @@ class TextAlignCommand extends _UICommand.default {
         return false;
       }
     });
-
     this._alignment = alignment;
   }
-
 }
-
-var _default = TextAlignCommand;
-exports.default = _default;
+var _default = exports.default = TextAlignCommand;

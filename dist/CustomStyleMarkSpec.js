@@ -4,11 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-
 var _prosemirrorModel = require("prosemirror-model");
-
 var _Types = require("./Types");
-
 const CustomStyleMarkSpec = {
   attrs: {
     stylename: {
@@ -37,7 +34,6 @@ const CustomStyleMarkSpec = {
       };
     }
   }],
-
   toDOM(node) {
     const {
       fontname,
@@ -47,27 +43,20 @@ const CustomStyleMarkSpec = {
     } = node.attrs;
     const attrs = {};
     let style = '';
-
     if (fontname) {
       style += `font-family: ${fontname};`;
     }
-
     if (fontsize) {
       style += `font-size: ${fontsize}pt;`;
     }
-
     if (highlightColor) {
       style += `background-color: ${highlightColor};`;
     }
-
     if (color) {
       style += `color: ${color};`;
     }
-
     attrs.style = style;
     return ['span', attrs];
   }
-
 };
-var _default = CustomStyleMarkSpec;
-exports.default = _default;
+var _default = exports.default = CustomStyleMarkSpec;

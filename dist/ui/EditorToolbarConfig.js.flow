@@ -54,6 +54,7 @@ const {
   LINK_SET_URL,
   MATH_EDIT,
   OL,
+  PRINT,
   STRIKE,
   STRONG,
   SUPER,
@@ -125,6 +126,10 @@ export const TABLE_COMMANDS_GROUP = [
 
 export const COMMAND_GROUPS = [
   {
+    [Lang('[print] Print')]: PRINT,
+    [Lang('[settings_overscan] Page layout')]: DOC_LAYOUT,
+  },
+  {
     [Lang('[undo] Undo')]: HISTORY_UNDO,
     [Lang('[redo] Redo')]: HISTORY_REDO,
   },
@@ -179,8 +184,5 @@ export const COMMAND_GROUPS = [
 
     // [FS][07-MAY-2020][IRAD-956]
     // '[format_quote] Block quote': BLOCKQUOTE_TOGGLE,
-  },
-  {
-    [Lang('[settings_overscan] Page layout')]: DOC_LAYOUT,
-  },
+  }
 ];

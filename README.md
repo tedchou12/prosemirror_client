@@ -4,6 +4,32 @@ Prosemirror Editor Modified
   <strong>WYSIWYG editor based on ProseMirror & React</strong>
 </div>
 
+## Using For CloudFiles
+
+### Install Prerequisite
+Because the pacakage is too big (about 1.5GB) in size, we are not inclined to pollute the current client app with this much JS. We will leave this as a separate repo.
+
+To start off
+
+```
+npm install
+``` 
+
+In debug mode, update the variables in `licit/index.html` so they connect with doc_server.php
+
+```
+npm start
+```
+
+After debug and test mode finish. Build by the following command and copy the build file from `bin/licit.bundle.js` to `/Applications/MAMP/htdocs/cloud_files_temp/resources/js/licit/licit.bundle.js`
+
+```
+npm run build:licit
+```
+
+
+
+
 ## Getting Started  
 
 ### Install Prerequisite

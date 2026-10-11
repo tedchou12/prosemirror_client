@@ -3,33 +3,22 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.bpfrpt_proptype_PopUpHandle = exports.bpfrpt_proptype_PopUpProps = exports.bpfrpt_proptype_PopUpParams = exports.bpfrpt_proptype_ViewProps = exports.default = void 0;
-
+exports.default = exports.bpfrpt_proptype_ViewProps = exports.bpfrpt_proptype_PopUpProps = exports.bpfrpt_proptype_PopUpParams = exports.bpfrpt_proptype_PopUpHandle = void 0;
 var React = _interopRequireWildcard(require("react"));
-
 var _PopUpManager = _interopRequireWildcard(require("./PopUpManager"));
-
 var _PopUpPosition = require("./PopUpPosition");
-
 var _uuid = _interopRequireDefault(require("./uuid"));
-
 var _rects = require("./rects");
-
 var _propTypes = _interopRequireDefault(require("prop-types"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var bpfrpt_proptype_ViewProps = _propTypes.default.object;
-exports.bpfrpt_proptype_ViewProps = bpfrpt_proptype_ViewProps;
-var bpfrpt_proptype_PopUpParams = {
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+var cache;
+function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var r, c, a = Object.defineProperty, n = { __proto__: null, default: e }; if (Object(e) !== e) return n; if (cache || "function" != typeof WeakMap || (cache = new WeakMap()), cache) { if (cache.has(e)) return cache.get(e); cache.set(e, n); } for (c in e) "default" !== c && {}.hasOwnProperty.call(e, c) && ((r = a && Object.getOwnPropertyDescriptor(e, c)) && (r.get || r.set) ? a(n, c, r) : n[c] = e[c]); return n; }
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, e) { if ("object" != typeof t || !t) return t; var r; if ("undefined" != typeof Symbol && void 0 !== (r = t[Symbol.toPrimitive])) { var i = r.call(t, e || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === e ? String : Number)(t); }
+var bpfrpt_proptype_ViewProps = exports.bpfrpt_proptype_ViewProps = _propTypes.default.object;
+var bpfrpt_proptype_PopUpParams = exports.bpfrpt_proptype_PopUpParams = {
   "anchor": _propTypes.default.any,
   "autoDismiss": _propTypes.default.bool,
   "container": function () {
@@ -39,8 +28,7 @@ var bpfrpt_proptype_PopUpParams = {
   "onClose": _propTypes.default.func,
   "position": _propTypes.default.func
 };
-exports.bpfrpt_proptype_PopUpParams = bpfrpt_proptype_PopUpParams;
-var bpfrpt_proptype_PopUpProps = {
+var bpfrpt_proptype_PopUpProps = exports.bpfrpt_proptype_PopUpProps = {
   "View": _propTypes.default.func.isRequired,
   "close": _propTypes.default.func.isRequired,
   "popUpParams": _propTypes.default.shape({
@@ -55,23 +43,16 @@ var bpfrpt_proptype_PopUpProps = {
   }).isRequired,
   "viewProps": _propTypes.default.object.isRequired
 };
-exports.bpfrpt_proptype_PopUpProps = bpfrpt_proptype_PopUpProps;
-var bpfrpt_proptype_PopUpHandle = {
+var bpfrpt_proptype_PopUpHandle = exports.bpfrpt_proptype_PopUpHandle = {
   "close": _propTypes.default.func.isRequired,
   "update": _propTypes.default.func.isRequired
 };
-exports.bpfrpt_proptype_PopUpHandle = bpfrpt_proptype_PopUpHandle;
-
 class PopUp extends React.PureComponent {
   constructor() {
     super(...arguments);
-
     _defineProperty(this, "props", void 0);
-
     _defineProperty(this, "_bridge", null);
-
     _defineProperty(this, "_id", (0, _uuid.default)());
-
     _defineProperty(this, "_getDetails", () => {
       const {
         close,
@@ -93,7 +74,6 @@ class PopUp extends React.PureComponent {
       };
     });
   }
-
   render() {
     const dummy = {};
     const {
@@ -108,20 +88,14 @@ class PopUp extends React.PureComponent {
       close: close
     })));
   }
-
   componentDidMount() {
     this._bridge = {
       getDetails: this._getDetails
     };
-
     _PopUpManager.default.register(this._bridge);
   }
-
   componentWillUnmount() {
     this._bridge && _PopUpManager.default.unregister(this._bridge);
   }
-
 }
-
-var _default = PopUp;
-exports.default = _default;
+var _default = exports.default = PopUp;

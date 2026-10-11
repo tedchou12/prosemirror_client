@@ -4,9 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-
 var _Types = require("./Types");
-
 const LinkMarkSpec = {
   attrs: {
     href: {
@@ -35,11 +33,8 @@ const LinkMarkSpec = {
       };
     }
   }],
-
   toDOM(node) {
     return ['a', node.attrs, 0];
   }
-
 };
-var _default = LinkMarkSpec;
-exports.default = _default;
+var _default = exports.default = LinkMarkSpec;

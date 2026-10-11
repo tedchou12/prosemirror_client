@@ -3,21 +3,16 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = htmlElementToRect;
 exports.bpfrpt_proptype_Rect = void 0;
-
+exports.default = htmlElementToRect;
 var _propTypes = _interopRequireDefault(require("prop-types"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var bpfrpt_proptype_Rect = {
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+var bpfrpt_proptype_Rect = exports.bpfrpt_proptype_Rect = {
   "h": _propTypes.default.number.isRequired,
   "w": _propTypes.default.number.isRequired,
   "x": _propTypes.default.number.isRequired,
   "y": _propTypes.default.number.isRequired
 };
-exports.bpfrpt_proptype_Rect = bpfrpt_proptype_Rect;
-
 function htmlElementToRect(el) {
   const rect = el.getBoundingClientRect();
   return {

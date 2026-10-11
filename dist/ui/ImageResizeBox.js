@@ -3,46 +3,31 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.MAX_SIZE = exports.MIN_SIZE = void 0;
-
+exports.default = exports.MIN_SIZE = exports.MAX_SIZE = void 0;
 var _classnames = _interopRequireDefault(require("classnames"));
-
 var _nullthrows = _interopRequireDefault(require("nullthrows"));
-
 var React = _interopRequireWildcard(require("react"));
-
 var _clamp = _interopRequireDefault(require("./clamp"));
-
 var _uuid = _interopRequireDefault(require("./uuid"));
-
 require("./czi-image-resize-box.css");
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-const MIN_SIZE = 20;
-exports.MIN_SIZE = MIN_SIZE;
-const MAX_SIZE = 10000;
-exports.MAX_SIZE = MAX_SIZE;
-
+var cache;
+function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var r, c, a = Object.defineProperty, n = { __proto__: null, default: e }; if (Object(e) !== e) return n; if (cache || "function" != typeof WeakMap || (cache = new WeakMap()), cache) { if (cache.has(e)) return cache.get(e); cache.set(e, n); } for (c in e) "default" !== c && {}.hasOwnProperty.call(e, c) && ((r = a && Object.getOwnPropertyDescriptor(e, c)) && (r.get || r.set) ? a(n, c, r) : n[c] = e[c]); return n; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, e) { if ("object" != typeof t || !t) return t; var r; if ("undefined" != typeof Symbol && void 0 !== (r = t[Symbol.toPrimitive])) { var i = r.call(t, e || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === e ? String : Number)(t); }
+const MIN_SIZE = exports.MIN_SIZE = 20;
+const MAX_SIZE = exports.MAX_SIZE = 10000;
 function setWidth(el, width, height) {
   el.style.width = width + 'px';
 }
-
 function setHeight(el, width, height) {
   el.style.height = height + 'px';
 }
-
 function setSize(el, width, height) {
   el.style.width = Math.round(width) + 'px';
   el.style.height = Math.round(height) + 'px';
 }
-
 const ResizeDirection = {
   top: setHeight,
   top_right: setSize,
@@ -53,40 +38,25 @@ const ResizeDirection = {
   left: setWidth,
   top_left: setSize
 };
-
 class ImageResizeBoxControl extends React.PureComponent {
   constructor() {
     super(...arguments);
-
     _defineProperty(this, "props", void 0);
-
     _defineProperty(this, "_active", false);
-
     _defineProperty(this, "_el", null);
-
     _defineProperty(this, "_h", '');
-
     _defineProperty(this, "_rafID", 0);
-
     _defineProperty(this, "_w", '');
-
     _defineProperty(this, "_x1", 0);
-
     _defineProperty(this, "_x2", 0);
-
     _defineProperty(this, "_y1", 0);
-
     _defineProperty(this, "_y2", 0);
-
     _defineProperty(this, "_ww", 0);
-
     _defineProperty(this, "_hh", 0);
-
     _defineProperty(this, "_syncSize", () => {
       if (!this._active) {
         return;
       }
-
       const {
         direction,
         width,
@@ -99,26 +69,20 @@ class ImageResizeBoxControl extends React.PureComponent {
       const aspect = width / height;
       let ww = (0, _clamp.default)(MIN_SIZE, width + Math.round(dx), MAX_SIZE);
       let hh = (0, _clamp.default)(MIN_SIZE, height + Math.round(dy), MAX_SIZE);
-
       if (fn === setSize) {
         hh = Math.max(ww / aspect, MIN_SIZE);
         ww = hh * aspect;
       }
-
       fn(el, Math.round(ww), Math.round(hh));
       this._ww = ww;
       this._hh = hh;
     });
-
     _defineProperty(this, "_onMouseDown", e => {
       e.preventDefault();
       e.stopPropagation();
-
       this._end();
-
       this._start(e);
     });
-
     _defineProperty(this, "_onMouseMove", e => {
       e.preventDefault();
       e.stopPropagation();
@@ -126,7 +90,6 @@ class ImageResizeBoxControl extends React.PureComponent {
       this._y2 = e.clientY;
       this._rafID = requestAnimationFrame(this._syncSize);
     });
-
     _defineProperty(this, "_onMouseUp", e => {
       e.preventDefault();
       e.stopPropagation();
@@ -137,17 +100,13 @@ class ImageResizeBoxControl extends React.PureComponent {
       } = this.props;
       const el = (0, _nullthrows.default)(this._el);
       el.classList.remove(direction);
-
       this._end();
-
       this.props.onResizeEnd(this._ww, this._hh);
     });
   }
-
   componentWillUnmount() {
     this._end();
   }
-
   render() {
     const {
       direction
@@ -161,12 +120,10 @@ class ImageResizeBoxControl extends React.PureComponent {
       onMouseDown: this._onMouseDown
     });
   }
-
   _start(e) {
     if (this._active) {
       this._end();
     }
-
     this._active = true;
     const {
       boxID,
@@ -188,12 +145,10 @@ class ImageResizeBoxControl extends React.PureComponent {
     document.addEventListener('mousemove', this._onMouseMove, true);
     document.addEventListener('mouseup', this._onMouseUp, true);
   }
-
   _end() {
     if (!this._active) {
       return;
     }
-
     this._active = false;
     document.removeEventListener('mousemove', this._onMouseMove, true);
     document.removeEventListener('mouseup', this._onMouseUp, true);
@@ -205,18 +160,13 @@ class ImageResizeBoxControl extends React.PureComponent {
     this._rafID && cancelAnimationFrame(this._rafID);
     this._rafID = null;
   }
-
 }
-
 class ImageResizeBox extends React.PureComponent {
   constructor() {
     super(...arguments);
-
     _defineProperty(this, "props", void 0);
-
     _defineProperty(this, "_id", (0, _uuid.default)());
   }
-
   render() {
     const {
       onResizeEnd,
@@ -249,8 +199,5 @@ class ImageResizeBox extends React.PureComponent {
       src: src
     }));
   }
-
 }
-
-var _default = ImageResizeBox;
-exports.default = _default;
+var _default = exports.default = ImageResizeBox;
