@@ -3,43 +3,30 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.bpfrpt_proptype_TableGridSizeEditorValue = exports.default = void 0;
-
+exports.default = exports.bpfrpt_proptype_TableGridSizeEditorValue = void 0;
 var _classnames = _interopRequireDefault(require("classnames"));
-
 var React = _interopRequireWildcard(require("react"));
-
 var _reactDom = _interopRequireDefault(require("react-dom"));
-
 var _clamp = _interopRequireDefault(require("./clamp"));
-
 var _htmlElementToRect = _interopRequireDefault(require("./htmlElementToRect"));
-
 var _rects = require("./rects");
-
 require("./czi-table-grid-size-editor.css");
-
 var _propTypes = _interopRequireDefault(require("prop-types"));
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var bpfrpt_proptype_TableGridSizeEditorValue = {
+var cache;
+function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var r, c, a = Object.defineProperty, n = { __proto__: null, default: e }; if (Object(e) !== e) return n; if (cache || "function" != typeof WeakMap || (cache = new WeakMap()), cache) { if (cache.has(e)) return cache.get(e); cache.set(e, n); } for (c in e) "default" !== c && {}.hasOwnProperty.call(e, c) && ((r = a && Object.getOwnPropertyDescriptor(e, c)) && (r.get || r.set) ? a(n, c, r) : n[c] = e[c]); return n; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, e) { if ("object" != typeof t || !t) return t; var r; if ("undefined" != typeof Symbol && void 0 !== (r = t[Symbol.toPrimitive])) { var i = r.call(t, e || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === e ? String : Number)(t); }
+var bpfrpt_proptype_TableGridSizeEditorValue = exports.bpfrpt_proptype_TableGridSizeEditorValue = {
   "cols": _propTypes.default.number.isRequired,
   "rows": _propTypes.default.number.isRequired
 };
-exports.bpfrpt_proptype_TableGridSizeEditorValue = bpfrpt_proptype_TableGridSizeEditorValue;
 const GUTTER_SIZE = 5;
-const CELL_SIZE = 16; // [FS] IRAD-1012 2020-07-14
+const CELL_SIZE = 16;
+// [FS] IRAD-1012 2020-07-14
 // Fix: Limited Table Grid size from 20 to 7
-
 const MAX_SIZE = 7;
-
 class GridCell extends React.PureComponent {
   render() {
     const {
@@ -61,41 +48,27 @@ class GridCell extends React.PureComponent {
       style: style
     });
   }
-
 }
-
 class TableGridSizeEditor extends React.PureComponent {
   constructor() {
     super(...arguments);
-
     _defineProperty(this, "_ex", 0);
-
     _defineProperty(this, "_ey", 0);
-
     _defineProperty(this, "_mx", 0);
-
     _defineProperty(this, "_my", 0);
-
     _defineProperty(this, "_rafID", 0);
-
     _defineProperty(this, "_ref", null);
-
     _defineProperty(this, "_entered", false);
-
     _defineProperty(this, "props", void 0);
-
     _defineProperty(this, "state", {
       rows: 1,
       cols: 1
     });
-
     _defineProperty(this, "_onRef", ref => {
       this._ref = ref;
     });
-
     _defineProperty(this, "_onMouseEnter", e => {
       const node = e.currentTarget;
-
       if (node instanceof HTMLElement) {
         const rect = (0, _rects.fromHTMlElement)(node);
         const mx = Math.round(e.clientX);
@@ -104,29 +77,23 @@ class TableGridSizeEditor extends React.PureComponent {
         this._ey = rect.y;
         this._mx = mx;
         this._my = my;
-
         if (!this._entered) {
           this._entered = true;
           document.addEventListener('mousemove', this._onMouseMove, true);
         }
       }
     });
-
     _defineProperty(this, "_onMouseMove", e => {
       const el = this._ref && _reactDom.default.findDOMNode(this._ref);
-
       const elRect = el ? (0, _htmlElementToRect.default)(el) : null;
       const mouseRect = (0, _rects.fromXY)(e.screenX, e.screenY, 10);
-
       if (elRect && mouseRect && (0, _rects.isIntersected)(elRect, mouseRect, 50)) {
         // This prevents `PopUpManager` from collapsing the editor.
         e.preventDefault();
         e.stopImmediatePropagation();
       }
-
       const mx = Math.round(e.clientX);
       const my = Math.round(e.clientY);
-
       if (mx !== this._mx || my !== this._my) {
         this._mx = mx;
         this._my = my;
@@ -134,7 +101,6 @@ class TableGridSizeEditor extends React.PureComponent {
         this._rafID = requestAnimationFrame(this._updateGridSize);
       }
     });
-
     _defineProperty(this, "_updateGridSize", () => {
       this._rafID = 0;
       const mx = this._mx;
@@ -147,7 +113,6 @@ class TableGridSizeEditor extends React.PureComponent {
         rows,
         cols
       } = this.state;
-
       if (rows !== rr || cols !== cc) {
         this.setState({
           rows: rr,
@@ -155,21 +120,17 @@ class TableGridSizeEditor extends React.PureComponent {
         });
       }
     });
-
     _defineProperty(this, "_onMouseDown", e => {
       e.preventDefault();
       this.props.close(this.state);
     });
   }
-
   componentWillUnmount() {
     if (this._entered) {
       document.removeEventListener('mousemove', this._onMouseMove, true);
     }
-
     this._rafID && cancelAnimationFrame(this._rafID);
   }
-
   render() {
     const {
       rows,
@@ -177,30 +138,25 @@ class TableGridSizeEditor extends React.PureComponent {
     } = this.state;
     let rr = Math.max(5, rows);
     let cc = Math.max(5, cols);
-
     if (rr === rows) {
       rr = Math.min(MAX_SIZE, rr + 1);
     }
-
     if (cc === cols) {
       cc = Math.min(MAX_SIZE, cc + 1);
     }
-
     const cells = [];
     let ii = 0;
     let y = 0;
     let w = 0;
     let h = 0;
-
     while (ii < rr) {
       y += GUTTER_SIZE;
       let jj = 0;
       let x = 0;
-
       while (jj < cc) {
         x += GUTTER_SIZE;
         const selected = ii < rows && jj < cols;
-        cells.push( /*#__PURE__*/React.createElement(GridCell, {
+        cells.push(/*#__PURE__*/React.createElement(GridCell, {
           key: `${String(ii)}-${String(jj)}`,
           selected: selected,
           x: x,
@@ -210,12 +166,10 @@ class TableGridSizeEditor extends React.PureComponent {
         w = x + GUTTER_SIZE;
         jj++;
       }
-
       y += CELL_SIZE;
       h = y + GUTTER_SIZE;
       ii++;
     }
-
     const bodyStyle = {
       width: w + 'px',
       height: h + 'px'
@@ -232,8 +186,5 @@ class TableGridSizeEditor extends React.PureComponent {
       className: "czi-table-grid-size-editor-footer"
     }, rows, " X ", cols));
   }
-
 }
-
-var _default = TableGridSizeEditor;
-exports.default = _default;
+var _default = exports.default = TableGridSizeEditor;

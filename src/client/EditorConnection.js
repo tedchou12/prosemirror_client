@@ -12,16 +12,12 @@ import { Schema } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
 import EditorPlugins from '../EditorPlugins';
 import EditorSchema from '../EditorSchema';
+import {
+  receiveRemoteCursor,
+  removeRemoteCursorsForUser,
+} from '../RemoteCursorPlugin';
 import uuid from '../uuid';
 // [FS] IRAD-1040 2020-09-02
-
-// deprecated with websocket
-// import { GET, POST } from './http';
-// import { stringify } from 'flatted';
-
-function badVersion(err: Object) {
-  return err.status == 400 && /invalid version/i.test(String(err));
-}
 
 var connection = null;
 var retry_count = 0;
@@ -44,7 +40,6 @@ class EditorConnection {
   backOff: number;
   onReady: Function;
   ready: boolean;
-  report: any;
   request: any;
   state: State;
   ws_url: string;
@@ -52,10 +47,9 @@ class EditorConnection {
   schema: Schema;
   socket: any;
 
-  constructor(onReady: Function, report: any, ws_url: string, session_hash: string, user_id: string, doc_id: string) {
+  constructor(onReady: Function, ws_url: string, session_hash: string, user_id: string, doc_id: string) {
     this.schema = null;
     this.service = 'doc_editor';
-    this.report = report;
     this.ws_url = ws_url;
     this.doc_id = doc_id;
     this.user_id = user_id;
@@ -97,8 +91,6 @@ class EditorConnection {
       this.state = new State(editState, 'poll');
       this.ready = true;
       this.onReady(editState);
-      // this.poll();
-      // this.cursor_poll();
     } else if (action.type == 'start') {
       this.state = new State(null, 'start');
       this.ws_start();
@@ -108,7 +100,6 @@ class EditorConnection {
     } else if (action.type == 'poll') {
       this.state = new State(this.state.edit, 'poll');
     } else if (action.type == 'recover') {
-      this.report.failure('error');
       if (typeof(show_message) === typeof(Function)) {
         show_message('error');
       }
@@ -122,7 +113,6 @@ class EditorConnection {
       let sendable;
       if (newEditState.doc.content.size > 40000) {
         if (this.state.comm !== 'detached') {
-          this.report.failure('Document too big. Detached.');
           if (typeof(show_message) === typeof(Function)) {
             show_message('size_limit');
           }
@@ -130,12 +120,10 @@ class EditorConnection {
         this.state = new State(newEditState, 'detached');
       } else if (action.requestDone) {
         this.state = new State(newEditState, 'poll');
-        // this.poll();
       } else if (
         (this.state.comm == 'poll') &&
         (sendable = this.sendable(newEditState))
       ) {
-        // this.closeRequest();
         this.state = new State(newEditState, 'send');
         this.ws_send(newEditState, sendable);
       } else {
@@ -151,16 +139,22 @@ class EditorConnection {
 
   // Send cursor updates to the server
   cursor_send(selection: Object): void {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+      return;
+    }
     const content = {
-                      selection: selection,
-                      clientID: this.client_id
-                    };
+      selection: {
+        anchor: selection.anchor,
+        head: selection.head,
+      },
+      clientID: this.client_id,
+    };
     const json = JSON.stringify({type: 'selection', data: content});
     this.socket.send(json);
   }
 
   ws_start(): void {
-    const ws_url = this.ws_url + '?service=' + this.service + '&user_id=' + this.user_id + '&session_hash=' + this.session_hash + '&doc_id=' + this.doc_id + '&client_id=' + btoa(this.client_id);
+    const ws_url = this.ws_url + '?service=' + this.service + '&user_id=' + this.user_id + '&session_hash=' + this.session_hash + '&doc_id=' + this.doc_id + '&client_id=' + encodeURIComponent(btoa(this.client_id));
     this.socket = new WebSocket(ws_url);
 
     this.socket.onopen = function(e) {
@@ -180,7 +174,6 @@ class EditorConnection {
     // replaces poll
     this.socket.onmessage = function(e) {
       unauthorized = false;
-      connection.report.success();
       var data = JSON.parse(e.data);
       var json = data.data;
 
@@ -208,18 +201,46 @@ class EditorConnection {
             requestDone: false,
           });
         }
+      } else if (data.type == 'selection' || data.type == 'cursor') {
+        const cursorData = json;
+        if (
+          connection.state.edit &&
+          cursorData &&
+          cursorData.clientID !== connection.client_id
+        ) {
+          const transaction = receiveRemoteCursor(connection.state.edit, cursorData);
+          if (transaction) {
+            connection.dispatch({ type: 'transaction', transaction });
+          }
+        }
+      } else if (data.type == 'cursor_leave') {
+        if (connection.state.edit && json && json.userId) {
+          connection.dispatch({
+            type: 'transaction',
+            transaction: removeRemoteCursorsForUser(connection.state.edit, String(json.userId)),
+          });
+        }
       } else if (data.type == 'users') {
         if ('add' in json && 'user_id' in json['add'] && (Object.keys(json['add']['user_id']).length || json.add.user_id.length)) {
           if (typeof(add_user) === typeof(Function)) {
-            for (var i in json['add']['user_id']) {
-              add_user(json['add']['user_id'][i], json['add']['user_name'][i]);
+            for (var addIndex in json['add']['user_id']) {
+              add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex]);
             }
           }
         }
         if ('delete' in json && 'user_id' in json['delete'] && (Object.keys(json['delete']['user_id']).length || json.delete.user_id.length)) {
-          if (typeof(delete_user) === typeof(Function)) {
-            for (var i in json['delete']['user_id']) {
-              delete_user(json['delete']['user_id'][i]);
+          for (var deleteIndex in json['delete']['user_id']) {
+            if (typeof(delete_user) === typeof(Function)) {
+              delete_user(json['delete']['user_id'][deleteIndex]);
+            }
+            if (connection.state.edit) {
+              connection.dispatch({
+                type: 'transaction',
+                transaction: removeRemoteCursorsForUser(
+                  connection.state.edit,
+                  String(json['delete']['user_id'][deleteIndex]),
+                ),
+              });
             }
           }
         }
@@ -231,25 +252,19 @@ class EditorConnection {
     //try reconnects
     this.socket.onclose = function(e) {
       // Too far behind. Revert to server state
-      if (true) {
-        connection.report.failure('error');
-        if (typeof(show_message) === typeof(Function)) {
-          show_message('error');
-        }
-        if (last_connection != null && (last_connection - Date.now()) < 3000) {
-          connection.state.comm = 'recover';
-          retry_count = 1;
-          retry_timer = 15;
-          if (unauthorized == false) {
-            connection.dispatch({ type: 'recover' });
-            unauthorized = true;
-          }
-        } else if (retry_count == 0 && retry_timer == 0) {
+      if (typeof(show_message) === typeof(Function)) {
+        show_message('error');
+      }
+      if (last_connection != null && (last_connection - Date.now()) < 3000) {
+        connection.state.comm = 'recover';
+        retry_count = 1;
+        retry_timer = 15;
+        if (unauthorized == false) {
           connection.dispatch({ type: 'recover' });
+          unauthorized = true;
         }
-      } else {
-        connection.closeRequest();
-        connection.setView(null);
+      } else if (retry_count == 0 && retry_timer == 0) {
+        connection.dispatch({ type: 'recover' });
       }
     }
   }
@@ -263,7 +278,6 @@ class EditorConnection {
                    clientID: steps ? steps.clientID : 0};
     let json = JSON.stringify({type: 'content', data: content});
     this.socket.send(json);
-    this.report.success();
     const tr = steps
       ? receiveTransaction(
         this.state.edit,
@@ -311,22 +325,6 @@ class EditorConnection {
   //   );
   // }
 
-  closeRequest(): void {
-    if (this.request) {
-      this.request.abort();
-      this.request = null;
-    }
-  }
-
-  run(request: any): Promise<any> {
-    return (this.request = request);
-  }
-
-  close(): void {
-    this.closeRequest();
-    this.setView(null);
-  }
-
   setView(view: EditorView): void {
     if (this.view) {
       this.view.destroy();
@@ -361,14 +359,6 @@ class EditorConnection {
   }
 }
 
-function repeat(val: any, n: number): Array<any> {
-  const result = [];
-  for (let i = 0; i < n; i++) {
-    result.push(val);
-  }
-  return result;
-}
-
 function recover() {
   clearTimeout(recover);
   if (connection.state.comm == 'recover') {
@@ -388,6 +378,14 @@ function recover() {
     retry_timer = 0;
     clearTimeout(recover);
   }
+}
+
+function repeat(val: any, n: number): Array<any> {
+  const result = [];
+  for (let i = 0; i < n; i++) {
+    result.push(val);
+  }
+  return result;
 }
 
 export default EditorConnection;

@@ -3,22 +3,17 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.bpfrpt_proptype_SymbolDefination = exports.bpfrpt_proptype_MathQuillEditorSymbol = exports.TRIG = exports.SYMBOLS = exports.STRUCTURE = exports.OPERATORS = exports.VERT = exports.VDASH = exports.UNION = exports.UNDERLINE = exports.TRIANGLE = exports.TIMES = exports.THETA = exports.TAN = exports.SUPERSETEQ = exports.SUPERSET = exports.SUM = exports.SUBSETEQ = exports.SUBSET = exports.SUBSCRIPT = exports.SQRT = exports.SQRT2 = exports.SQR = exports.SMALLE = exports.SIN = exports.SIM = exports.SIMEQ = exports.POWER = exports.PM = exports.PLUS = exports.PI = exports.PHI = exports.PERP = exports.PARENS = exports.OVERLINE = exports.NEQ = exports.MINUS = exports.LTE = exports.LT = exports.LOG_E = exports.INTXY = exports.INTERSECT = exports.INT = exports.INFINITY = exports.IMAGINARY = exports.GTE = exports.GT = exports.FRAC = exports.EQUAL = exports.DOTM = exports.DOLLAR = exports.DIVIDE = exports.DEGREES = exports.CTIMES = exports.CONG = exports.COS = exports.CENT = exports.BRACKETS = exports.ARROWLLR = exports.ARROWRL = exports.ARROWLL = exports.ARCTAN = exports.ARCSIN = exports.ARCCOS = exports.APPROX = exports.ANGLE = exports.ABSOLUTE = void 0;
-
+exports.bpfrpt_proptype_SymbolDefination = exports.bpfrpt_proptype_MathQuillEditorSymbol = exports.VERT = exports.VDASH = exports.UNION = exports.UNDERLINE = exports.TRIG = exports.TRIANGLE = exports.TIMES = exports.THETA = exports.TAN = exports.SYMBOLS = exports.SUPERSETEQ = exports.SUPERSET = exports.SUM = exports.SUBSETEQ = exports.SUBSET = exports.SUBSCRIPT = exports.STRUCTURE = exports.SQRT2 = exports.SQRT = exports.SQR = exports.SMALLE = exports.SIN = exports.SIMEQ = exports.SIM = exports.POWER = exports.PM = exports.PLUS = exports.PI = exports.PHI = exports.PERP = exports.PARENS = exports.OVERLINE = exports.OPERATORS = exports.NEQ = exports.MINUS = exports.LTE = exports.LT = exports.LOG_E = exports.INTXY = exports.INTERSECT = exports.INT = exports.INFINITY = exports.IMAGINARY = exports.GTE = exports.GT = exports.FRAC = exports.EQUAL = exports.DOTM = exports.DOLLAR = exports.DIVIDE = exports.DEGREES = exports.CTIMES = exports.COS = exports.CONG = exports.CENT = exports.BRACKETS = exports.ARROWRL = exports.ARROWLLR = exports.ARROWLL = exports.ARCTAN = exports.ARCSIN = exports.ARCCOS = exports.APPROX = exports.ANGLE = exports.ABSOLUTE = void 0;
 var _i18n = _interopRequireDefault(require("../i18n"));
-
 var _propTypes = _interopRequireDefault(require("prop-types"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var bpfrpt_proptype_MathQuillEditorSymbol = {
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+var bpfrpt_proptype_MathQuillEditorSymbol = exports.bpfrpt_proptype_MathQuillEditorSymbol = {
   "label": _propTypes.default.string.isRequired,
   "latex": _propTypes.default.string.isRequired,
   "description": _propTypes.default.string.isRequired,
   "cmd": _propTypes.default.string.isRequired
 };
-exports.bpfrpt_proptype_MathQuillEditorSymbol = bpfrpt_proptype_MathQuillEditorSymbol;
-var bpfrpt_proptype_SymbolDefination = {
+var bpfrpt_proptype_SymbolDefination = exports.bpfrpt_proptype_SymbolDefination = {
   // The label shown at the command button.
   "label": _propTypes.default.string.isRequired,
   // The latex to use
@@ -35,7 +30,6 @@ var bpfrpt_proptype_SymbolDefination = {
   // the description of the command.
   "description": _propTypes.default.string.isRequired
 };
-exports.bpfrpt_proptype_SymbolDefination = bpfrpt_proptype_SymbolDefination;
 // It's hard to find a full list of latex symbols that we could use.
 // Here's are some references that might be helpful.
 // https://github.com/mathquill/mathquill/blob/23a0e88c80c79514ffc30ead490bd880306bce2a/src/commands/math/basicSymbols.js
@@ -43,450 +37,386 @@ exports.bpfrpt_proptype_SymbolDefination = bpfrpt_proptype_SymbolDefination;
 // https://inspera.atlassian.net/wiki/spaces/KB/pages/62062830/MathQuill+symbols
 // https://www.rapidtables.com/math/symbols/Basic_Math_Symbols.html
 // https://www.math.uci.edu/~xiangwen/pdf/LaTeX-Math-Symbols.pdf
-const ABSOLUTE = {
+
+const ABSOLUTE = exports.ABSOLUTE = {
   label: '|x|',
   latex: '|',
   description: 'Absolute Value',
   cmd: 'cmd'
 };
-exports.ABSOLUTE = ABSOLUTE;
-const ANGLE = {
+const ANGLE = exports.ANGLE = {
   label: '\\angle',
   latex: '\\angle',
   description: 'Angle',
   cmd: 'write'
 };
-exports.ANGLE = ANGLE;
-const APPROX = {
+const APPROX = exports.APPROX = {
   label: '\\approx',
   latex: '\\approx',
   description: 'Approximation',
   cmd: 'cmd'
 };
-exports.APPROX = APPROX;
-const ARCCOS = {
+const ARCCOS = exports.ARCCOS = {
   label: '\\arccos',
   latex: '\\arccos',
   description: 'Arc Cos',
   cmd: 'write'
 };
-exports.ARCCOS = ARCCOS;
-const ARCSIN = {
+const ARCSIN = exports.ARCSIN = {
   label: '\\arcsin',
   latex: '\\arcsin',
   description: 'Arc Sin',
   cmd: 'write'
 };
-exports.ARCSIN = ARCSIN;
-const ARCTAN = {
+const ARCTAN = exports.ARCTAN = {
   label: '\\arctan',
   latex: '\\arctan',
   description: 'Arc Tan',
   cmd: 'write'
 };
-exports.ARCTAN = ARCTAN;
-const ARROWLL = {
+const ARROWLL = exports.ARROWLL = {
   label: '\\Longleftarrow',
   latex: '\\Longleftarrow',
   description: 'Long Left Arrow',
   cmd: 'write'
 };
-exports.ARROWLL = ARROWLL;
-const ARROWRL = {
+const ARROWRL = exports.ARROWRL = {
   label: '\\Longrightarrow',
   latex: '\\Longrightarrow',
   description: 'Long Right Arrow',
   cmd: 'write'
 };
-exports.ARROWRL = ARROWRL;
-const ARROWLLR = {
+const ARROWLLR = exports.ARROWLLR = {
   label: '\\Longleftrightarrow',
   latex: '\\Longleftrightarrow',
   description: 'Long Left Right Arrow',
   cmd: 'write'
 };
-exports.ARROWLLR = ARROWLLR;
-const BRACKETS = {
+const BRACKETS = exports.BRACKETS = {
   label: '[x]',
   latex: '[',
   description: 'Brackets',
   cmd: 'cmd'
 };
-exports.BRACKETS = BRACKETS;
-const CENT = {
+const CENT = exports.CENT = {
   label: '¢',
   latex: '¢',
   description: 'Cent',
   cmd: 'write'
 };
-exports.CENT = CENT;
-const COS = {
+const COS = exports.COS = {
   label: '\\cos',
   latex: '\\cos',
   description: 'Cos',
   cmd: 'write'
 };
-exports.COS = COS;
-const CONG = {
+const CONG = exports.CONG = {
   label: '\\cong',
   latex: '\\cong',
   description: 'Congruent To',
   cmd: 'write'
 };
-exports.CONG = CONG;
-const CTIMES = {
+const CTIMES = exports.CTIMES = {
   label: '\\otimes',
   latex: '\\otimes',
   description: 'Tensor Product',
   cmd: 'write'
 };
-exports.CTIMES = CTIMES;
-const DEGREES = {
+const DEGREES = exports.DEGREES = {
   label: '\\deg',
   latex: '\\deg',
   description: 'Degrees',
   cmd: 'write'
 };
-exports.DEGREES = DEGREES;
-const DIVIDE = {
+const DIVIDE = exports.DIVIDE = {
   label: '\u00F7',
   latex: '\\divide',
   description: 'Division',
   cmd: 'cmd'
 };
-exports.DIVIDE = DIVIDE;
-const DOLLAR = {
+const DOLLAR = exports.DOLLAR = {
   label: '$',
   latex: '$',
   description: 'Dollar',
   cmd: 'write'
 };
-exports.DOLLAR = DOLLAR;
-const DOTM = {
+const DOTM = exports.DOTM = {
   label: '\\cdot',
   latex: '\\cdot',
   description: 'Dot for Multiplication',
   cmd: 'write'
 };
-exports.DOTM = DOTM;
-const EQUAL = {
+const EQUAL = exports.EQUAL = {
   label: '=',
   latex: '=',
   description: 'Equal',
   cmd: 'cmd'
 };
-exports.EQUAL = EQUAL;
-const FRAC = {
+const FRAC = exports.FRAC = {
   label: '\\frac {x}{y}',
   latex: '\\frac',
   description: 'Fraction',
   cmd: 'cmd'
 };
-exports.FRAC = FRAC;
-const GT = {
+const GT = exports.GT = {
   label: '>',
   latex: '>',
   description: 'Greater Than',
   cmd: 'cmd'
 };
-exports.GT = GT;
-const GTE = {
+const GTE = exports.GTE = {
   label: '\\ge',
   latex: '\\ge',
   description: 'Greater Than or Equal To',
   cmd: 'cmd'
 };
-exports.GTE = GTE;
-const IMAGINARY = {
+const IMAGINARY = exports.IMAGINARY = {
   label: 'i',
   latex: 'i',
   description: 'Imaginary Number',
   cmd: 'write'
 };
-exports.IMAGINARY = IMAGINARY;
-const INFINITY = {
+const INFINITY = exports.INFINITY = {
   label: '\\infty',
   latex: '\\infty',
   description: 'Infinity',
   cmd: 'write'
 };
-exports.INFINITY = INFINITY;
-const INT = {
+const INT = exports.INT = {
   label: '\\int',
   latex: '\\int',
   description: 'Integral',
   cmd: 'cmd'
 };
-exports.INT = INT;
-const INTERSECT = {
+const INTERSECT = exports.INTERSECT = {
   label: '\\cap',
   latex: '\\cap',
   description: 'Intersection',
   cmd: 'write'
 };
-exports.INTERSECT = INTERSECT;
-const INTXY = {
+const INTXY = exports.INTXY = {
   label: '\\int_{x}^{y}',
   latex: '\\int_{x}^{y}',
   description: 'Integral',
   cmd: 'write'
 };
-exports.INTXY = INTXY;
-const LOG_E = {
+const LOG_E = exports.LOG_E = {
   label: '\\log',
   latex: '\\log',
   description: 'Log',
   cmd: 'cmd'
 };
-exports.LOG_E = LOG_E;
-const LT = {
+const LT = exports.LT = {
   label: '<',
   latex: '<',
   description: 'Less Than',
   cmd: 'cmd'
 };
-exports.LT = LT;
-const LTE = {
+const LTE = exports.LTE = {
   label: '\\le',
   latex: 'le',
   description: 'Less Than or Equal To',
   cmd: 'cmd'
 };
-exports.LTE = LTE;
-const MINUS = {
+const MINUS = exports.MINUS = {
   label: '-',
   latex: '-',
   description: 'Subtraction',
   cmd: 'cmd'
 };
-exports.MINUS = MINUS;
-const NEQ = {
+const NEQ = exports.NEQ = {
   label: '\\neq',
   latex: '\\neq',
   description: 'Not Equal',
   cmd: 'write'
 };
-exports.NEQ = NEQ;
-const OVERLINE = {
+const OVERLINE = exports.OVERLINE = {
   label: '\\overline\u3000',
   latex: '\\overline',
   description: 'Overline',
   cmd: 'cmd'
 };
-exports.OVERLINE = OVERLINE;
-const PARENS = {
+const PARENS = exports.PARENS = {
   label: '(x)',
   latex: '(',
   description: 'Parentheses',
   cmd: 'cmd'
 };
-exports.PARENS = PARENS;
-const PERP = {
+const PERP = exports.PERP = {
   label: '\\perp',
   latex: '\\perp',
   description: 'Perpendicular Lines',
   cmd: 'write'
 };
-exports.PERP = PERP;
-const PHI = {
+const PHI = exports.PHI = {
   label: '\\phi',
   latex: '\\phi',
   description: 'Phi',
   cmd: 'write'
 };
-exports.PHI = PHI;
-const PI = {
+const PI = exports.PI = {
   label: '\\pi',
   latex: '\\pi',
   description: 'Pi',
   cmd: 'write'
 };
-exports.PI = PI;
-const PLUS = {
+const PLUS = exports.PLUS = {
   label: '+',
   latex: '+',
   description: 'Addition',
   cmd: 'cmd'
 };
-exports.PLUS = PLUS;
-const PM = {
+const PM = exports.PM = {
   label: '\\pm',
   latex: '\\pm',
   description: 'Plus-Minus',
   cmd: 'cmd'
 };
-exports.PM = PM;
-const POWER = {
+const POWER = exports.POWER = {
   label: 'x^{y}',
   latex: '^',
   description: 'Power',
   cmd: 'cmd'
 };
-exports.POWER = POWER;
-const SIMEQ = {
+const SIMEQ = exports.SIMEQ = {
   label: '\\simeq',
   latex: '\\simeq',
   description: 'Approximately Equal',
   cmd: 'write'
 };
-exports.SIMEQ = SIMEQ;
-const SIM = {
+const SIM = exports.SIM = {
   label: '\\sim',
   latex: '\\sim',
   description: 'Similarity',
   cmd: 'write'
 };
-exports.SIM = SIM;
-const SIN = {
+const SIN = exports.SIN = {
   label: '\\sin',
   latex: '\\sin',
   description: 'Sin',
   cmd: 'write'
 };
-exports.SIN = SIN;
-const SMALLE = {
+const SMALLE = exports.SMALLE = {
   label: '\u212F',
   latex: '\u212F',
   description: 'Script Small E',
   cmd: 'write'
 };
-exports.SMALLE = SMALLE;
-const SQR = {
+const SQR = exports.SQR = {
   label: 'x^{2}',
   latex: '^{2}',
   description: 'Square',
   cmd: 'write'
 };
-exports.SQR = SQR;
-const SQRT2 = {
+const SQRT2 = exports.SQRT2 = {
   label: '\\sqrt[x]{y}',
   latex: '\\sqrt[x]{y}',
   description: 'Square Root Alt',
   cmd: 'write'
 };
-exports.SQRT2 = SQRT2;
-const SQRT = {
+const SQRT = exports.SQRT = {
   label: '\\sqrt x',
   latex: '\\sqrt',
   description: 'Square Root',
   cmd: 'cmd'
 };
-exports.SQRT = SQRT;
-const SUBSCRIPT = {
+const SUBSCRIPT = exports.SUBSCRIPT = {
   label: 'x_{2}',
   latex: '_{2}',
   description: 'Subscript',
   cmd: 'write'
 };
-exports.SUBSCRIPT = SUBSCRIPT;
-const SUBSET = {
+const SUBSET = exports.SUBSET = {
   label: '\\sub',
   latex: '\\sub',
   description: 'Subset',
   cmd: 'write'
 };
-exports.SUBSET = SUBSET;
-const SUBSETEQ = {
+const SUBSETEQ = exports.SUBSETEQ = {
   label: '\\sube',
   latex: '\\sube',
   description: 'Subset or Equal',
   cmd: 'write'
 };
-exports.SUBSETEQ = SUBSETEQ;
-const SUM = {
+const SUM = exports.SUM = {
   label: '\\sum',
   latex: '\\sum',
   description: 'Summation',
   cmd: 'cmd'
 };
-exports.SUM = SUM;
-const SUPERSET = {
+const SUPERSET = exports.SUPERSET = {
   label: '\\supset',
   latex: '\\supset',
   description: 'Superset',
   cmd: 'write'
 };
-exports.SUPERSET = SUPERSET;
-const SUPERSETEQ = {
+const SUPERSETEQ = exports.SUPERSETEQ = {
   label: '\\supe',
   latex: '\\supe',
   description: 'Superset or Equal',
   cmd: 'write'
 };
-exports.SUPERSETEQ = SUPERSETEQ;
-const TAN = {
+const TAN = exports.TAN = {
   label: '\\tan',
   latex: '\\tan',
   description: 'Tan',
   cmd: 'write'
 };
-exports.TAN = TAN;
-const THETA = {
+const THETA = exports.THETA = {
   label: '\\theta',
   latex: '\\theta',
   description: 'Theta',
   cmd: 'write'
 };
-exports.THETA = THETA;
-const TIMES = {
+const TIMES = exports.TIMES = {
   label: '\\times',
   latex: '\\times',
   description: 'Multiplication',
   cmd: 'cmd'
 };
-exports.TIMES = TIMES;
-const TRIANGLE = {
+const TRIANGLE = exports.TRIANGLE = {
   label: '\\bigtriangleup',
   latex: '\\bigtriangleup',
   description: 'Triangle',
   cmd: 'write'
 };
-exports.TRIANGLE = TRIANGLE;
-const UNDERLINE = {
+const UNDERLINE = exports.UNDERLINE = {
   label: '\\underline\u3000',
   latex: '\\underline',
   description: 'Underline',
   cmd: 'cmd'
 };
-exports.UNDERLINE = UNDERLINE;
-const UNION = {
+const UNION = exports.UNION = {
   label: '\\cup',
   latex: '\\cup',
   description: 'Union',
   cmd: 'write'
 };
-exports.UNION = UNION;
-const VDASH = {
+const VDASH = exports.VDASH = {
   label: '\\vdash',
   latex: '\\vdash',
   description: 'Vertical and Dash Line',
   cmd: 'write'
 };
-exports.VDASH = VDASH;
-const VERT = {
+const VERT = exports.VERT = {
   label: '\\vert',
   latex: '\\vert',
   description: 'Vertical Line',
   cmd: 'write'
 };
-exports.VERT = VERT;
-const OPERATORS = {
+const OPERATORS = exports.OPERATORS = {
   title: [(0, _i18n.default)('Operators')],
   symbols: [PLUS, MINUS, TIMES, DOTM, DIVIDE, EQUAL, APPROX, SIM, SIMEQ, CONG, NEQ, PM, LT, GT, LTE, GTE, UNION, INTERSECT, SUBSET, SUBSETEQ, SUPERSET, SUPERSETEQ, VERT, CTIMES]
 };
-exports.OPERATORS = OPERATORS;
-const STRUCTURE = {
+const STRUCTURE = exports.STRUCTURE = {
   title: [(0, _i18n.default)('Structure')],
   symbols: [SUM, FRAC, PARENS, BRACKETS, SQR, SUBSCRIPT, ABSOLUTE, INTXY, OVERLINE, UNDERLINE, POWER, INT, SQRT, SQRT2, LOG_E]
 };
-exports.STRUCTURE = STRUCTURE;
-const SYMBOLS = {
+const SYMBOLS = exports.SYMBOLS = {
   title: [(0, _i18n.default)('Symbols')],
   symbols: [SMALLE, ANGLE, PI, IMAGINARY, DEGREES, THETA, PHI, TRIANGLE, INFINITY, DOLLAR, CENT, VDASH, PERP, ARROWLL, ARROWRL, ARROWLLR]
 };
-exports.SYMBOLS = SYMBOLS;
-const TRIG = {
+const TRIG = exports.TRIG = {
   title: [(0, _i18n.default)('Trigonometry')],
   symbols: [SIN, COS, TAN, ARCSIN, ARCCOS, ARCTAN]
 };
-exports.TRIG = TRIG;

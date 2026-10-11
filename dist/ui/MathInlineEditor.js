@@ -3,70 +3,52 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.bpfrpt_proptype_MathInlineEditorValue = exports.default = void 0;
-
+exports.default = exports.bpfrpt_proptype_MathInlineEditorValue = void 0;
 require("./czi-inline-editor.css");
-
 var _CustomButton = _interopRequireDefault(require("./CustomButton"));
-
 var _CustomEditorView = _interopRequireDefault(require("./CustomEditorView"));
-
 var _MathEditor = _interopRequireDefault(require("./MathEditor"));
-
 var React = _interopRequireWildcard(require("react"));
-
 var _createPopUp = _interopRequireDefault(require("./createPopUp"));
-
+var _i18n = _interopRequireDefault(require("./i18n"));
 var _propTypes = _interopRequireDefault(require("prop-types"));
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+var cache;
+function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var r, c, a = Object.defineProperty, n = { __proto__: null, default: e }; if (Object(e) !== e) return n; if (cache || "function" != typeof WeakMap || (cache = new WeakMap()), cache) { if (cache.has(e)) return cache.get(e); cache.set(e, n); } for (c in e) "default" !== c && {}.hasOwnProperty.call(e, c) && ((r = a && Object.getOwnPropertyDescriptor(e, c)) && (r.get || r.set) ? a(n, c, r) : n[c] = e[c]); return n; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, e) { if ("object" != typeof t || !t) return t; var r; if ("undefined" != typeof Symbol && void 0 !== (r = t[Symbol.toPrimitive])) { var i = r.call(t, e || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === e ? String : Number)(t); }
 const MathAlignValues = {
   NONE: {
     value: null,
-    text: 'Inline'
+    text: (0, _i18n.default)('Inline')
   },
   CENTER: {
     value: 'center',
-    text: 'Break text'
+    text: (0, _i18n.default)('Break text')
   }
 };
-var bpfrpt_proptype_MathInlineEditorValue = {
+var bpfrpt_proptype_MathInlineEditorValue = exports.bpfrpt_proptype_MathInlineEditorValue = {
   "align": _propTypes.default.string,
   "latex": _propTypes.default.string.isRequired
 };
-exports.bpfrpt_proptype_MathInlineEditorValue = bpfrpt_proptype_MathInlineEditorValue;
-
 class MathInlineEditor extends React.PureComponent {
   constructor() {
     super(...arguments);
-
     _defineProperty(this, "props", void 0);
-
     _defineProperty(this, "_popUp", null);
-
     _defineProperty(this, "_onClick", align => {
       const value = this.props.value || {};
       this.props.onSelect(_objectSpread(_objectSpread({}, value), {}, {
         align
       }));
     });
-
     _defineProperty(this, "_editLatex", latex => {
       if (this._popUp) {
         return;
       }
-
       const {
         editorView,
         value
@@ -81,14 +63,12 @@ class MathInlineEditor extends React.PureComponent {
         onClose: latex => {
           if (this._popUp) {
             this._popUp = null;
-
             if (latex !== undefined) {
               const value = this.props.value || {};
               this.props.onSelect(_objectSpread(_objectSpread({}, value), {}, {
                 latex
               }));
             }
-
             this.props.onEditEnd();
           }
         }
@@ -96,11 +76,9 @@ class MathInlineEditor extends React.PureComponent {
       this.props.onEditStart();
     });
   }
-
   componentWillUnmount() {
     this._popUp && this._popUp.close();
   }
-
   render() {
     const {
       align,
@@ -124,13 +102,10 @@ class MathInlineEditor extends React.PureComponent {
       className: "czi-inline-editor"
     }, buttons, /*#__PURE__*/React.createElement(_CustomButton.default, {
       key: "edit",
-      label: "Edit",
+      label: (0, _i18n.default)("Edit"),
       onClick: this._editLatex,
       value: latex || ''
     }));
   }
-
 }
-
-var _default = MathInlineEditor;
-exports.default = _default;
+var _default = exports.default = MathInlineEditor;

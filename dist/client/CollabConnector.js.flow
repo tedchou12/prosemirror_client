@@ -6,7 +6,7 @@ import { Schema } from 'prosemirror-model';
 import SimpleConnector from './SimpleConnector';
 import type { SetStateCall } from './SimpleConnector';
 import EditorConnection from './EditorConnection';
-import Reporter from './Reporter';
+// import Reporter from './Reporter';
 import ReactDOM from 'react-dom';
 
 type IdStrict = number;
@@ -40,7 +40,6 @@ class CollabConnector extends SimpleConnector {
     //   docID;
     this._connection = new EditorConnection(
       setState,
-      new Reporter(),
       ws_url,
       session_hash,
       user_id,

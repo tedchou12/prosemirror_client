@@ -3,25 +3,18 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.bpfrpt_proptype_PointerSurfaceProps = exports.default = void 0;
-
+exports.default = exports.bpfrpt_proptype_PointerSurfaceProps = void 0;
 var _classnames = _interopRequireDefault(require("classnames"));
-
 var React = _interopRequireWildcard(require("react"));
-
 var _preventEventDefault = _interopRequireDefault(require("./preventEventDefault"));
-
 var _propTypes = _interopRequireDefault(require("prop-types"));
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var bpfrpt_proptype_PointerSurfaceProps = {
+var cache;
+function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var r, c, a = Object.defineProperty, n = { __proto__: null, default: e }; if (Object(e) !== e) return n; if (cache || "function" != typeof WeakMap || (cache = new WeakMap()), cache) { if (cache.has(e)) return cache.get(e); cache.set(e, n); } for (c in e) "default" !== c && {}.hasOwnProperty.call(e, c) && ((r = a && Object.getOwnPropertyDescriptor(e, c)) && (r.get || r.set) ? a(n, c, r) : n[c] = e[c]); return n; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, e) { if ("object" != typeof t || !t) return t; var r; if ("undefined" != typeof Symbol && void 0 !== (r = t[Symbol.toPrimitive])) { var i = r.call(t, e || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === e ? String : Number)(t); }
+var bpfrpt_proptype_PointerSurfaceProps = exports.bpfrpt_proptype_PointerSurfaceProps = {
   "active": _propTypes.default.bool,
   "children": _propTypes.default.any,
   "className": _propTypes.default.string,
@@ -33,26 +26,17 @@ var bpfrpt_proptype_PointerSurfaceProps = {
   "title": _propTypes.default.string,
   "value": _propTypes.default.any
 };
-exports.bpfrpt_proptype_PointerSurfaceProps = bpfrpt_proptype_PointerSurfaceProps;
-
 class PointerSurface extends React.PureComponent {
   constructor() {
     super(...arguments);
-
     _defineProperty(this, "props", void 0);
-
     _defineProperty(this, "_clicked", false);
-
     _defineProperty(this, "_mul", false);
-
     _defineProperty(this, "_pressedTarget", null);
-
     _defineProperty(this, "_unmounted", false);
-
     _defineProperty(this, "state", {
       pressed: false
     });
-
     _defineProperty(this, "_onMouseEnter", e => {
       this._pressedTarget = null;
       e.preventDefault();
@@ -62,39 +46,31 @@ class PointerSurface extends React.PureComponent {
       } = this.props;
       onMouseEnter && onMouseEnter(value, e);
     });
-
     _defineProperty(this, "_onMouseLeave", e => {
       this._pressedTarget = null;
       const mouseUpEvent = e;
-
       this._onMouseUpCapture(mouseUpEvent);
     });
-
     _defineProperty(this, "_onMouseDown", e => {
       e.preventDefault();
       this._pressedTarget = null;
       this._clicked = false;
-
       if (e.which === 3 || e.button == 2) {
         // right click.
         return;
       }
-
       this.setState({
         pressed: true
       });
       this._pressedTarget = e.currentTarget;
       this._clicked = false;
-
       if (!this._mul) {
         document.addEventListener('mouseup', this._onMouseUpCapture, true);
         this._mul = true;
       }
     });
-
     _defineProperty(this, "_onMouseUp", e => {
       e.preventDefault();
-
       if (this._clicked || e.type === 'keypress') {
         const {
           onClick,
@@ -103,17 +79,14 @@ class PointerSurface extends React.PureComponent {
         } = this.props;
         !disabled && onClick && onClick(value, e);
       }
-
       this._pressedTarget = null;
       this._clicked = false;
     });
-
     _defineProperty(this, "_onMouseUpCapture", e => {
       if (this._mul) {
         this._mul = false;
         document.removeEventListener('mouseup', this._onMouseUpCapture, true);
       }
-
       const target = e.target;
       this._clicked = this._pressedTarget instanceof HTMLElement && target instanceof HTMLElement && (target === this._pressedTarget || target.contains(this._pressedTarget) || this._pressedTarget.contains(target));
       this.setState({
@@ -121,7 +94,6 @@ class PointerSurface extends React.PureComponent {
       });
     });
   }
-
   render() {
     const {
       className,
@@ -157,17 +129,12 @@ class PointerSurface extends React.PureComponent {
       title: title
     }, children);
   }
-
   componentWillUnmount() {
     this._unmounted = true;
-
     if (this._mul) {
       this._mul = false;
       document.removeEventListener('mouseup', this._onMouseUpCapture, true);
     }
   }
-
 }
-
-var _default = PointerSurface;
-exports.default = _default;
+var _default = exports.default = PointerSurface;

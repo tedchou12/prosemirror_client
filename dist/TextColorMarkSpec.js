@@ -4,15 +4,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-
 var _prosemirrorModel = require("prosemirror-model");
-
 var _toCSSColor = _interopRequireDefault(require("./ui/toCSSColor"));
-
 var _Types = require("./Types");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 const TextColorMarkSpec = {
   attrs: {
     color: ''
@@ -27,22 +22,17 @@ const TextColorMarkSpec = {
       };
     }
   }],
-
   toDOM(node) {
     const {
       color
     } = node.attrs;
     let style = '';
-
     if (color) {
       style += `color: ${color};`;
     }
-
     return ['span', {
       style
     }, 0];
   }
-
 };
-var _default = TextColorMarkSpec;
-exports.default = _default;
+var _default = exports.default = TextColorMarkSpec;

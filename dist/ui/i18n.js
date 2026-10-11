@@ -104,6 +104,7 @@ lang_list['zh'] = {
   '[settings_overscan] Page layout': '[settings_overscan] 頁面設定',
   '[undo] Undo': '[undo] 復原',
   '[redo] Redo': '[redo] 取消復原',
+  '[print] Print': '[print] 列印',
   'Normal': '一般文字',
   'Heading 1': '標題 1',
   'Heading 2': '標題 2',
@@ -132,17 +133,19 @@ lang_list['zh'] = {
   'Structure': '運算公式',
   'Symbols': '特殊符號',
   'Trigonometry': '三角函式',
-  'Change': '變更'
+  'Change': '變更',
+  'Inline': '環繞文字',
+  'Float left': '置左',
+  'Float right': '置右',
+  'Break text': '切段文字',
+  'Edit': '編輯'
 };
-
 function Lang(text) {
   if (lang == undefined || !(lang in lang_list)) {
     return lang_list['en'][text];
   }
-
   if (text in lang_list[lang]) {
     return lang_list[lang][text];
   }
-
   return text;
 }

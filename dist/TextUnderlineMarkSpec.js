@@ -4,9 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-
 var _Types = require("./Types");
-
 // https://bitbucket.org/atlassian/atlaskit/src/34facee3f461/packages/editor-core/src/schema/nodes/?at=master
 const TextUnderlineMarkSpec = {
   parseDOM: [{
@@ -22,11 +20,8 @@ const TextUnderlineMarkSpec = {
       return value === 'underline' && null;
     }
   }],
-
   toDOM() {
     return ['u', 0];
   }
-
 };
-var _default = TextUnderlineMarkSpec;
-exports.default = _default;
+var _default = exports.default = TextUnderlineMarkSpec;

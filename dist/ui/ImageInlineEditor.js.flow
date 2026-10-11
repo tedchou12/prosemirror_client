@@ -4,22 +4,24 @@ import './czi-inline-editor.css';
 import CustomButton from './CustomButton';
 import * as React from 'react';
 
+import Lang from './i18n';
+
 const ImageAlignValues = {
   NONE: {
     value: null,
-    text: 'Inline',
+    text: Lang('Inline'),
   },
   LEFT: {
     value: 'left',
-    text: 'Float left',
+    text: Lang('Float left'),
   },
   CENTER: {
     value: 'center',
-    text: 'Break text',
+    text: Lang('Break text'),
   },
   RIGHT: {
     value: 'right',
-    text: 'Float right',
+    text: Lang('Float right'),
   },
 };
 

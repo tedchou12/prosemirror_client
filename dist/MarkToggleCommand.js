@@ -4,29 +4,20 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-
 var _prosemirrorCommands = require("prosemirror-commands");
-
 var _prosemirrorState = require("prosemirror-state");
-
 var _prosemirrorTransform = require("prosemirror-transform");
-
 var _prosemirrorView = require("prosemirror-view");
-
 var _findNodesWithSameMark = _interopRequireDefault(require("./findNodesWithSameMark"));
-
 var _UICommand = _interopRequireDefault(require("./ui/UICommand"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, e) { if ("object" != typeof t || !t) return t; var r; if ("undefined" != typeof Symbol && void 0 !== (r = t[Symbol.toPrimitive])) { var i = r.call(t, e || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === e ? String : Number)(t); }
 class MarkToggleCommand extends _UICommand.default {
   constructor(markName) {
     super();
-
     _defineProperty(this, "_markName", void 0);
-
     _defineProperty(this, "isActive", state => {
       const {
         schema,
@@ -38,14 +29,11 @@ class MarkToggleCommand extends _UICommand.default {
         to
       } = selection;
       const markType = schema.marks[this._markName];
-
       if (markType && from < to) {
         return !!(0, _findNodesWithSameMark.default)(doc, from, to - 1, markType);
       }
-
       return false;
     });
-
     _defineProperty(this, "execute", (state, dispatch, view) => {
       const {
         schema,
@@ -53,38 +41,29 @@ class MarkToggleCommand extends _UICommand.default {
         tr
       } = state;
       const markType = schema.marks[this._markName];
-
       if (!markType) {
         return false;
       }
-
       if (selection.empty && !(selection instanceof _prosemirrorState.TextSelection)) {
         return false;
       }
-
       const {
         from,
         to
       } = selection;
-
       if (tr && to === from + 1) {
         const node = tr.doc.nodeAt(from);
-
         if (node.isAtom && !node.isText && node.isLeaf) {
           // An atomic node (e.g. Image) is selected.
           return false;
         }
-      } // TODO: Replace `toggleMark` with transform that does not change scroll
+      }
+
+      // TODO: Replace `toggleMark` with transform that does not change scroll
       // position.
-
-
       return (0, _prosemirrorCommands.toggleMark)(markType)(state, dispatch, view);
     });
-
     this._markName = markName;
   }
-
 }
-
-var _default = MarkToggleCommand;
-exports.default = _default;
+var _default = exports.default = MarkToggleCommand;

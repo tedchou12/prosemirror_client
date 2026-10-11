@@ -4,58 +4,35 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-
 var _classnames = _interopRequireDefault(require("classnames"));
-
 var _prosemirrorModel = require("prosemirror-model");
-
 var _prosemirrorView = require("prosemirror-view");
-
 var _prosemirrorState = require("prosemirror-state");
-
 var React = _interopRequireWildcard(require("react"));
-
 var _reactDom = _interopRequireDefault(require("react-dom"));
-
 var _CustomNodeView = _interopRequireWildcard(require("./CustomNodeView"));
-
 var _EditorFrameset = require("./EditorFrameset");
-
 var _Icon = _interopRequireDefault(require("./Icon"));
-
 var _ImageInlineEditor = _interopRequireDefault(require("./ImageInlineEditor"));
-
 var _ImageResizeBox = _interopRequireWildcard(require("./ImageResizeBox"));
-
 var _PopUpPosition = require("./PopUpPosition");
-
 var _ResizeObserver = _interopRequireWildcard(require("./ResizeObserver"));
-
 var _createPopUp = _interopRequireDefault(require("./createPopUp"));
-
 var _resolveImage = _interopRequireDefault(require("./resolveImage"));
-
 var _uuid = _interopRequireDefault(require("./uuid"));
-
 require("./czi-image-view.css");
-
 var _Types = require("../Types");
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+var cache;
+function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var r, c, a = Object.defineProperty, n = { __proto__: null, default: e }; if (Object(e) !== e) return n; if (cache || "function" != typeof WeakMap || (cache = new WeakMap()), cache) { if (cache.has(e)) return cache.get(e); cache.set(e, n); } for (c in e) "default" !== c && {}.hasOwnProperty.call(e, c) && ((r = a && Object.getOwnPropertyDescriptor(e, c)) && (r.get || r.set) ? a(n, c, r) : n[c] = e[c]); return n; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, e) { if ("object" != typeof t || !t) return t; var r; if ("undefined" != typeof Symbol && void 0 !== (r = t[Symbol.toPrimitive])) { var i = r.call(t, e || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === e ? String : Number)(t); }
 const EMPTY_SRC = 'data:image/gif;base64,' + 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-/* This value must be synced with the margin defined at .czi-image-view */
 
+/* This value must be synced with the margin defined at .czi-image-view */
 const IMAGE_MARGIN = 2;
 const MAX_SIZE = 100000;
 const IMAGE_PLACEHOLDER_SIZE = 24;
@@ -65,67 +42,52 @@ const DEFAULT_ORIGINAL_SIZE = {
   height: 0,
   width: 0
 };
-const SIZE_OVERFLOW = 100; // Get the maxWidth that the image could be resized to.
+const SIZE_OVERFLOW = 100;
 
+// Get the maxWidth that the image could be resized to.
 function getMaxResizeWidth(el) {
   // Ideally, the image should bot be wider then its containing element.
   let node = el.parentElement;
-
   while (node && !node.offsetParent) {
     node = node.parentElement;
   }
-
   if (node && node.offsetParent && node.offsetParent.offsetWidth && node.offsetParent.offsetWidth > 0) {
     const {
       offsetParent
     } = node;
     const style = el.ownerDocument.defaultView.getComputedStyle(offsetParent);
     let width = offsetParent.clientWidth - IMAGE_MARGIN * 2;
-
     if (style.boxSizing === 'border-box') {
       const pl = parseInt(style.paddingLeft, 10);
       const pr = parseInt(style.paddingRight, 10);
       width -= pl + pr;
     }
-
     return Math.max(width, _ImageResizeBox.MIN_SIZE);
-  } // Let the image resize freely.
-
-
+  }
+  // Let the image resize freely.
   return MAX_SIZE;
 }
-
 function resolveURL(runtime, src) {
   if (!runtime) {
     return src;
   }
-
   const {
     canProxyImageSrc,
     getProxyImageSrc
   } = runtime;
-
   if (src && canProxyImageSrc && getProxyImageSrc && canProxyImageSrc(src)) {
     return getProxyImageSrc(src);
   }
-
   return src;
 }
-
 class ImageViewBody extends React.PureComponent {
   constructor() {
     super(...arguments);
-
     _defineProperty(this, "props", void 0);
-
     _defineProperty(this, "_body", null);
-
     _defineProperty(this, "_id", (0, _uuid.default)());
-
     _defineProperty(this, "_inlineEditor", null);
-
     _defineProperty(this, "_mounted", false);
-
     _defineProperty(this, "state", {
       maxSize: {
         width: MAX_SIZE,
@@ -134,52 +96,42 @@ class ImageViewBody extends React.PureComponent {
       },
       originalSize: DEFAULT_ORIGINAL_SIZE
     });
-
     _defineProperty(this, "_resolveOriginalSize", async () => {
       if (!this._mounted) {
         // unmounted;
         return;
       }
-
       this.setState({
         originalSize: DEFAULT_ORIGINAL_SIZE
       });
       const src = this.props.node.attrs.src;
       const url = resolveURL(this.props.editorView.runtime, src);
       const originalSize = await (0, _resolveImage.default)(url);
-
       if (!this._mounted) {
         // unmounted;
         return;
       }
-
       if (this.props.node.attrs.src !== src) {
         // src had changed.
         return;
-      } // [FS] IRAD-992 2020-06-25
+      }
+      // [FS] IRAD-992 2020-06-25
       // Fix:Image exceeds the canvas
-
-
       const clientHeight = document.getElementsByClassName('czi-prosemirror-editor')[0].offsetHeight;
-
       if (originalSize.height > clientHeight) {
         originalSize.height = clientHeight - SIZE_OVERFLOW;
       }
-
       if (!originalSize.complete) {
         originalSize.width = _ImageResizeBox.MIN_SIZE;
         originalSize.height = _ImageResizeBox.MIN_SIZE;
       }
-
       this.setState({
         originalSize
       });
     });
-
     _defineProperty(this, "_onKeyDown", e => {
       console.log(e.keyCode);
     });
-
     _defineProperty(this, "_onResizeEnd", (width, height) => {
       const {
         getPos,
@@ -187,33 +139,28 @@ class ImageViewBody extends React.PureComponent {
         editorView
       } = this.props;
       const pos = getPos();
-
       const attrs = _objectSpread(_objectSpread({}, node.attrs), {}, {
         // TODO: Support UI for cropping later.
         crop: null,
         width,
         height
       });
-
       let tr = editorView.state.tr;
       const {
         selection
       } = editorView.state;
-      tr = tr.setNodeMarkup(pos, null, attrs); // [FS] IRAD-1005 2020-07-09
+      tr = tr.setNodeMarkup(pos, null, attrs);
+      // [FS] IRAD-1005 2020-07-09
       // Upgrade outdated packages.
       // reset selection to original using the latest doc.
-
       const origSelection = _prosemirrorState.NodeSelection.create(tr.doc, selection.from);
-
       tr = tr.setSelection(origSelection);
       editorView.dispatch(tr);
     });
-
     _defineProperty(this, "_onChange", value => {
       if (!this._mounted) {
         return;
       }
-
       const align = value ? value.align : null;
       const {
         getPos,
@@ -221,46 +168,38 @@ class ImageViewBody extends React.PureComponent {
         editorView
       } = this.props;
       const pos = getPos();
-
       const attrs = _objectSpread(_objectSpread({}, node.attrs), {}, {
         align
       });
-
       let tr = editorView.state.tr;
       const {
         selection
       } = editorView.state;
-      tr = tr.setNodeMarkup(pos, null, attrs); // [FS] IRAD-1005 2020-07-09
+      tr = tr.setNodeMarkup(pos, null, attrs);
+      // [FS] IRAD-1005 2020-07-09
       // Upgrade outdated packages.
       // reset selection to original using the latest doc.
-
       const origSelection = _prosemirrorState.NodeSelection.create(tr.doc, selection.from);
-
       tr = tr.setSelection(origSelection);
       editorView.dispatch(tr);
     });
-
     _defineProperty(this, "_onBodyRef", ref => {
       if (ref) {
-        this._body = ref; // Mounting
-
+        this._body = ref;
+        // Mounting
         const el = _reactDom.default.findDOMNode(ref);
-
         if (el instanceof HTMLElement) {
           _ResizeObserver.default.observe(el, this._onBodyResize);
         }
       } else {
         // Unmounting.
         const el = this._body && _reactDom.default.findDOMNode(this._body);
-
         if (el instanceof HTMLElement) {
           _ResizeObserver.default.unobserve(el);
         }
-
         this._body = null;
       }
     });
-
     _defineProperty(this, "_onBodyResize", info => {
       const width = this._body ? getMaxResizeWidth(_reactDom.default.findDOMNode(this._body)) : MAX_SIZE;
       this.setState({
@@ -272,21 +211,16 @@ class ImageViewBody extends React.PureComponent {
       });
     });
   }
-
   componentDidMount() {
     this._mounted = true;
-
     this._resolveOriginalSize();
-
     this._renderInlineEditor();
   }
-
   componentWillUnmount() {
     this._mounted = false;
     this._inlineEditor && this._inlineEditor.close();
     this._inlineEditor = null;
   }
-
   componentDidUpdate(prevProps) {
     const prevSrc = prevProps.node.attrs.src;
     const {
@@ -295,15 +229,12 @@ class ImageViewBody extends React.PureComponent {
     const {
       src
     } = node.attrs;
-
     if (prevSrc !== src) {
       // A new image is provided, resolve it.
       this._resolveOriginalSize();
     }
-
     this._renderInlineEditor();
   }
-
   render() {
     const {
       originalSize,
@@ -325,8 +256,9 @@ class ImageViewBody extends React.PureComponent {
       align,
       crop,
       rotate
-    } = attrs; // It's only active when the image's fully loaded.
+    } = attrs;
 
+    // It's only active when the image's fully loaded.
     const loading = originalSize === DEFAULT_ORIGINAL_SIZE;
     const active = !loading && focused && !readOnly && originalSize.complete;
     const src = originalSize.complete ? originalSize.src : EMPTY_SRC;
@@ -336,12 +268,10 @@ class ImageViewBody extends React.PureComponent {
       width,
       height
     } = attrs;
-
     if (loading) {
       width = width || IMAGE_PLACEHOLDER_SIZE;
       height = height || IMAGE_PLACEHOLDER_SIZE;
     }
-
     if (width && !height) {
       height = width / aspectRatio;
     } else if (height && !width) {
@@ -350,9 +280,7 @@ class ImageViewBody extends React.PureComponent {
       width = originalSize.width;
       height = originalSize.height;
     }
-
     let scale = 1;
-
     if (width > maxSize.width && (!crop || crop.width > maxSize.width)) {
       // Scale image to fit its containing space.
       // If the image is not cropped.
@@ -360,7 +288,6 @@ class ImageViewBody extends React.PureComponent {
       height = width / aspectRatio;
       scale = maxSize.width / width;
     }
-
     const className = (0, _classnames.default)('czi-image-view-body', {
       active,
       error,
@@ -383,10 +310,8 @@ class ImageViewBody extends React.PureComponent {
       position: 'relative'
     };
     const clipStyle = {};
-
     if (crop) {
       const cropped = _objectSpread({}, crop);
-
       if (scale !== 1) {
         scale = maxSize.width / cropped.width;
         cropped.width *= scale;
@@ -394,17 +319,14 @@ class ImageViewBody extends React.PureComponent {
         cropped.left *= scale;
         cropped.top *= scale;
       }
-
       clipStyle.width = cropped.width + 'px';
       clipStyle.height = cropped.height + 'px';
       imageStyle.left = cropped.left + 'px';
       imageStyle.top = cropped.top + 'px';
     }
-
     if (rotate) {
       clipStyle.transform = `rotate(${rotate}rad)`;
     }
-
     const errorView = error ? _Icon.default.get('error') : null;
     const errorTitle = error ? `Unable to load image from ${attrs.src || ''}` : undefined;
     return /*#__PURE__*/React.createElement("span", {
@@ -430,15 +352,12 @@ class ImageViewBody extends React.PureComponent {
       width: width
     }), errorView)), resizeBox);
   }
-
   _renderInlineEditor() {
     const el = document.getElementById(this._id);
-
     if (!el || el.getAttribute('data-active') !== 'true') {
       this._inlineEditor && this._inlineEditor.close();
       return;
     }
-
     const {
       node
     } = this.props;
@@ -446,7 +365,6 @@ class ImageViewBody extends React.PureComponent {
       value: node.attrs,
       onSelect: this._onChange
     };
-
     if (this._inlineEditor) {
       this._inlineEditor.update(editorProps);
     } else {
@@ -461,48 +379,36 @@ class ImageViewBody extends React.PureComponent {
       });
     }
   }
-
 }
-
 class ImageNodeView extends _CustomNodeView.default {
   // @override
   createDOMElement() {
     const el = document.createElement('span');
     el.className = 'czi-image-view';
-
     this._updateDOM(el);
-
     return el;
-  } // @override
+  }
 
-
+  // @override
   update(node, decorations) {
     super.update(node, decorations);
-
     this._updateDOM(this.dom);
-
     return true;
-  } // @override
+  }
 
-
+  // @override
   renderReactComponent() {
     return /*#__PURE__*/React.createElement(ImageViewBody, this.props);
   }
-
   _updateDOM(el) {
     const {
       align
     } = this.props.node.attrs;
     let className = 'czi-image-view';
-
     if (align) {
       className += ' align-' + align;
     }
-
     el.className = className;
   }
-
 }
-
-var _default = ImageNodeView;
-exports.default = _default;
+var _default = exports.default = ImageNodeView;

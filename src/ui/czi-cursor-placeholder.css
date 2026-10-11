@@ -6,6 +6,65 @@
   vertical-align: text-bottom;
 }
 
+.czi-local-cursor {
+  border-left: 2px solid #fa8100;
+  display: inline-block;
+  height: 1.2em;
+  margin-left: -1px;
+  margin-right: -1px;
+  pointer-events: none;
+  position: relative;
+  vertical-align: text-bottom;
+  width: 0;
+  z-index: 1;
+}
+
+.czi-local-cursor__label {
+  background-color: #fa8100;
+  color: #fff;
+  font-family: sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: normal;
+  left: -1px;
+  line-height: 1.2;
+  padding: 1px 4px;
+  position: absolute;
+  top: -1.2em;
+  user-select: none;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+.czi-remote-cursor {
+  border-left: 2px solid;
+  display: inline-block;
+  height: 1.2em;
+  margin-left: -1px;
+  margin-right: -1px;
+  pointer-events: none;
+  position: relative;
+  vertical-align: text-bottom;
+  width: 0;
+  z-index: 1;
+}
+
+.czi-remote-cursor__label {
+  color: #fff;
+  font-family: sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: normal;
+  left: -1px;
+  line-height: 1.2;
+  padding: 1px 4px;
+  position: absolute;
+  top: -1.2em;
+  user-select: none;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
 .czi-cursor-placeholder::after {
   background-color: var(--czi-selection-highlight-color-dark);
   bottom: 0;

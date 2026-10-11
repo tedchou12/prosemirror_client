@@ -3,50 +3,36 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.TABLE_COMMANDS_GROUP = exports.COMMAND_GROUPS = void 0;
 exports.parseLabel = parseLabel;
-exports.COMMAND_GROUPS = exports.TABLE_COMMANDS_GROUP = void 0;
-
 var React = _interopRequireWildcard(require("react"));
-
 var EditorCommands = _interopRequireWildcard(require("../EditorCommands"));
-
 var _FontSizeCommandMenuButton = _interopRequireDefault(require("./FontSizeCommandMenuButton"));
-
 var _FontTypeCommandMenuButton = _interopRequireDefault(require("./FontTypeCommandMenuButton"));
-
 var _HeadingCommandMenuButton = _interopRequireDefault(require("./HeadingCommandMenuButton"));
-
 var _Icon = _interopRequireDefault(require("./Icon"));
-
 var _i18n = _interopRequireDefault(require("./i18n"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+var cache;
+function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var r, c, a = Object.defineProperty, n = { __proto__: null, default: e }; if (Object(e) !== e) return n; if (cache || "function" != typeof WeakMap || (cache = new WeakMap()), cache) { if (cache.has(e)) return cache.get(e); cache.set(e, n); } for (c in e) "default" !== c && {}.hasOwnProperty.call(e, c) && ((r = a && Object.getOwnPropertyDescriptor(e, c)) && (r.get || r.set) ? a(n, c, r) : n[c] = e[c]); return n; }
 // eslint-disable-next-line no-unused-vars
 const ICON_LABEL_PATTERN = /\[([A-Za-z_\d]+)\](.*)/;
-
 function parseLabel(input) {
   const matched = input.match(ICON_LABEL_PATTERN);
-
   if (matched) {
-    const [// eslint-disable-next-line no-unused-vars
+    const [
+    // eslint-disable-next-line no-unused-vars
     all, icon, label] = matched;
     return {
       icon: icon ? _Icon.default.get(icon) : null,
       title: label || null
     };
   }
-
   return {
     icon: null,
     title: input || null
   };
 }
-
 const {
   // [FS][07-MAY-2020][IRAD-956]
   // BLOCKQUOTE_TOGGLE,
@@ -101,7 +87,7 @@ const {
   UL,
   UNDERLINE
 } = EditorCommands;
-const TABLE_COMMANDS_GROUP = [{
+const TABLE_COMMANDS_GROUP = exports.TABLE_COMMANDS_GROUP = [{
   [(0, _i18n.default)('Insert Table...')]: TABLE_INSERT_TABLE
 }, {
   [(0, _i18n.default)('Fill Color...')]: TABLE_BACKGROUND_COLOR,
@@ -117,23 +103,27 @@ const TABLE_COMMANDS_GROUP = [{
 }, {
   [(0, _i18n.default)('Merge Cells')]: TABLE_MERGE_CELLS,
   [(0, _i18n.default)('Split Row')]: TABLE_SPLIT_ROW
-}, // Disable these commands cause user rarely use them.
+},
+// Disable these commands cause user rarely use them.
 {
   [(0, _i18n.default)('Toggle Header Column')]: TABLE_TOGGLE_HEADER_COLUMN,
   [(0, _i18n.default)('Toggle Header Row')]: TABLE_TOGGLE_HEADER_ROW,
   [(0, _i18n.default)('Toggle Header Cells')]: TABLE_TOGGLE_HEADER_CELL
 }, {
   [(0, _i18n.default)('Delete Table')]: TABLE_DELETE_TABLE
-}]; // [FS] IRAD-1012 2020-07-14
+}];
+
+// [FS] IRAD-1012 2020-07-14
 // Fix: Toolbar is poorly organized.
 
-exports.TABLE_COMMANDS_GROUP = TABLE_COMMANDS_GROUP;
-const COMMAND_GROUPS = [{
-  [(0, _i18n.default)('[print] Print')]: PRINT
+const COMMAND_GROUPS = exports.COMMAND_GROUPS = [{
+  [(0, _i18n.default)('[print] Print')]: PRINT,
+  [(0, _i18n.default)('[settings_overscan] Page layout')]: DOC_LAYOUT
 }, {
   [(0, _i18n.default)('[undo] Undo')]: HISTORY_UNDO,
   [(0, _i18n.default)('[redo] Redo')]: HISTORY_REDO
-}, // [FS] IRAD-1042 2020-09-09
+},
+// [FS] IRAD-1042 2020-09-09
 // Changes the menu for include the custom styles.
 {
   [(0, _i18n.default)('[H1] Header 1')]: _HeadingCommandMenuButton.default
@@ -166,15 +156,13 @@ const COMMAND_GROUPS = [{
 }, {
   [(0, _i18n.default)('[link] Apply link')]: LINK_SET_URL,
   [(0, _i18n.default)('[image] Insert image')]: [{
-    [(0, _i18n.default)('Insert image by URL')]: IMAGE_FROM_URL // [Lang('Upload image from computer')]: IMAGE_UPLOAD,
-
+    [(0, _i18n.default)('Insert image by URL')]: IMAGE_FROM_URL
+    // [Lang('Upload image from computer')]: IMAGE_UPLOAD,
   }],
   [(0, _i18n.default)('[grid_on] Table...')]: TABLE_COMMANDS_GROUP,
   [(0, _i18n.default)('[hr] Horizontal line')]: HR,
-  [(0, _i18n.default)('[functions] Math')]: MATH_EDIT // [FS][07-MAY-2020][IRAD-956]
-  // '[format_quote] Block quote': BLOCKQUOTE_TOGGLE,
+  [(0, _i18n.default)('[functions] Math')]: MATH_EDIT
 
-}, {
-  [(0, _i18n.default)('[settings_overscan] Page layout')]: DOC_LAYOUT
+  // [FS][07-MAY-2020][IRAD-956]
+  // '[format_quote] Block quote': BLOCKQUOTE_TOGGLE,
 }];
-exports.COMMAND_GROUPS = COMMAND_GROUPS;

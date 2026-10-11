@@ -4,9 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-
 var _Types = require("./Types");
-
 const TextSuperMarkSpec = {
   parseDOM: [{
     tag: 'sup'
@@ -16,11 +14,8 @@ const TextSuperMarkSpec = {
       return value === 'super' && null;
     }
   }],
-
   toDOM() {
     return ['sup', 0];
   }
-
 };
-var _default = TextSuperMarkSpec;
-exports.default = _default;
+var _default = exports.default = TextSuperMarkSpec;

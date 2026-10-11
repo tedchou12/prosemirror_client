@@ -3,21 +3,15 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.HAIR_SPACE_CHAR = exports.SPACER_SIZE_TAB_LARGE = exports.SPACER_SIZE_TAB = exports.DOM_ATTRIBUTE_SIZE = void 0;
-
+exports.default = exports.SPACER_SIZE_TAB_LARGE = exports.SPACER_SIZE_TAB = exports.HAIR_SPACE_CHAR = exports.DOM_ATTRIBUTE_SIZE = void 0;
 var _prosemirrorModel = require("prosemirror-model");
-
 var _Types = require("./Types");
+const DOM_ATTRIBUTE_SIZE = exports.DOM_ATTRIBUTE_SIZE = 'data-spacer-size';
+const SPACER_SIZE_TAB = exports.SPACER_SIZE_TAB = 'tab';
+const SPACER_SIZE_TAB_LARGE = exports.SPACER_SIZE_TAB_LARGE = 'tab-large';
 
-const DOM_ATTRIBUTE_SIZE = 'data-spacer-size';
-exports.DOM_ATTRIBUTE_SIZE = DOM_ATTRIBUTE_SIZE;
-const SPACER_SIZE_TAB = 'tab';
-exports.SPACER_SIZE_TAB = SPACER_SIZE_TAB;
-const SPACER_SIZE_TAB_LARGE = 'tab-large'; // See http://jkorpela.fi/chars/spaces.html
-
-exports.SPACER_SIZE_TAB_LARGE = SPACER_SIZE_TAB_LARGE;
-const HAIR_SPACE_CHAR = '\u200A';
-exports.HAIR_SPACE_CHAR = HAIR_SPACE_CHAR;
+// See http://jkorpela.fi/chars/spaces.html
+const HAIR_SPACE_CHAR = exports.HAIR_SPACE_CHAR = '\u200A';
 const SpacerMarkSpec = {
   attrs: {
     size: {
@@ -39,7 +33,6 @@ const SpacerMarkSpec = {
       };
     }
   }],
-
   toDOM(node) {
     const {
       size
@@ -48,7 +41,5 @@ const SpacerMarkSpec = {
       [DOM_ATTRIBUTE_SIZE]: size
     }, 0];
   }
-
 };
-var _default = SpacerMarkSpec;
-exports.default = _default;
+var _default = exports.default = SpacerMarkSpec;

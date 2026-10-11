@@ -12,11 +12,8 @@ const HardBreakNodeSpec = {
   parseDOM: [{
     tag: 'br'
   }],
-
   toDOM() {
     return BR_DOM;
   }
-
 };
-var _default = HardBreakNodeSpec;
-exports.default = _default;
+var _default = exports.default = HardBreakNodeSpec;
