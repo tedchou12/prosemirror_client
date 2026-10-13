@@ -7,7 +7,7 @@
 }
 
 .czi-local-cursor {
-  border-left: 2px solid #fa8100;
+  border-left: 2px solid #000000;
   display: inline-block;
   height: 1.2em;
   margin-left: -1px;
@@ -20,7 +20,7 @@
 }
 
 .czi-local-cursor__label {
-  background-color: #fa8100;
+  background-color: #000000;
   color: #fff;
   font-family: sans-serif;
   font-size: 12px;
@@ -81,6 +81,9 @@
 }
 
 @-webkit-keyframes czi_cursor_blink {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from { 
+    opacity: 1;
+  } to { 
+    opacity: 0;
+  }
 }

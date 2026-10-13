@@ -111,7 +111,7 @@ class EditorConnection {
 
     if (newEditState) {
       let sendable;
-      if (newEditState.doc.content.size > 40000) {
+      if (newEditState.doc.content.size > 1000000) {
         if (this.state.comm !== 'detached') {
           if (typeof(show_message) === typeof(Function)) {
             show_message('size_limit');
