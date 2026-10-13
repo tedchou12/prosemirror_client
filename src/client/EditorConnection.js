@@ -160,7 +160,7 @@ class EditorConnection {
     this.socket.onopen = function(e) {
       //does something when socket opens
       if (typeof(add_user) === typeof(Function)) {
-        add_user(connection.user_id, window.user_name);
+        add_user(connection.user_id, window.user_name, '#2c2c2c');
       }
       connection.state.comm = 'start';
       retry_count = 0;
@@ -202,7 +202,8 @@ class EditorConnection {
           });
         }
       } else if (data.type == 'selection' || data.type == 'cursor') {
-        const cursorData = json;
+        var cursorData = json;
+        cursorData.color = cursorColor(cursorData.userId + window.doc_id);
         if (
           connection.state.edit &&
           cursorData &&
@@ -224,7 +225,7 @@ class EditorConnection {
         if ('add' in json && 'user_id' in json['add'] && (Object.keys(json['add']['user_id']).length || json.add.user_id.length)) {
           if (typeof(add_user) === typeof(Function)) {
             for (var addIndex in json['add']['user_id']) {
-              add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex]);
+              add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex], cursorColor(json['add']['user_id'][addIndex] + window.doc_id));
             }
           }
         }
@@ -386,6 +387,18 @@ function repeat(val: any, n: number): Array<any> {
     result.push(val);
   }
   return result;
+}
+
+function cursorColor(rand_id: string): string {
+  return `hsl(${colorHue(rand_id)}, 72%, 42%)`;
+}
+
+function colorHue(rand_id: string): number {
+  let hash = 0;
+  for (let i = 0; i < rand_id.length; i += 1) {
+    hash = (hash * 31 + rand_id.charCodeAt(i)) | 0;
+  }
+  return (hash >>> 0) % 360;
 }
 
 export default EditorConnection;
