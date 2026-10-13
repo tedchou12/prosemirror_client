@@ -1,54 +1,49 @@
 @import 'czi-vars.css';
 
-.czi-cursor-placeholder {
-  display: inline-block;
-  position: relative;
-  vertical-align: text-bottom;
-}
+/* Zero-size in-flow widgets so the caret never shifts text, wraps lines, or
+   resizes tables. The visible bar is painted with an absolutely positioned
+   ::before / ::after overlay. Remote color comes from inline borderLeftColor. */
 
-.czi-local-cursor {
-  border-left: 2px solid #000000;
-  display: inline-block;
-  height: 1.2em;
-  margin-left: -1px;
-  margin-right: -1px;
-  pointer-events: none;
-  position: relative;
-  vertical-align: text-bottom;
-  width: 0;
-  z-index: 1;
-}
-
-.czi-local-cursor__label {
-  background-color: #000000;
-  color: #fff;
-  font-family: sans-serif;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: normal;
-  left: -1px;
-  line-height: 1.2;
-  padding: 1px 4px;
-  position: absolute;
-  top: -1.2em;
-  user-select: none;
-  white-space: nowrap;
-  z-index: 1000;
-}
-
+.czi-cursor-placeholder,
+.czi-local-cursor,
 .czi-remote-cursor {
-  border-left: 2px solid;
+  border: 0;
   display: inline-block;
-  height: 1.2em;
-  margin-left: -1px;
-  margin-right: -1px;
+  font-size: 1em;
+  height: 0;
+  line-height: 0;
+  margin: 0;
+  max-height: 0;
+  max-width: 0;
+  overflow: visible;
+  padding: 0;
   pointer-events: none;
   position: relative;
-  vertical-align: text-bottom;
+  vertical-align: baseline;
   width: 0;
-  z-index: 1;
 }
 
+.czi-local-cursor::before,
+.czi-remote-cursor::before {
+  bottom: 0;
+  content: '';
+  height: 1.2em;
+  left: -1px;
+  pointer-events: none;
+  position: absolute;
+  width: 0;
+}
+
+.czi-local-cursor::before {
+  border-left: 2px solid #000000;
+}
+
+.czi-remote-cursor::before {
+  border-left: 2px solid;
+  border-left-color: inherit;
+}
+
+.czi-local-cursor__label,
 .czi-remote-cursor__label {
   color: #fff;
   font-family: sans-serif;
@@ -58,11 +53,17 @@
   left: -1px;
   line-height: 1.2;
   padding: 1px 4px;
+  pointer-events: none;
   position: absolute;
-  top: -1.2em;
+  bottom: 1.2em;
+  top: auto;
   user-select: none;
   white-space: nowrap;
   z-index: 1000;
+}
+
+.czi-local-cursor__label {
+  background-color: #000000;
 }
 
 .czi-cursor-placeholder::after {
@@ -81,9 +82,9 @@
 }
 
 @-webkit-keyframes czi_cursor_blink {
-  from { 
+  from {
     opacity: 1;
-  } to { 
+  } to {
     opacity: 0;
   }
 }
