@@ -20,11 +20,7 @@ import uuid from '../uuid';
 // [FS] IRAD-1040 2020-09-02
 
 var connection = null;
-var retry_count = 0;
-var retry_timer = 0;
-var retry_time = [15, 30, 60, 90, 180, 360, 720];
-var last_connection = null;
-var unauthorized = false;
+
 
 class State {
   edit: EditorState;
@@ -47,14 +43,14 @@ class EditorConnection {
   schema: Schema;
   socket: any;
 
-  constructor(onReady: Function, ws_url: string, session_hash: string, user_id: string, doc_id: string) {
+  constructor(onReady: Function, ws_url: string, doc_id: string) {
     this.schema = null;
-    this.service = 'doc_editor';
+    this.service = editor.service;
     this.ws_url = ws_url;
     this.doc_id = doc_id;
-    this.user_id = user_id;
-    this.client_id = user_id + '#' + uuid();
-    this.session_hash = session_hash;
+    this.user_id = editor.user_id;
+    this.client_id = editor.user_id + '#' + uuid();
+    this.session_hash = editor.session_hash;
     this.state = new State(null, 'start');
     this.request = null;
     this.view = null;
@@ -62,10 +58,15 @@ class EditorConnection {
     this.ready = false;
     this.onReady = onReady;
     this.socket = null;
-
     this.temp = null;
-
-
+    // config vars
+    this.max_docsize = editor.max_docsize;
+    this.retry_time = editor.retry_time;
+    // temp vars
+    this.retry_count = 0;
+    this.retry_timer = 0;
+    this.last_connection = null;
+    this.unauthorized = false;
     // for websocket onmessage
     connection = this;
   }
@@ -111,7 +112,7 @@ class EditorConnection {
 
     if (newEditState) {
       let sendable;
-      if (newEditState.doc.content.size > 1000000) {
+      if (newEditState.doc.content.size > this.max_docsize) {
         if (this.state.comm !== 'detached') {
           if (typeof(show_message) === typeof(Function)) {
             show_message('size_limit');
@@ -160,20 +161,20 @@ class EditorConnection {
     this.socket.onopen = function(e) {
       //does something when socket opens
       if (typeof(add_user) === typeof(Function)) {
-        add_user(connection.user_id, window.user_name, '#2c2c2c');
+        add_user(connection.user_id, editor.user_name, '#2c2c2c');
       }
       connection.state.comm = 'start';
-      retry_count = 0;
-      retry_timer = 0;
+      this.retry_count = 0;
+      this.retry_timer = 0;
       if (typeof(hide_message) === typeof(Function)) {
         hide_message();
       }
-      last_connection = Date.now();
+      this.last_connection = Date.now();
     }
 
     // replaces poll
     this.socket.onmessage = function(e) {
-      unauthorized = false;
+      this.unauthorized = false;
       var data = JSON.parse(e.data);
       var json = data.data;
 
@@ -203,7 +204,7 @@ class EditorConnection {
         }
       } else if (data.type == 'selection' || data.type == 'cursor') {
         var cursorData = json;
-        cursorData.color = cursorColor(cursorData.userId + window.doc_id);
+        cursorData.color = cursorColor(cursorData.userId + doc_id);
         if (
           connection.state.edit &&
           cursorData &&
@@ -225,7 +226,7 @@ class EditorConnection {
         if ('add' in json && 'user_id' in json['add'] && (Object.keys(json['add']['user_id']).length || json.add.user_id.length)) {
           if (typeof(add_user) === typeof(Function)) {
             for (var addIndex in json['add']['user_id']) {
-              add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex], cursorColor(json['add']['user_id'][addIndex] + window.doc_id));
+              add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex], cursorColor(json['add']['user_id'][addIndex] + doc_id));
             }
           }
         }
@@ -256,15 +257,15 @@ class EditorConnection {
       if (typeof(show_message) === typeof(Function)) {
         show_message('error');
       }
-      if (last_connection != null && (last_connection - Date.now()) < 3000) {
+      if (this.last_connection != null && (this.last_connection - Date.now()) < 3000) {
         connection.state.comm = 'recover';
-        retry_count = 1;
-        retry_timer = 15;
-        if (unauthorized == false) {
+        this.retry_count = 1;
+        this.retry_timer = 15;
+        if (this.unauthorized == false) {
           connection.dispatch({ type: 'recover' });
-          unauthorized = true;
+          this.unauthorized = true;
         }
-      } else if (retry_count == 0 && retry_timer == 0) {
+      } else if (this.retry_count == 0 && this.retry_timer == 0) {
         connection.dispatch({ type: 'recover' });
       }
     }
@@ -363,20 +364,20 @@ class EditorConnection {
 function recover() {
   clearTimeout(recover);
   if (connection.state.comm == 'recover') {
-    if (retry_timer <= 0 && retry_count <= retry_time.length) {
+    if (this.retry_timer <= 0 && this.retry_count <= this.retry_time.length) {
       connection.dispatch({ type: 'restart' });
-      if (retry_count < retry_time.length) {
-        retry_timer = retry_time[retry_count];
-        retry_count = retry_count + 1;
+      if (this.retry_count < this.retry_time.length) {
+        this.retry_timer = this.retry_time[this.retry_count];
+        this.retry_count = this.retry_count + 1;
         setTimeout(recover, 1000);
       }
     } else {
-      retry_timer = retry_timer - 1;
+      this.retry_timer = this.retry_timer - 1;
       setTimeout(recover, 1000);
     }
   } else {
-    retry_count = 0;
-    retry_timer = 0;
+    this.retry_count = 0;
+    this.retry_timer = 0;
     clearTimeout(recover);
   }
 }
