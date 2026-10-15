@@ -168,7 +168,7 @@ class EditorConnection {
   // }
 
   ws_start(): void {
-    this.socket = new WebSocket(ws_url + '?service=' + custom_variables.service + '&user_id=' + custom_variables.user_id + '&session_hash=' + custom_variables.session_hash + '&doc_id=' + doc_id + '&client_id=' + encodeURIComponent(btoa(custom_variables.client_id)));
+    this.socket = new WebSocket(custom_variables.ws_url + '?service=' + custom_variables.service + '&user_id=' + custom_variables.user_id + '&session_hash=' + custom_variables.session_hash + '&doc_id=' + custom_variables.doc_id + '&client_id=' + encodeURIComponent(btoa(custom_variables.client_id)));
 
     this.socket.onopen = function(e) {
       //does something when socket opens
@@ -216,11 +216,11 @@ class EditorConnection {
         }
       } else if (data.type == 'selection' || data.type == 'cursor') {
         const cursorData = json;
-        cursorData.color = cursorColor(cursorData.userId + doc_id);
+        cursorData.color = cursorColor(cursorData.userId + custom_variables.doc_id);
         if (
           connection.state.edit &&
           cursorData &&
-          cursorData.clientID !== connection.client_id
+          cursorData.clientID !== custom_variables.client_id
         ) {
           const transaction = receiveRemoteCursor(connection.state.edit, cursorData);
           if (transaction) {
@@ -240,7 +240,7 @@ class EditorConnection {
         if ('add' in json && 'user_id' in json['add'] && (Object.keys(json['add']['user_id']).length || json.add.user_id.length)) {
           if (typeof(add_user) === typeof(Function)) {
             for (var addIndex in json['add']['user_id']) {
-              add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex], cursorColor(json['add']['user_id'][addIndex] + doc_id));
+              add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex], cursorColor(json['add']['user_id'][addIndex] + custom_variables.doc_id));
             }
           }
         }
