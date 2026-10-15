@@ -29,7 +29,12 @@
             lang: 'zh',
             max_docsize: 1000000,
             retry_time: [15, 30, 60, 90, 180, 360, 720],
+            update_title: function(title) {
+                return title;
+            }
         }
+
+        connection.title_update('New Title');
     </script>
 </body>
 </html>

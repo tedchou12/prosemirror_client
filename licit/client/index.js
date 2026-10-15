@@ -7,7 +7,7 @@ import CustomLicitRuntime from './CustomLicitRuntime';
 
 function main(): void {
   let el = null;
-  if (window.lang) {
+  if (editor.lang) {
     el = document.getElementById('doc_editor');
   } else {
     el = document.createElement('div');
@@ -29,9 +29,9 @@ function main(): void {
   // null means it will take licit EditorRuntime
   // const runTime = new CustomLicitRuntime();
 
-  const ws_url = window.ws_url;
-  const doc_id = window.doc_id;
-  const read_only = window.read_only;
+  const ws_url = editor.ws_url;
+  const doc_id = editor.doc_id;
+  const read_only = editor.read_only;
   const width = '100vw';
   const height = '100vh';
 
@@ -50,6 +50,9 @@ function onChangeCB(data) {
 
 function onReadyCB(ref) {
   // console.log('ref: ' + ref);
+  editor.title_update = function(title) {
+    ref._connector._connection.title_update(title);
+  };
 }
 
 window.onload = main;

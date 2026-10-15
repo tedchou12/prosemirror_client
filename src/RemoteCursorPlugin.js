@@ -55,7 +55,7 @@ function decorationsFor(state: EditorState, cursors: Array<RemoteCursor>): Decor
     const to = Math.max(anchor, head);
     if (from < to) {
       decorations.push(Decoration.inline(from, to, {
-        style: 'background-color: ' + cursor.color,
+        style: `background-color: ${cursor.color}`,
       }, {
         inclusiveEnd: true,
         inclusiveStart: true,
