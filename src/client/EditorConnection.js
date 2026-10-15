@@ -46,16 +46,16 @@ class EditorConnection {
   constructor(onReady: Function, ws_url: string, doc_id: string) {
     // attach variables to connection
     custom_variables = {};
-    custom_variables.service = editor.service;
-    custom_variables.ws_url = ws_url;
-    custom_variables.doc_id = doc_id;
-    custom_variables.user_id = editor.user_id;
-    custom_variables.user_name = editor.user_name;
-    custom_variables.session_hash = editor.session_hash;
-    custom_variables.client_id = editor.user_id + '#' + uuid();
+    custom_variables.service = window.service;
+    this.ws_url = window.ws_url;
+    this.doc_id = window.doc_id;
+    custom_variables.user_id = window.user_id;
+    custom_variables.user_name = window.user_name;
+    custom_variables.session_hash = window.session_hash;
+    custom_variables.client_id = window.user_id + '#' + uuid();
     // config vars
-    custom_variables.max_docsize = editor.max_docsize;
-    custom_variables.retry_time = editor.retry_time;
+    custom_variables.max_docsize = window.max_docsize;
+    custom_variables.retry_time = window.retry_time;
     // temp vars
     custom_variables.retry_count = 0;
     custom_variables.retry_timer = 0;
@@ -168,7 +168,7 @@ class EditorConnection {
   // }
 
   ws_start(): void {
-    this.socket = new WebSocket(custom_variables.ws_url + '?service=' + custom_variables.service + '&user_id=' + custom_variables.user_id + '&session_hash=' + custom_variables.session_hash + '&doc_id=' + custom_variables.doc_id + '&client_id=' + encodeURIComponent(btoa(custom_variables.client_id)));
+    this.socket = new WebSocket(this.ws_url + '?service=' + custom_variables.service + '&user_id=' + custom_variables.user_id + '&session_hash=' + custom_variables.session_hash + '&doc_id=' + this.doc_id + '&client_id=' + encodeURIComponent(btoa(custom_variables.client_id)));
 
     this.socket.onopen = function(e) {
       //does something when socket opens
@@ -216,7 +216,7 @@ class EditorConnection {
         }
       } else if (data.type == 'selection' || data.type == 'cursor') {
         const cursorData = json;
-        cursorData.color = cursorColor(cursorData.userId + custom_variables.doc_id);
+        cursorData.color = cursorColor(cursorData.userId + this.doc_id);
         if (
           connection.state.edit &&
           cursorData &&
@@ -240,7 +240,7 @@ class EditorConnection {
         if ('add' in json && 'user_id' in json['add'] && (Object.keys(json['add']['user_id']).length || json.add.user_id.length)) {
           if (typeof(add_user) === typeof(Function)) {
             for (var addIndex in json['add']['user_id']) {
-              add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex], cursorColor(json['add']['user_id'][addIndex] + custom_variables.doc_id));
+              add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex], cursorColor(json['add']['user_id'][addIndex] + this.doc_id));
             }
           }
         }
