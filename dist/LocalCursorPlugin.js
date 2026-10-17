@@ -15,7 +15,7 @@ function createLocalCursor() {
   cursor.setAttribute('aria-hidden', 'true');
   const label = document.createElement('span');
   label.className = 'czi-local-cursor__label';
-  label.textContent = window.user_name;
+  label.textContent = editor.user_name;
   cursor.appendChild(label);
   return cursor;
 }

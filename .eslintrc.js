@@ -20,6 +20,7 @@ module.exports = {
     'no-undef': 'off',
     'no-unused-vars': ['error', { args: 'none' }],
     'no-useless-escape': 'off',
+    'react/jsx-uses-vars': 'error',
   },
   globals: {
     add_user: 'readonly',

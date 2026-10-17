@@ -1,5 +1,5 @@
 
-const lang = window.lang ? window.lang : 'en';
+const lang = editor.lang ? editor.lang : 'en';
 
 let lang_list = {}
 lang_list['en'] = {'Insert Table...': 'Insert Table...',

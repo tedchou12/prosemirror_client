@@ -20,11 +20,7 @@ import uuid from '../uuid';
 // [FS] IRAD-1040 2020-09-02
 
 var connection = null;
-var retry_count = 0;
-var retry_timer = 0;
-var retry_time = [15, 30, 60, 90, 180, 360, 720];
-var last_connection = null;
-var unauthorized = false;
+var custom_variables = {};
 
 class State {
   edit: EditorState;
@@ -47,14 +43,26 @@ class EditorConnection {
   schema: Schema;
   socket: any;
 
-  constructor(onReady: Function, ws_url: string, session_hash: string, user_id: string, doc_id: string) {
+  constructor(onReady: Function, ws_url: string, doc_id: string) {
+    // attach variables to connection
+    custom_variables = {};
+    custom_variables.service = editor.service;
+    custom_variables.ws_url = editor.ws_url;
+    custom_variables.doc_id = editor.doc_id;
+    custom_variables.user_id = editor.user_id;
+    custom_variables.user_name = editor.user_name;
+    custom_variables.session_hash = editor.session_hash;
+    custom_variables.client_id = editor.user_id + '#' + uuid();
+    // config vars
+    custom_variables.max_docsize = editor.max_docsize;
+    custom_variables.retry_time = editor.retry_time;
+    // temp vars
+    custom_variables.retry_count = 0;
+    custom_variables.retry_timer = 0;
+    custom_variables.last_connection = null;
+    custom_variables.unauthorized = false;
+    // other variables
     this.schema = null;
-    this.service = 'doc_editor';
-    this.ws_url = ws_url;
-    this.doc_id = doc_id;
-    this.user_id = user_id;
-    this.client_id = user_id + '#' + uuid();
-    this.session_hash = session_hash;
     this.state = new State(null, 'start');
     this.request = null;
     this.view = null;
@@ -62,11 +70,8 @@ class EditorConnection {
     this.ready = false;
     this.onReady = onReady;
     this.socket = null;
-
     this.temp = null;
-
-
-    // for websocket onmessage
+    // initiate for websocket onmessage
     connection = this;
   }
 
@@ -83,7 +88,7 @@ class EditorConnection {
         doc: action.doc,
         plugins: EditorPlugins.concat([
           collab({
-            clientID: this.client_id,
+            clientID: custom_variables.client_id,
             version: action.version,
           }),
         ]),
@@ -111,7 +116,7 @@ class EditorConnection {
 
     if (newEditState) {
       let sendable;
-      if (newEditState.doc.content.size > 1000000) {
+      if (newEditState.doc.content.size > custom_variables.max_docsize) {
         if (this.state.comm !== 'detached') {
           if (typeof(show_message) === typeof(Function)) {
             show_message('size_limit');
@@ -147,33 +152,41 @@ class EditorConnection {
         anchor: selection.anchor,
         head: selection.head,
       },
-      clientID: this.client_id,
+      clientID: custom_variables.client_id,
     };
     const json = JSON.stringify({type: 'selection', data: content});
     this.socket.send(json);
   }
 
+  // Send title updates to the server
+  title_update(title: String): void {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+      return;
+    }
+    const json = JSON.stringify({type: 'title', data: title});
+    this.socket.send(json);
+  }
+
   ws_start(): void {
-    const ws_url = this.ws_url + '?service=' + this.service + '&user_id=' + this.user_id + '&session_hash=' + this.session_hash + '&doc_id=' + this.doc_id + '&client_id=' + encodeURIComponent(btoa(this.client_id));
-    this.socket = new WebSocket(ws_url);
+    this.socket = new WebSocket(custom_variables.ws_url + '?service=' + custom_variables.service + '&user_id=' + custom_variables.user_id + '&session_hash=' + custom_variables.session_hash + '&doc_id=' + custom_variables.doc_id + '&client_id=' + encodeURIComponent(btoa(custom_variables.client_id)));
 
     this.socket.onopen = function(e) {
       //does something when socket opens
       if (typeof(add_user) === typeof(Function)) {
-        add_user(connection.user_id, window.user_name);
+        add_user(custom_variables.user_id, custom_variables.user_name, '#2c2c2c');
       }
       connection.state.comm = 'start';
-      retry_count = 0;
-      retry_timer = 0;
+      custom_variables.retry_count = 0;
+      custom_variables.retry_timer = 0;
       if (typeof(hide_message) === typeof(Function)) {
         hide_message();
       }
-      last_connection = Date.now();
+      custom_variables.last_connection = Date.now();
     }
 
     // replaces poll
     this.socket.onmessage = function(e) {
-      unauthorized = false;
+      custom_variables.unauthorized = false;
       var data = JSON.parse(e.data);
       var json = data.data;
 
@@ -203,10 +216,11 @@ class EditorConnection {
         }
       } else if (data.type == 'selection' || data.type == 'cursor') {
         const cursorData = json;
+        cursorData.color = cursorColor(cursorData.userId + custom_variables.doc_id);
         if (
           connection.state.edit &&
           cursorData &&
-          cursorData.clientID !== connection.client_id
+          cursorData.clientID !== custom_variables.client_id
         ) {
           const transaction = receiveRemoteCursor(connection.state.edit, cursorData);
           if (transaction) {
@@ -220,11 +234,15 @@ class EditorConnection {
             transaction: removeRemoteCursorsForUser(connection.state.edit, String(json.userId)),
           });
         }
+      } else if (data.type == 'title') {
+        if (typeof(editor.update_title) === typeof(editor.update_title)) {
+          editor.update_title(data.data);
+        }
       } else if (data.type == 'users') {
         if ('add' in json && 'user_id' in json['add'] && (Object.keys(json['add']['user_id']).length || json.add.user_id.length)) {
           if (typeof(add_user) === typeof(Function)) {
             for (var addIndex in json['add']['user_id']) {
-              add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex]);
+              add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex], cursorColor(json['add']['user_id'][addIndex] + custom_variables.doc_id));
             }
           }
         }
@@ -249,21 +267,21 @@ class EditorConnection {
       }
     }
 
-    //try reconnects
+    // handling reconnections
     this.socket.onclose = function(e) {
       // Too far behind. Revert to server state
       if (typeof(show_message) === typeof(Function)) {
         show_message('error');
       }
-      if (last_connection != null && (last_connection - Date.now()) < 3000) {
+      if (custom_variables.last_connection != null && (custom_variables.last_connection - Date.now()) < 3000) {
         connection.state.comm = 'recover';
-        retry_count = 1;
-        retry_timer = 15;
-        if (unauthorized == false) {
+        custom_variables.retry_count = 1;
+        custom_variables.retry_timer = 15;
+        if (custom_variables.unauthorized == false) {
           connection.dispatch({ type: 'recover' });
-          unauthorized = true;
+          custom_variables.unauthorized = true;
         }
-      } else if (retry_count == 0 && retry_timer == 0) {
+      } else if (custom_variables.retry_count == 0 && custom_variables.retry_timer == 0) {
         connection.dispatch({ type: 'recover' });
       }
     }
@@ -362,20 +380,20 @@ class EditorConnection {
 function recover() {
   clearTimeout(recover);
   if (connection.state.comm == 'recover') {
-    if (retry_timer <= 0 && retry_count <= retry_time.length) {
+    if (custom_variables.retry_timer <= 0 && custom_variables.retry_count <= custom_variables.retry_time.length) {
       connection.dispatch({ type: 'restart' });
-      if (retry_count < retry_time.length) {
-        retry_timer = retry_time[retry_count];
-        retry_count = retry_count + 1;
+      if (custom_variables.retry_count < custom_variables.retry_time.length) {
+        custom_variables.retry_timer = custom_variables.retry_time[custom_variables.retry_count];
+        custom_variables.retry_count = custom_variables.retry_count + 1;
         setTimeout(recover, 1000);
       }
     } else {
-      retry_timer = retry_timer - 1;
+      custom_variables.retry_timer = custom_variables.retry_timer - 1;
       setTimeout(recover, 1000);
     }
   } else {
-    retry_count = 0;
-    retry_timer = 0;
+    custom_variables.retry_count = 0;
+    custom_variables.retry_timer = 0;
     clearTimeout(recover);
   }
 }
@@ -386,6 +404,18 @@ function repeat(val: any, n: number): Array<any> {
     result.push(val);
   }
   return result;
+}
+
+function cursorColor(rand_id: string): string {
+  return `hsl(${colorHue(rand_id)}, 72%, 42%)`;
+}
+
+function colorHue(rand_id: string): number {
+  let hash = 0;
+  for (let i = 0; i < rand_id.length; i += 1) {
+    hash = (hash * 31 + rand_id.charCodeAt(i)) | 0;
+  }
+  return (hash >>> 0) % 360;
 }
 
 export default EditorConnection;

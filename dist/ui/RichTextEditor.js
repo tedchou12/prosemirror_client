@@ -33,6 +33,22 @@ class RichTextEditor extends React.PureComponent {
         readOnly
       } = this.props;
       if (readOnly === true) {
+        const editorView = this.state.editorView;
+        if (editorView && !tr.docChanged) {
+          const nextState = editorView.state.apply(tr);
+          // Belt-and-braces: never let a readonly update change the document
+          // (e.g. via a plugin's appendTransaction).
+          if (nextState.doc.eq(editorView.state.doc)) {
+            editorView.updateState(nextState);
+            // Forward selection-only transactions so the collab connector
+            // shares them over the websocket (EditorConnection.cursor_send).
+            // No document steps are sent for selection-only transactions.
+            onChange && onChange({
+              state: editorState || _Editor.default.EDITOR_EMPTY_STATE,
+              transaction: tr
+            });
+          }
+        }
         return;
       }
       if (onChange) {

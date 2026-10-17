@@ -7,7 +7,7 @@
 }
 
 .czi-local-cursor {
-  border-left: 2px solid #000000;
+  border-left: 2px solid #2c2c2c;
   display: inline-block;
   height: 1.2em;
   margin-left: -1px;
@@ -20,7 +20,7 @@
 }
 
 .czi-local-cursor__label {
-  background-color: #000000;
+  background-color: #2c2c2c;
   color: #fff;
   font-family: sans-serif;
   font-size: 12px;
