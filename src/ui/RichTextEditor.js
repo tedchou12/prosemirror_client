@@ -112,6 +112,15 @@ class RichTextEditor extends React.PureComponent<any, any> {
   _dispatchTransaction = (tr: Transform): void => {
     const {onChange, editorState, readOnly} = this.props;
     if (readOnly === true) {
+      const editorView = this.state.editorView;
+      if (editorView && !(tr: any).docChanged) {
+        const nextState = editorView.state.apply(tr);
+        // Belt-and-braces: never let a readonly update change the document
+        // (e.g. via a plugin's appendTransaction).
+        if (nextState.doc.eq(editorView.state.doc)) {
+          editorView.updateState(nextState);
+        }
+      }
       return;
     }
 

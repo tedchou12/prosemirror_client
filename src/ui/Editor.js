@@ -98,6 +98,13 @@ WebFontLoader.setImplementation(webfontloader);
 preLoadFonts();
 
 const handleDOMEvents = {
+  beforeinput: (view, event) => {
+    if (view && view.readOnly) {
+      event.preventDefault();
+      return true;
+    }
+    return false;
+  },
   drop: handleEditorDrop,
   keydown: handleEditorKeyDown,
   paste: handleEditorPaste,
@@ -278,9 +285,9 @@ class Editor extends React.PureComponent<any, any> {
   };
 
   _isEditable = (): boolean => {
-    const { disabled, readOnly } = this.props;
+    const { disabled } = this.props;
     const { isPrinting } = this.state;
-    return !isPrinting && !!this._editorView && !readOnly && !disabled;
+    return !isPrinting && !!this._editorView && !disabled;
   };
 
   _onPrintStart = (): void => {
