@@ -119,6 +119,13 @@ class RichTextEditor extends React.PureComponent<any, any> {
         // (e.g. via a plugin's appendTransaction).
         if (nextState.doc.eq(editorView.state.doc)) {
           editorView.updateState(nextState);
+          // Forward selection-only transactions so the collab connector
+          // shares them over the websocket (EditorConnection.cursor_send).
+          // No document steps are sent for selection-only transactions.
+          onChange && onChange({
+            state: editorState || Editor.EDITOR_EMPTY_STATE,
+            transaction: tr,
+          });
         }
       }
       return;

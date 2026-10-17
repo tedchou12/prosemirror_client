@@ -171,6 +171,11 @@ class Editor extends React.PureComponent<any, any> {
 
       // Reference: http://prosemirror.net/examples/basic/
       const view = (this._editorView = new CustomEditorView(editorNode, {
+        attributes: () => {
+          // In readonly mode, don't pop the mobile virtual keyboard,
+          // while keeping the text focusable and selectable.
+          return this.props.readOnly ? {inputmode: 'none'} : {};
+        },
         clipboardSerializer: DOMSerializer.fromSchema(schema),
         dispatchTransaction,
         editable: this._isEditable,
