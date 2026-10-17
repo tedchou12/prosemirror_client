@@ -99,6 +99,13 @@ _WebFontLoader.default.setImplementation(_webfontloader.default);
 // FS IRAD-988 2020-06-18
 (0, _FontTypeMarkSpec.preLoadFonts)();
 const handleDOMEvents = {
+  beforeinput: (view, event) => {
+    if (view && view.readOnly) {
+      event.preventDefault();
+      return true;
+    }
+    return false;
+  },
   drop: _handleEditorDrop.default,
   keydown: _handleEditorKeyDown.default,
   paste: _handleEditorPaste.default
@@ -152,13 +159,12 @@ class Editor extends React.PureComponent {
     });
     _defineProperty(this, "_isEditable", () => {
       const {
-        disabled,
-        readOnly
+        disabled
       } = this.props;
       const {
         isPrinting
       } = this.state;
-      return !isPrinting && !!this._editorView && !readOnly && !disabled;
+      return !isPrinting && !!this._editorView && !disabled;
     });
     _defineProperty(this, "_onPrintStart", () => {
       this.setState({
@@ -201,6 +207,13 @@ class Editor extends React.PureComponent {
 
       // Reference: http://prosemirror.net/examples/basic/
       const view = this._editorView = new _CustomEditorView.default(editorNode, {
+        attributes: () => {
+          // In readonly mode, don't pop the mobile virtual keyboard,
+          // while keeping the text focusable and selectable.
+          return this.props.readOnly ? {
+            inputmode: 'none'
+          } : {};
+        },
         clipboardSerializer: _prosemirrorModel.DOMSerializer.fromSchema(schema),
         dispatchTransaction,
         editable: this._isEditable,

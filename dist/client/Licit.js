@@ -129,8 +129,6 @@ class Licit extends React.Component {
     });
     const ws_url = _props.ws_url;
     const docID = _props.docID || 0; // 0 < means collaborative.
-    const user_id = _props.user_id;
-    const session_hash = _props.session_hash;
     const collaborative = 0 < docID;
     const debug = _props.debug || false;
     // Default width and height to undefined
@@ -163,8 +161,6 @@ class Licit extends React.Component {
     const setState = this.setState.bind(this);
     this._connector = collaborative ? new _CollabConnector.default(editorState, setState, {
       ws_url,
-      session_hash,
-      user_id,
       docID
     }) : new _SimpleConnector.default(editorState, setState);
 
@@ -232,8 +228,6 @@ class Licit extends React.Component {
         // create new connector
         this._connector = collabEditing ? new _CollabConnector.default(editorState, setState, {
           ws_url,
-          session_hash,
-          user_id,
           docID
         }) : new _SimpleConnector.default(editorState, setState);
       }

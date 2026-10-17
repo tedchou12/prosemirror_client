@@ -10,25 +10,14 @@ type RemoteCursor = {
   userName: string,
   anchor: number,
   head: number,
+  color: string,
 };
 
 const remoteCursorPluginKey = new PluginKey('RemoteCursorPlugin');
 
-function cursorColor(clientID: string): string {
-  return `hsl(${colorHue(clientID)}, 72%, 42%)`;
-}
-
-function colorHue(clientID: string): number {
-  let hash = 0;
-  for (let i = 0; i < clientID.length; i += 1) {
-    hash = (hash * 31 + clientID.charCodeAt(i)) | 0;
-  }
-  return (hash >>> 0) % 360;
-}
-
 function createRemoteCursor(cursor: RemoteCursor): HTMLElement {
-  const color = cursorColor(cursor.clientID);
-  // const color = cursorColor(window.doc_id + cursor.userId);
+  // const color = cursorColor(cursor.clientID);
+  const color = cursor.color;
   const marker = document.createElement('span');
   marker.className = 'czi-remote-cursor';
   marker.setAttribute('contenteditable', 'false');
@@ -66,7 +55,7 @@ function decorationsFor(state: EditorState, cursors: Array<RemoteCursor>): Decor
     const to = Math.max(anchor, head);
     if (from < to) {
       decorations.push(Decoration.inline(from, to, {
-        style: `background-color: hsla(${colorHue(cursor.clientID)}, 72%, 58%, 0.25)`,
+        style: `background-color: ${cursor.color}`,
       }, {
         inclusiveEnd: true,
         inclusiveStart: true,
@@ -84,7 +73,8 @@ function isRemoteCursor(value: any): boolean {
     typeof value.anchor === 'number' &&
     Number.isInteger(value.anchor) &&
     typeof value.head === 'number' &&
-    Number.isInteger(value.head);
+    Number.isInteger(value.head) &&
+    typeof value.color === 'string';
 }
 
 export function receiveRemoteCursor(state: EditorState, data: any): ?Transform {
@@ -98,6 +88,7 @@ export function receiveRemoteCursor(state: EditorState, data: any): ?Transform {
     userName: String(data.userName),
     anchor: selection.anchor,
     head: selection.head,
+    color: String(data.color),
   };
   if (!isRemoteCursor(cursor)) {
     return null;

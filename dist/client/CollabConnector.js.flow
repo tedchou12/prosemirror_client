@@ -24,13 +24,11 @@ class CollabConnector extends SimpleConnector {
     setState: SetStateCall,
     config: {
       ws_url: String,
-      session_hash: String,
-      user_id: String,
       docID: IdStrict,
     },
   ) {
     super(editorState, setState);
-    const { ws_url, session_hash, user_id, docID } = config;
+    const { ws_url, docID } = config;
 
     // [FS][11-MAR-2020]
     // Modified the scripts to ensure not to always replace 3001 with 3002 to run both servers together,
@@ -41,8 +39,6 @@ class CollabConnector extends SimpleConnector {
     this._connection = new EditorConnection(
       setState,
       ws_url,
-      session_hash,
-      user_id,
       docID,
     );
 

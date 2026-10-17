@@ -43,8 +43,6 @@ class CollabConnector extends _SimpleConnector.default {
     });
     const {
       ws_url,
-      session_hash,
-      user_id,
       docID
     } = config;
 
@@ -54,7 +52,7 @@ class CollabConnector extends _SimpleConnector.default {
     // const url = window.location.protocol + '\/\/' +
     //   window.location.hostname + ':3002/docs/' +
     //   docID;
-    this._connection = new _EditorConnection.default(setState, ws_url, session_hash, user_id, docID);
+    this._connection = new _EditorConnection.default(setState, ws_url, docID);
     this._connection.view = {
       updateState: s => {
         const {

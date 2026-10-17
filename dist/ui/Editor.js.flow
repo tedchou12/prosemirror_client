@@ -98,6 +98,13 @@ WebFontLoader.setImplementation(webfontloader);
 preLoadFonts();
 
 const handleDOMEvents = {
+  beforeinput: (view, event) => {
+    if (view && view.readOnly) {
+      event.preventDefault();
+      return true;
+    }
+    return false;
+  },
   drop: handleEditorDrop,
   keydown: handleEditorKeyDown,
   paste: handleEditorPaste,
@@ -164,6 +171,11 @@ class Editor extends React.PureComponent<any, any> {
 
       // Reference: http://prosemirror.net/examples/basic/
       const view = (this._editorView = new CustomEditorView(editorNode, {
+        attributes: () => {
+          // In readonly mode, don't pop the mobile virtual keyboard,
+          // while keeping the text focusable and selectable.
+          return this.props.readOnly ? {inputmode: 'none'} : {};
+        },
         clipboardSerializer: DOMSerializer.fromSchema(schema),
         dispatchTransaction,
         editable: this._isEditable,
@@ -278,9 +290,9 @@ class Editor extends React.PureComponent<any, any> {
   };
 
   _isEditable = (): boolean => {
-    const { disabled, readOnly } = this.props;
+    const { disabled } = this.props;
     const { isPrinting } = this.state;
-    return !isPrinting && !!this._editorView && !readOnly && !disabled;
+    return !isPrinting && !!this._editorView && !disabled;
   };
 
   _onPrintStart = (): void => {
