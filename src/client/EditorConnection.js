@@ -1,10 +1,10 @@
 // @flow
 
 import {
-  collab,
-  getVersion,
-  receiveTransaction,
-  sendableSteps,
+    collab,
+    getVersion,
+    receiveTransaction,
+    sendableSteps,
 } from 'prosemirror-collab';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
@@ -13,409 +13,411 @@ import { Step } from 'prosemirror-transform';
 import EditorPlugins from '../EditorPlugins';
 import EditorSchema from '../EditorSchema';
 import {
-  receiveRemoteCursor,
-  removeRemoteCursorsForUser,
+    receiveRemoteCursor,
+    removeRemoteCursorsForUser,
 } from '../RemoteCursorPlugin';
 import uuid from '../uuid';
 // [FS] IRAD-1040 2020-09-02
 
 var connection = null;
-var custom_variables = {};
+var custom_variables = {timer: null};
 
 class State {
-  edit: EditorState;
-  comm: ?string;
+    edit: EditorState;
+    comm: ?string;
 
-  constructor(edit: ?EditorState, comm: ?string) {
-    this.edit = edit;
-    this.comm = comm;
-  }
+    constructor(edit: ?EditorState, comm: ?string) {
+        this.edit = edit;
+        this.comm = comm;
+    }
 }
 
 class EditorConnection {
-  backOff: number;
-  onReady: Function;
-  ready: boolean;
-  request: any;
-  state: State;
-  ws_url: string;
-  view: ?EditorView;
-  schema: Schema;
-  socket: any;
+    onReady: Function;
+    ready: boolean;
+    request: any;
+    state: State;
+    ws_url: string;
+    view: ?EditorView;
+    schema: Schema;
+    socket: any;
 
-  constructor(onReady: Function, ws_url: string, doc_id: string) {
-    // attach variables to connection
-    custom_variables = {};
-    custom_variables.service = editor.service;
-    custom_variables.ws_url = editor.ws_url;
-    custom_variables.doc_id = editor.doc_id;
-    custom_variables.user_id = editor.user_id;
-    custom_variables.user_name = editor.user_name;
-    custom_variables.session_hash = editor.session_hash;
-    custom_variables.client_id = editor.user_id + '#' + uuid();
-    // config vars
-    custom_variables.max_docsize = editor.max_docsize;
-    custom_variables.retry_time = editor.retry_time;
-    // temp vars
-    custom_variables.retry_count = 0;
-    custom_variables.retry_timer = 0;
-    custom_variables.last_connection = null;
-    custom_variables.unauthorized = false;
-    // other variables
-    this.schema = null;
-    this.state = new State(null, 'start');
-    this.request = null;
-    this.view = null;
-    this.dispatch = this.dispatch.bind(this);
-    this.ready = false;
-    this.onReady = onReady;
-    this.socket = null;
-    this.temp = null;
-    // initiate for websocket onmessage
-    connection = this;
-  }
-
-  // [FS] IRAD-1040 2020-09-08
-  getEffectiveSchema(): Schema {
-    return (null != this.schema) ? this.schema : EditorSchema;
-  }
-
-  // All state changes go through this
-  dispatch = (action: Object): void => {
-    let newEditState = null;
-    if (action.type == 'loaded') {
-      const editState = EditorState.create({
-        doc: action.doc,
-        plugins: EditorPlugins.concat([
-          collab({
-            clientID: custom_variables.client_id,
-            version: action.version,
-          }),
-        ]),
-      });
-      this.state = new State(editState, 'poll');
-      this.ready = true;
-      this.onReady(editState);
-    } else if (action.type == 'start') {
-      this.state = new State(null, 'start');
-      this.ws_start();
-    } else if (action.type == 'restart') {
-      this.state = new State(null, 'recover');
-      this.ws_start();
-    } else if (action.type == 'poll') {
-      this.state = new State(this.state.edit, 'poll');
-    } else if (action.type == 'recover') {
-      if (typeof(show_message) === typeof(Function)) {
-        show_message('error');
-      }
-      this.state = new State(null, 'recover');
-      this.ws_recover();
-    } else if (action.type == 'transaction') {
-      newEditState = this.state.edit ? this.state.edit.apply(action.transaction) : null;
+    constructor(onReady: Function, ws_url: string, doc_id: string) {
+        // attach variables to connection
+        custom_variables.service = editor.service;
+        custom_variables.ws_url = editor.ws_url;
+        custom_variables.doc_id = editor.doc_id;
+        custom_variables.user_id = editor.user_id;
+        custom_variables.user_name = editor.user_name;
+        custom_variables.session_hash = editor.session_hash;
+        custom_variables.client_id = editor.user_id + '#' + uuid();
+        // config vars
+        custom_variables.max_docsize = editor.max_docsize;
+        custom_variables.retry_time = editor.retry_time;
+        // temp vars
+        custom_variables.retry_count = 0;
+        custom_variables.retry_timer = 0;
+        custom_variables.last_connection = null;
+        custom_variables.unauthorized = false;
+        // other variables
+        this.schema = null;
+        this.state = new State(null, 'start');
+        this.request = null;
+        this.view = null;
+        this.dispatch = this.dispatch.bind(this);
+        this.ready = false;
+        this.onReady = onReady;
+        this.socket = null;
+        this.temp = null;
+        // initiate for websocket onmessage
+        connection = this;
     }
 
-    if (newEditState) {
-      let sendable;
-      if (newEditState.doc.content.size > custom_variables.max_docsize) {
-        if (this.state.comm !== 'detached') {
-          if (typeof(show_message) === typeof(Function)) {
-            show_message('size_limit');
-          }
+    // [FS] IRAD-1040 2020-09-08
+    getEffectiveSchema(): Schema {
+        return (null != this.schema) ? this.schema : EditorSchema;
+    }
+
+    // All state changes go through this
+    dispatch = (action: Object): void => {
+        let newEditState = null;
+        if (action.type == 'loaded') {
+            const editState = EditorState.create({
+                doc: action.doc,
+                plugins: EditorPlugins.concat([
+                    collab({
+                        clientID: custom_variables.client_id,
+                        version: action.version,
+                    }),
+                ]),
+            });
+            this.state = new State(editState, 'poll');
+            this.ready = true;
+            this.onReady(editState);
+        } else if (action.type == 'start') {
+            this.state = new State(null, 'start');
+            this.ws_start();
+        } else if (action.type == 'restart') {
+            this.state = new State(null, 'recover');
+            this.ws_start();
+        } else if (action.type == 'poll') {
+            this.state = new State(this.state.edit, 'poll');
+        } else if (action.type == 'recover') {
+            if (typeof(show_message) === typeof(Function)) {
+                show_message('danger', 'error');
+            }
+            this.state = new State(null, 'recover');
+            this.ws_recover();
+        } else if (action.type == 'transaction') {
+            newEditState = this.state.edit ? this.state.edit.apply(action.transaction) : null;
         }
-        this.state = new State(newEditState, 'detached');
-      } else if (action.requestDone) {
-        this.state = new State(newEditState, 'poll');
-      } else if (
-        (this.state.comm == 'poll') &&
-        (sendable = this.sendable(newEditState))
-      ) {
-        this.state = new State(newEditState, 'send');
-        this.ws_send(newEditState, sendable);
-      } else {
-        this.state = new State(newEditState, this.state.comm);
-      }
-    }
 
-    // Sync the editor with this.state.edit
-    if (this.state.edit && this.view) {
-      this.view.updateState(this.state.edit);
-    }
-  };
+        if (newEditState) {
+            let sendable;
+            if (newEditState.doc.content.size > custom_variables.max_docsize) {
+                if (this.state.comm !== 'detached') {
+                    if (typeof(show_message) === typeof(Function)) {
+                        show_message('warning', 'size_limit');
+                    }
+                }
+                this.state = new State(newEditState, 'detached');
+            } else if (action.requestDone) {
+                this.state = new State(newEditState, 'poll');
+            } else if (
+                (this.state.comm == 'poll') &&
+                (sendable = this.sendable(newEditState))
+            ) {
+                this.state = new State(newEditState, 'send');
+                this.ws_send(newEditState, sendable);
+            } else {
+                this.state = new State(newEditState, this.state.comm);
+            }
+        }
 
-  // Send cursor updates to the server
-  cursor_send(selection: Object): void {
-    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
-      return;
-    }
-    const content = {
-      selection: {
-        anchor: selection.anchor,
-        head: selection.head,
-      },
-      clientID: custom_variables.client_id,
+        // Sync the editor with this.state.edit
+        if (this.state.edit && this.view) {
+            this.view.updateState(this.state.edit);
+        }
     };
-    const json = JSON.stringify({type: 'selection', data: content});
-    this.socket.send(json);
-  }
 
-  // Send title updates to the server
-  title_update(title: String): void {
-    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
-      return;
-    }
-    const json = JSON.stringify({type: 'title', data: title});
-    this.socket.send(json);
-  }
-
-  ws_start(): void {
-    this.socket = new WebSocket(custom_variables.ws_url + '?service=' + custom_variables.service + '&user_id=' + custom_variables.user_id + '&session_hash=' + custom_variables.session_hash + '&doc_id=' + custom_variables.doc_id + '&client_id=' + encodeURIComponent(btoa(custom_variables.client_id)));
-
-    this.socket.onopen = function(e) {
-      //does something when socket opens
-      if (typeof(add_user) === typeof(Function)) {
-        add_user(custom_variables.user_id, custom_variables.user_name, '#2c2c2c');
-      }
-      connection.state.comm = 'start';
-      custom_variables.retry_count = 0;
-      custom_variables.retry_timer = 0;
-      if (typeof(hide_message) === typeof(Function)) {
-        hide_message();
-      }
-      custom_variables.last_connection = Date.now();
+    // Send cursor updates to the server
+    cursor_send(selection: Object): void {
+        if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+            return;
+        }
+        const content = {
+            selection: {
+                anchor: selection.anchor,
+                head: selection.head,
+            },
+            clientID: custom_variables.client_id,
+        };
+        const json = JSON.stringify({type: 'selection', data: content});
+        this.socket.send(json);
     }
 
-    // replaces poll
-    this.socket.onmessage = function(e) {
-      custom_variables.unauthorized = false;
-      var data = JSON.parse(e.data);
-      var json = data.data;
+    // Send title updates to the server
+    title_update(title: String): void {
+        if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+            return;
+        }
+        const json = JSON.stringify({type: 'title', data: title});
+        this.socket.send(json);
+    }
 
-      if (data.type == 'init') {
-        connection.temp = json.doc_json;
-        connection.recursive_unquote(connection.temp);
-        connection.dispatch({
-          type: 'loaded',
-          doc: connection.getEffectiveSchema().nodeFromJSON(connection.temp),
-          version: json.version,
-          users: json.users,
-        });
-      } else if (data.type == 'step') {
-        if (json.steps && json.steps.length) {
-          connection.temp = json.steps;
-          connection.recursive_unquote(connection.temp);
-          const tr = receiveTransaction(
-            connection.state.edit,
-            connection.temp.map(j => Step.fromJSON(connection.getEffectiveSchema(), j)),
-            json.clientIDs
-          );
-          connection.dispatch({
+    ws_start(): void {
+        this.socket = new WebSocket(custom_variables.ws_url + '?service=' + custom_variables.service + '&user_id=' + custom_variables.user_id + '&session_hash=' + custom_variables.session_hash + '&doc_id=' + custom_variables.doc_id + '&client_id=' + encodeURIComponent(btoa(custom_variables.client_id)));
+
+        this.socket.onopen = function(e) {
+            //does something when socket opens
+            if (typeof(add_user) === typeof(Function)) {
+                add_user(custom_variables.user_id, custom_variables.user_name, '#2c2c2c');
+            }
+            connection.state.comm = 'start';
+            custom_variables.retry_count = 0;
+            custom_variables.retry_timer = 0;
+            if (typeof(hide_message) === typeof(Function)) {
+                hide_message();
+            }
+            custom_variables.last_connection = Date.now();
+        }
+
+        // replaces poll
+        this.socket.onmessage = function(e) {
+            custom_variables.unauthorized = false;
+            var data = JSON.parse(e.data);
+            var json = data.data;
+
+            if (data.type == 'init') {
+                connection.temp = json.doc_json;
+                connection.recursive_unquote(connection.temp);
+                connection.dispatch({
+                    type: 'loaded',
+                    doc: connection.getEffectiveSchema().nodeFromJSON(connection.temp),
+                    version: json.version,
+                    users: json.users,
+                });
+            } else if (data.type == 'step') {
+                if (json.steps && json.steps.length) {
+                    connection.temp = json.steps;
+                    connection.recursive_unquote(connection.temp);
+                    const tr = receiveTransaction(
+                        connection.state.edit,
+                        connection.temp.map(j => Step.fromJSON(connection.getEffectiveSchema(), j)),
+                        json.clientIDs
+                    );
+                    connection.dispatch({
+                        type: 'transaction',
+                        transaction: tr,
+                        requestDone: false,
+                    });
+                }
+            } else if (data.type == 'selection' || data.type == 'cursor') {
+                const cursorData = json;
+                cursorData.color = cursorColor(cursorData.userId + custom_variables.doc_id);
+                if (
+                    connection.state.edit &&
+                    cursorData &&
+                    cursorData.clientID !== custom_variables.client_id
+                ) {
+                    const transaction = receiveRemoteCursor(connection.state.edit, cursorData);
+                    if (transaction) {
+                        connection.dispatch({ type: 'transaction', transaction });
+                    }
+                }
+            } else if (data.type == 'cursor_leave') {
+                if (connection.state.edit && json && json.userId) {
+                    connection.dispatch({
+                        type: 'transaction',
+                        transaction: removeRemoteCursorsForUser(connection.state.edit, String(json.userId)),
+                    });
+                }
+            } else if (data.type == 'title') {
+                if (typeof(editor.update_title) === typeof(editor.update_title)) {
+                    editor.update_title(data.data);
+                }
+            } else if (data.type == 'users') {
+                if ('add' in json && 'user_id' in json['add'] && (Object.keys(json['add']['user_id']).length || json.add.user_id.length)) {
+                    if (typeof(add_user) === typeof(Function)) {
+                        for (var addIndex in json['add']['user_id']) {
+                            add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex], cursorColor(json['add']['user_id'][addIndex] + custom_variables.doc_id));
+                        }
+                    }
+                }
+                if ('delete' in json && 'user_id' in json['delete'] && (Object.keys(json['delete']['user_id']).length || json.delete.user_id.length)) {
+                    for (var deleteIndex in json['delete']['user_id']) {
+                        if (typeof(delete_user) === typeof(Function)) {
+                            delete_user(json['delete']['user_id'][deleteIndex]);
+                        }
+                        if (connection.state.edit) {
+                            connection.dispatch({
+                                type: 'transaction',
+                                transaction: removeRemoteCursorsForUser(
+                                    connection.state.edit,
+                                    String(json['delete']['user_id'][deleteIndex]),
+                                ),
+                            });
+                        }
+                    }
+                }
+            } else if (data.type == 'error') {
+                if (typeof(show_message) === typeof(Function)) {
+                    show_message(data.data.type, data.data.message);
+                }
+            } else {
+                console.log(json);
+            }
+        }
+
+        // handling reconnections
+        this.socket.onclose = function(e) {
+            // Too far behind. Revert to server state
+            if (typeof(show_message) === typeof(Function)) {
+                show_message('danger', 'error');
+            }
+            if (custom_variables.last_connection != null && (custom_variables.last_connection - Date.now()) < 3000) {
+                connection.state.comm = 'recover';
+                custom_variables.retry_count = 1;
+                custom_variables.retry_timer = 15;
+                if (custom_variables.unauthorized == false) {
+                    connection.dispatch({ type: 'recover' });
+                    custom_variables.unauthorized = true;
+                }
+            } else if (custom_variables.retry_count == 0 && custom_variables.retry_timer == 0) {
+                connection.dispatch({ type: 'recover' });
+            }
+        }
+    }
+
+    ws_send(editState: EditorState, sendable: Object) {
+        let { steps } = sendable;
+        this.temp = steps ? steps.steps.map(s => s.toJSON()) : [];
+        this.recursive_enquote(this.temp);
+        const content = {version: getVersion(editState),
+                                      steps: this.temp,
+                                      clientID: steps ? steps.clientID : 0};
+        let json = JSON.stringify({type: 'content', data: content});
+        this.socket.send(json);
+        const tr = steps
+            ? receiveTransaction(
+                this.state.edit,
+                steps.steps,
+                repeat(steps.clientID, steps.steps.length)
+            )
+            : this.state.edit.tr;
+
+        this.dispatch({
             type: 'transaction',
             transaction: tr,
-            requestDone: false,
-          });
+            requestDone: true,
+        });
+    }
+
+    ws_recover(): void {
+        if (connection.state.comm == 'recover') {
+            recover();
         }
-      } else if (data.type == 'selection' || data.type == 'cursor') {
-        const cursorData = json;
-        cursorData.color = cursorColor(cursorData.userId + custom_variables.doc_id);
-        if (
-          connection.state.edit &&
-          cursorData &&
-          cursorData.clientID !== custom_variables.client_id
-        ) {
-          const transaction = receiveRemoteCursor(connection.state.edit, cursorData);
-          if (transaction) {
-            connection.dispatch({ type: 'transaction', transaction });
-          }
+    }
+
+    sendable(editState: EditorState): ?{ steps: Array<Step> } {
+        const steps = sendableSteps(editState);
+        if (steps) {
+            return { steps };
         }
-      } else if (data.type == 'cursor_leave') {
-        if (connection.state.edit && json && json.userId) {
-          connection.dispatch({
-            type: 'transaction',
-            transaction: removeRemoteCursorsForUser(connection.state.edit, String(json.userId)),
-          });
+        return null;
+    }
+
+    // [FS] IRAD-1040 2020-09-02
+    // Send the modified schema to server
+    // updateSchema(schema: Schema) {
+    //   // to avoid cyclic reference error, use flatted string.
+    //   const schemaFlatted = stringify(schema);
+    //   this.run(POST(this.ws_url + '/schema/', schemaFlatted, 'text/plain')).then(
+    //     data => {
+    //       console.log("collab server's schema updated");
+    //       // [FS] IRAD-1040 2020-09-08
+    //       this.schema = schema;
+    //       this.start();
+    //     },
+    //     err => {
+    //       this.report.failure('error');
+    //     }
+    //   );
+    // }
+
+    setView(view: EditorView): void {
+        if (this.view) {
+            this.view.destroy();
         }
-      } else if (data.type == 'title') {
-        if (typeof(editor.update_title) === typeof(editor.update_title)) {
-          editor.update_title(data.data);
-        }
-      } else if (data.type == 'users') {
-        if ('add' in json && 'user_id' in json['add'] && (Object.keys(json['add']['user_id']).length || json.add.user_id.length)) {
-          if (typeof(add_user) === typeof(Function)) {
-            for (var addIndex in json['add']['user_id']) {
-              add_user(json['add']['user_id'][addIndex], json['add']['user_name'][addIndex], cursorColor(json['add']['user_id'][addIndex] + custom_variables.doc_id));
+        this.view = window.view = view;
+    }
+
+    recursive_enquote(arr) {
+        for (var i in arr) {
+            if (typeof(arr[i]) == 'string') {
+                // arr[i] = arr[i].replace('\\', '^@$!^%*@^#%#*@$!!');
+                arr[i] = arr[i].replace(/"/g, '龘');
+                arr[i] = arr[i].replace(/\\/g, '靐');
             }
-          }
-        }
-        if ('delete' in json && 'user_id' in json['delete'] && (Object.keys(json['delete']['user_id']).length || json.delete.user_id.length)) {
-          for (var deleteIndex in json['delete']['user_id']) {
-            if (typeof(delete_user) === typeof(Function)) {
-              delete_user(json['delete']['user_id'][deleteIndex]);
+            if (typeof(arr[i]) == 'object') {
+                this.recursive_enquote(arr[i]);
             }
-            if (connection.state.edit) {
-              connection.dispatch({
-                type: 'transaction',
-                transaction: removeRemoteCursorsForUser(
-                  connection.state.edit,
-                  String(json['delete']['user_id'][deleteIndex]),
-                ),
-              });
+        }
+    }
+
+    recursive_unquote(arr) {
+        for (var i in arr) {
+            if (typeof(arr[i]) == 'string') {
+                // arr[i] = arr[i].replace('^@$!^%*@^#%#*@$!!', '\\');
+                arr[i] = arr[i].replace(/靐/g, '\\');
+                arr[i] = arr[i].replace(/龘/g, '"');
             }
-          }
+            if (typeof(arr[i]) == 'object') {
+                this.recursive_unquote(arr[i]);
+            }
         }
-      } else {
-        console.log(json);
-      }
     }
-
-    // handling reconnections
-    this.socket.onclose = function(e) {
-      // Too far behind. Revert to server state
-      if (typeof(show_message) === typeof(Function)) {
-        show_message('error');
-      }
-      if (custom_variables.last_connection != null && (custom_variables.last_connection - Date.now()) < 3000) {
-        connection.state.comm = 'recover';
-        custom_variables.retry_count = 1;
-        custom_variables.retry_timer = 15;
-        if (custom_variables.unauthorized == false) {
-          connection.dispatch({ type: 'recover' });
-          custom_variables.unauthorized = true;
-        }
-      } else if (custom_variables.retry_count == 0 && custom_variables.retry_timer == 0) {
-        connection.dispatch({ type: 'recover' });
-      }
-    }
-  }
-
-  ws_send(editState: EditorState, sendable: Object) {
-    let { steps } = sendable;
-    this.temp = steps ? steps.steps.map(s => s.toJSON()) : [];
-    this.recursive_enquote(this.temp);
-    const content = {version: getVersion(editState),
-                   steps: this.temp,
-                   clientID: steps ? steps.clientID : 0};
-    let json = JSON.stringify({type: 'content', data: content});
-    this.socket.send(json);
-    const tr = steps
-      ? receiveTransaction(
-        this.state.edit,
-        steps.steps,
-        repeat(steps.clientID, steps.steps.length)
-      )
-      : this.state.edit.tr;
-
-    this.dispatch({
-      type: 'transaction',
-      transaction: tr,
-      requestDone: true,
-    });
-  }
-
-  ws_recover(): void {
-    if (connection.state.comm == 'recover') {
-      recover();
-    }
-  }
-
-  sendable(editState: EditorState): ?{ steps: Array<Step> } {
-    const steps = sendableSteps(editState);
-    if (steps) {
-      return { steps };
-    }
-    return null;
-  }
-
-  // [FS] IRAD-1040 2020-09-02
-  // Send the modified schema to server
-  // updateSchema(schema: Schema) {
-  //   // to avoid cyclic reference error, use flatted string.
-  //   const schemaFlatted = stringify(schema);
-  //   this.run(POST(this.ws_url + '/schema/', schemaFlatted, 'text/plain')).then(
-  //     data => {
-  //       console.log("collab server's schema updated");
-  //       // [FS] IRAD-1040 2020-09-08
-  //       this.schema = schema;
-  //       this.start();
-  //     },
-  //     err => {
-  //       this.report.failure('error');
-  //     }
-  //   );
-  // }
-
-  setView(view: EditorView): void {
-    if (this.view) {
-      this.view.destroy();
-    }
-    this.view = window.view = view;
-  }
-
-  recursive_enquote(arr) {
-    for (var i in arr) {
-      if (typeof(arr[i]) == 'string') {
-        // arr[i] = arr[i].replace('\\', '^@$!^%*@^#%#*@$!!');
-        arr[i] = arr[i].replace(/"/g, '龘');
-        arr[i] = arr[i].replace(/\\/g, '靐');
-      }
-      if (typeof(arr[i]) == 'object') {
-        this.recursive_enquote(arr[i]);
-      }
-    }
-  }
-
-  recursive_unquote(arr) {
-    for (var i in arr) {
-      if (typeof(arr[i]) == 'string') {
-        // arr[i] = arr[i].replace('^@$!^%*@^#%#*@$!!', '\\');
-        arr[i] = arr[i].replace(/靐/g, '\\');
-        arr[i] = arr[i].replace(/龘/g, '"');
-      }
-      if (typeof(arr[i]) == 'object') {
-        this.recursive_unquote(arr[i]);
-      }
-    }
-  }
 }
 
 function recover() {
-  clearTimeout(recover);
-  if (connection.state.comm == 'recover') {
-    if (custom_variables.retry_timer <= 0 && custom_variables.retry_count <= custom_variables.retry_time.length) {
-      connection.dispatch({ type: 'restart' });
-      if (custom_variables.retry_count < custom_variables.retry_time.length) {
-        custom_variables.retry_timer = custom_variables.retry_time[custom_variables.retry_count];
-        custom_variables.retry_count = custom_variables.retry_count + 1;
-        setTimeout(recover, 1000);
-      }
+    clearTimeout(custom_variables.timer);
+    if (connection.state.comm == 'recover') {
+        if (custom_variables.retry_timer <= 0 && custom_variables.retry_count <= custom_variables.retry_time.length) {
+            connection.dispatch({ type: 'restart' });
+            if (custom_variables.retry_count < custom_variables.retry_time.length) {
+                custom_variables.retry_timer = custom_variables.retry_time[custom_variables.retry_count];
+                custom_variables.retry_count = custom_variables.retry_count + 1;
+                custom_variables.timer = setTimeout(recover, 1000);
+            }
+        } else {
+            custom_variables.retry_timer = custom_variables.retry_timer - 1;
+            custom_variables.timer = setTimeout(recover, 1000);
+        }
     } else {
-      custom_variables.retry_timer = custom_variables.retry_timer - 1;
-      setTimeout(recover, 1000);
+        custom_variables.retry_count = 0;
+        custom_variables.retry_timer = 0;
+        clearTimeout(custom_variables.timer);
     }
-  } else {
-    custom_variables.retry_count = 0;
-    custom_variables.retry_timer = 0;
-    clearTimeout(recover);
-  }
 }
 
 function repeat(val: any, n: number): Array<any> {
-  const result = [];
-  for (let i = 0; i < n; i++) {
-    result.push(val);
-  }
-  return result;
+    const result = [];
+    for (let i = 0; i < n; i++) {
+        result.push(val);
+    }
+    return result;
 }
 
 function cursorColor(rand_id: string): string {
-  return `hsl(${colorHue(rand_id)}, 72%, 42%)`;
+    return `hsl(${colorHue(rand_id)}, 72%, 42%)`;
 }
 
 function colorHue(rand_id: string): number {
-  let hash = 0;
-  for (let i = 0; i < rand_id.length; i += 1) {
-    hash = (hash * 31 + rand_id.charCodeAt(i)) | 0;
-  }
-  return (hash >>> 0) % 360;
+    let hash = 0;
+    for (let i = 0; i < rand_id.length; i += 1) {
+        hash = (hash * 31 + rand_id.charCodeAt(i)) | 0;
+    }
+    return (hash >>> 0) % 360;
 }
 
 export default EditorConnection;
