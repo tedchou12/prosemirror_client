@@ -6,7 +6,7 @@ import {
     receiveTransaction,
     sendableSteps,
 } from 'prosemirror-collab';
-import { EditorState } from 'prosemirror-state';
+import { EditorState, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
@@ -84,6 +84,7 @@ class EditorConnection {
         if (action.type == 'loaded') {
             const editState = EditorState.create({
                 doc: action.doc,
+                selection: TextSelection.create(action.doc, 1, 1),
                 plugins: EditorPlugins.concat([
                     collab({
                         clientID: custom_variables.client_id,
@@ -92,6 +93,7 @@ class EditorConnection {
                 ]),
             });
             this.state = new State(editState, 'poll');
+            this._pendingCursorReset = true;
             this.ready = true;
             this.onReady(editState);
         } else if (action.type == 'start') {
@@ -211,6 +213,14 @@ class EditorConnection {
                         transaction: tr,
                         requestDone: false,
                     });
+                    if (connection._pendingCursorReset && connection.state.edit) {
+                        const st = connection.state.edit;
+                        connection.dispatch({
+                            type: 'transaction',
+                            transaction: st.tr.setSelection(TextSelection.create(st.doc, 1, 1)),
+                            requestDone: false,
+                        });
+                    }
                 }
             } else if (data.type == 'selection' || data.type == 'cursor') {
                 const cursorData = json;

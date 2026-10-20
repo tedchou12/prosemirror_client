@@ -60,6 +60,7 @@ class CollabConnector extends SimpleConnector {
   }
 
   onEdit = (transaction: Transform): void => {
+    this._connection._pendingCursorReset = false;
     if (!this._connection.ready) {
       // console.warn('not ready');
       return;
