@@ -1,7 +1,7 @@
 // @flow
 
 import applyDevTools from 'prosemirror-dev-tools';
-import { EditorState, TextSelection } from 'prosemirror-state';
+import { EditorState, TextSelection, Selection } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
 import * as React from 'react';
@@ -225,6 +225,7 @@ class Licit extends React.Component<any, any> {
     const tr = state.tr;
     const doc = state.doc;
     dispatch(tr.setSelection(TextSelection.create(doc, 0, doc.content.size)));
+    // dispatch(tr.setSelection(Selection.atStart(doc)));
     editorView.focus();
 
     if (this.state.onReadyCB) {
